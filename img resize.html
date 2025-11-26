@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Image Resizer by KB</title>
+  <style>
+    body {
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: linear-gradient(135deg, #e3f2fd, #f3e5f5);
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      transition: background 0.3s, color 0.3s;
+    }
+    body.dark { background: #121212; color: #e0e0e0; }
+    h1 { margin: 20px 0 10px 0; color: #1976d2; font-size: 22px; }
+    body.dark h1 { color: #90caf9; }
+    .container {
+      background: #fff;
+      padding: 15px;
+      border-radius: 12px;
+      border: 2px solid #4caf50;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      width: 90%;
+      max-width: 320px;
+      text-align: center;
+      margin-bottom: 20px;
+      transition: background 0.3s, border 0.3s;
+    }
+    body.dark .container { background: #1e1e1e; border-color: #81c784; }
+    input[type="file"], input[type="number"] {
+      margin: 10px auto;
+      padding: 10px;
+      border: 2px dashed #1976d2;
+      border-radius: 8px;
+      cursor: pointer;
+      width: calc(100% - 20px);
+      background: #f9f9f9;
+      text-align: center;
+      font-size: 14px;
+      box-sizing: border-box;
+    }
+    body.dark input[type="file"], body.dark input[type="number"] {
+      background: #2c2c2c;
+      border-color: #90caf9;
+      color: #ccc;
+    }
+    button {
+      margin: 8px 0;
+      padding: 8px;
+      border-radius: 8px;
+      border: none;
+      width: 100%;
+      font-size: 15px;
+      font-weight: 500;
+      cursor: pointer;
+      background: linear-gradient(90deg, #1976d2, #512da8);
+      color: white;
+      transition: 0.3s;
+    }
+    button:hover { background: linear-gradient(90deg, #1565c0, #4527a0); }
+    #status { margin-top: 8px; font-size: 13px; color: #444; }
+    body.dark #status { color: #bbb; }
+    #fileInfo { margin-top: 8px; font-size: 13px; color: green; font-weight: 600; white-space: pre-line; }
+    #popup {
+      position: fixed;
+      bottom: -50px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #4caf50;
+      color: white;
+      padding: 10px 15px;
+      border-radius: 6px;
+      display: none;
+      font-size: 14px;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+      transition: bottom 0.3s ease-in-out;
+    }
+    footer { margin-top: auto; background: #212121; color: #ccc; text-align: center; padding: 12px; font-size: 13px; width: 100%; }
+    footer span { color: #ffd54f; }
+    .social-icons { margin-top: 8px; }
+    .social-icons a { margin: 0 6px; display: inline-block; }
+    .social-icons img { width: 22px; height: 22px; vertical-align: middle; }
+    .dark-toggle {
+      position: fixed; top: 15px; right: 15px;
+      background: #1976d2; color: white; border: none; border-radius: 50%;
+      width: 40px; height: 40px; cursor: pointer; font-size: 18px;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.3); transition: background 0.3s;
+    }
+    .dark-toggle:hover { background: #0d47a1; }
+  </style>
+</head>
+<body>
+  <button class="dark-toggle" onclick="toggleDark()">🌙</button>
+  <h1>Image Resizer by KB</h1>
+  <div class="container">
+    <input type="file" id="imageInput" accept="image/*">
+    <input type="number" id="targetKB" placeholder="Target Size (KB)">
+    <button onclick="resizeByKB()">Resize & Download</button>
+    <div id="status">Upload an image to start</div>
+    <div id="fileInfo"></div>
+  </div>
+
+    <footer>
+    © 2025 <span>Public CSC</span> | All Rights Reserved
+    <div class="social-icons">
+      <a href="https://www.facebook.com/share/1JavTLfsyU/"><img src="https://cdn-icons-png.flaticon.com/512/733/733547.png"></a>
+      <a href="https://t.me/tgdanzer"><img src="https://cdn-icons-png.flaticon.com/512/2111/2111646.png"></a>
+      <a href="https://instagram.com/public.csc"><img src="https://cdn-icons-png.flaticon.com/512/733/733558.png"></a>
+      <a href="https://wa.me/8051450233"><img src="https://cdn-icons-png.flaticon.com/512/733/733585.png"></a>
+    </div>
+  </footer>
+
+
+  <div id="popup">✅ Image downloaded successfully!</div>
+
+  <script>
+    let originalSize = 0;
+
+    function formatSize(size) {
+      let kb = (size / 1024).toFixed(2);
+      if (kb > 1024) return (kb / 1024).toFixed(2) + " MB";
+      return kb + " KB";
+    }
+
+    document.getElementById("imageInput").addEventListener("change", (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        originalSize = file.size;
+        document.getElementById("fileInfo").innerText =
+          `📂 File: ${file.name}\nSize: ${formatSize(file.size)}`;
+      }
+    });
+
+    async function resizeByKB() {
+      const fileInput = document.getElementById("imageInput");
+      const targetKB = parseInt(document.getElementById("targetKB").value);
+      const status = document.getElementById("status");
+
+      if (!fileInput.files[0]) { alert("Please select an image!"); return; }
+      if (!targetKB || targetKB <= 0) { alert("Enter valid target KB!"); return; }
+
+      status.innerText = "⏳ Processing...";
+
+      const file = fileInput.files[0];
+      const reader = new FileReader();
+      reader.onload = function(event) {
+        const img = new Image();
+        img.onload = async function() {
+          let quality = 0.9;
+          let blob;
+          let step = 0.05;
+
+          // Reduce quality iteratively to reach target size
+          do {
+            const canvas = document.createElement("canvas");
+            canvas.width = img.width;
+            canvas.height = img.height;
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            blob = await new Promise(res => canvas.toBlob(res, "image/jpeg", quality));
+            quality -= step;
+          } while ((blob.size / 1024) > targetKB && quality > 0.05);
+
+          const newSize = blob.size;
+          document.getElementById("fileInfo").innerText =
+            `📂 File: ${file.name}\nOld Size: ${formatSize(originalSize)}\nNew Size: ${formatSize(newSize)}`;
+
+          const link = document.createElement("a");
+          link.href = URL.createObjectURL(blob);
+          link.download = "resized_" + file.name;
+          link.click();
+
+          status.innerText = "✅ Resize complete! File downloaded.";
+          showPopup();
+        }
+        img.src = event.target.result;
+      }
+      reader.readAsDataURL(file);
+    }
+
+    function toggleDark() { document.body.classList.toggle("dark"); }
+    function showPopup() {
+      const popup = document.getElementById("popup");
+      popup.style.display = "block";
+      popup.style.bottom = "30px";
+      setTimeout(() => { popup.style.bottom = "-50px"; setTimeout(() => { popup.style.display = "none"; }, 300); }, 1000);
+    }
+  </script>
+</body>
+</html>

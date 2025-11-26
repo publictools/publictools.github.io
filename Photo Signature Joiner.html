@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Photo + Signature Merger</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css"/>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+</head>
+<body class="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 min-h-screen flex flex-col justify-between p-4">
+
+  <div class="bg-white/95 shadow-2xl rounded-2xl p-6 w-full max-w-md mx-auto">
+    <h1 class="text-center text-2xl font-bold text-indigo-700 mb-5">📷Photo✍Signature Merger</h1>
+
+    <!-- Upload inputs -->
+    <div class="mb-4">
+      <label class="flex items-center gap-2 text-indigo-700 font-semibold mb-1">
+        <span class="text-lg">📤</span> Upload Pic
+      </label>
+      <input type="file" id="photoInput" accept="image/*" class="w-full p-2 border-2 border-indigo-400 rounded-lg cursor-pointer hover:bg-indigo-50" />
+    </div>
+    <div class="mb-5">
+      <label class="flex items-center gap-2 text-purple-700 font-semibold mb-1">
+        <span class="text-lg">🖊️</span> Upload Signature
+      </label>
+      <input type="file" id="signInput" accept="image/*" class="w-full p-2 border-2 border-purple-400 rounded-lg cursor-pointer hover:bg-purple-50" />
+    </div>
+
+        <!-- Outline controls -->
+    <div class="flex gap-3 mb-4 items-center">
+      <label class="flex-1 text-sm font-semibold text-gray-700">Outline Color:
+        <input type="color" id="outlineColor" value="#ff0000" class="w-full h-10 border rounded">
+      </label>
+      <label class="flex-1 text-sm font-semibold text-gray-700">Thickness:
+        <input type="range" id="outlineWidth" min="1" max="20" value="0" class="w-full">
+      </label>
+      <span id="thicknessValue" class="text-sm font-bold text-indigo-700">0</span>
+    </div>
+
+    <!-- Action buttons -->
+    <div class="flex gap-3 mb-4">
+      <button onclick="render()" class="flex-1 py-2 rounded-lg shadow bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-semibold transition transform hover:scale-105">🔍 Preview</button>
+      <button onclick="downloadImage()" class="flex-1 py-2 rounded-lg shadow bg-gradient-to-r from-green-500 to-emerald-600 text-white font-semibold transition transform hover:scale-105">💾 Download</button>
+    </div>
+
+    <!-- Target size option -->
+    <div class="flex gap-3 mb-4 items-center">
+      <label class="flex-1 text-sm font-semibold text-gray-700">Target Size (KB):
+        <select id="targetSize" class="w-full border-2 border-orange-400 p-2 rounded-lg">
+          <option value="">--Select--</option>
+          <option value="50">50 KB</option>
+          <option value="100">100 KB</option>
+          <option value="200">200 KB</option>
+          <option value="300">300 KB</option>
+        </select>
+      </label>
+      <button onclick="downloadTargetSize()" class="flex-1 py-2 rounded-lg shadow bg-gradient-to-r from-orange-500 to-red-500 text-white font-semibold transition transform hover:scale-105">Compress & Download</button>
+    </div>
+
+    <!-- Canvas -->
+    <div class="relative group">
+      <canvas id="canvas" width="400" height="500" 
+        class="w-full border-4 border-indigo-200 rounded-xl shadow-lg transition-all duration-500 group-hover:shadow-2xl group-hover:scale-[1.02] group-hover:border-indigo-400">
+      </canvas>
+      <p class="absolute -top-3 -right-3 bg-gradient-to-r from-indigo-500 to-purple-600 text-white text-xs px-2 py-1 rounded-full shadow">
+        Preview
+      </p>
+    </div>
+    <p id="sizeInfo" class="text-sm text-green-600 font-semibold mt-2 text-center">Size: 0 KB</p>
+  </div>
+
+<!-- Custom Footer -->
+  <footer class="text-center mt-6">
+    <p class="text-sm text-white">© 2025 <span>Public CSC</span> | All Rights Reserved
+    <div class="flex justify-center gap-5 mt-3">
+    
+      <a href="https://t.me/tgdanzer" target="_blank">
+        <img src="https://cdn-icons-png.flaticon.com/512/2111/2111646.png" alt="Telegram" class="w-8 h-8 hover:scale-110 transition">
+      </a>
+      <a href="https://wa.me/8051450233" target="_blank">
+        <img src="https://cdn-icons-png.flaticon.com/512/733/733585.png" alt="WhatsApp" class="w-8 h-8 hover:scale-110 transition">
+      </a>
+      <a href="https://instagram.com/public.csc" target="_blank">
+        <img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png" alt="Instagram" class="w-8 h-8 hover:scale-110 transition">
+      </a>
+    <a href="https://www.facebook.com/share/1JavTLfsyU/" target="_blank">
+        <img src="https://cdn-icons-png.flaticon.com/512/733/733547.png" alt="Facebook" class="w-8 h-8 hover:scale-110 transition">
+    </a>
+  </footer>
+
+
+
+
+  <!-- Crop Modal -->
+  <div id="cropModal" class="fixed inset-0 bg-black bg-opacity-70 hidden flex items-center justify-center z-50">
+    <div class="bg-white p-5 rounded-xl shadow-2xl w-[90%] max-w-lg">
+      <h2 class="text-lg font-bold text-indigo-700 mb-3">✂️Crop Image</h2>
+      <img id="cropImage" class="max-w-full max-h-[70vh] rounded border shadow">
+      <div class="flex gap-3 mt-4">
+        <button id="applyCrop" class="flex-1 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg shadow">✂️Crop✂️</button>
+        <button id="cancelCrop" class="flex-1 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg shadow">Skip❌</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+let photo = null, signature = null;
+let cropper = null, currentTarget = null;
+let rotationDeg = 0;
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
+
+function handleFile(input, type) {
+  const reader = new FileReader();
+  reader.onload = e => {
+    document.getElementById("cropImage").src = e.target.result;
+    document.getElementById("cropModal").classList.remove("hidden");
+
+    if (cropper) cropper.destroy();
+    const img = document.getElementById("cropImage");
+    img.onload = () => {
+      let aspect = type === "photo" ? 4/5 : 4/1;
+      cropper = new Cropper(img, { aspectRatio: aspect, viewMode: 1, autoCropArea: 1 });
+    };
+    currentTarget = type;
+  };
+  reader.readAsDataURL(input.files[0]);
+}
+
+document.getElementById("photoInput").addEventListener("change", e => handleFile(e.target, "photo"));
+document.getElementById("signInput").addEventListener("change", e => handleFile(e.target, "sign"));
+
+document.getElementById("applyCrop").addEventListener("click", () => {
+  if (cropper) {
+    const canvasCropped = cropper.getCroppedCanvas();
+    const img = new Image();
+    img.onload = () => {
+      if (currentTarget === "photo") photo = img;
+      if (currentTarget === "sign") signature = img;
+      render();
+    };
+    img.src = canvasCropped.toDataURL("image/png");
+    cropper.destroy();
+    cropper = null;
+  }
+  document.getElementById("cropModal").classList.add("hidden");
+});
+
+document.getElementById("cancelCrop").addEventListener("click", () => {
+  document.getElementById("cropModal").classList.add("hidden");
+  if (cropper) cropper.destroy();
+});
+
+document.getElementById("outlineWidth").addEventListener("input", e => {
+  document.getElementById("thicknessValue").textContent = e.target.value;
+  render();
+});
+document.getElementById("outlineColor").addEventListener("input", render);
+
+document.getElementById("rotation").addEventListener("input", e => {
+  rotationDeg = parseInt(e.target.value);
+  document.getElementById("rotationValue").textContent = rotationDeg + "°";
+  render();
+});
+
+function render() {
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  ctx.fillStyle = "white";
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+
+  if (photo) ctx.drawImage(photo, 0, 0, canvas.width, 400);
+
+  if (signature) {
+    const centerX = canvas.width/2;
+    const sigY = 450; // fixed Y for signature center
+    const sigWidth = canvas.width;
+    const sigHeight = 100;
+
+    ctx.save();
+    ctx.translate(centerX, sigY);
+    ctx.rotate(rotationDeg * Math.PI/180);
+    ctx.drawImage(signature, -sigWidth/2, -sigHeight/2, sigWidth, sigHeight);
+    ctx.restore();
+  }
+
+  ctx.strokeStyle = document.getElementById("outlineColor").value;
+  ctx.lineWidth = document.getElementById("outlineWidth").value;
+  ctx.strokeRect(0,0,canvas.width,canvas.height);
+
+  const dataUrl = canvas.toDataURL("image/jpeg",0.9);
+  const sizeKB = Math.round((dataUrl.length*3/4)/1024);
+  document.getElementById("sizeInfo").textContent = `Size: ${sizeKB} KB`;
+}
+
+function downloadImage() {
+  const link = document.createElement("a");
+  link.download = "merged.jpg";
+  link.href = canvas.toDataURL("image/jpeg",0.9);
+  link.click();
+}
+
+function downloadTargetSize() {
+  const target = document.getElementById("targetSize").value;
+  if (!target) { alert("Please select target size!"); return; }
+
+  let quality = 0.9;
+  let dataUrl = canvas.toDataURL("image/jpeg", quality);
+  let sizeKB = Math.round((dataUrl.length*3/4)/1024);
+
+  while (sizeKB > target && quality > 0.1) {
+    quality -= 0.05;
+    dataUrl = canvas.toDataURL("image/jpeg", quality);
+    sizeKB = Math.round((dataUrl.length*3/4)/1024);
+  }
+
+  const link = document.createElement("a");
+  link.download = `merged_${sizeKB}KB.jpg`;
+  link.href = dataUrl;
+  link.click();
+}
+</script>
+</body>
+</html>

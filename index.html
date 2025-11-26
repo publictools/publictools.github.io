@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6220777480779762"
+     crossorigin="anonymous"></script>
+
+<title>Public CSC Dashboard</title>
+<style>
+/* ------------------- BODY ------------------- */
+body {
+  margin:0;
+  font-family:"Segoe UI", Arial, sans-serif;
+  background: linear-gradient(135deg,#e3f2fd,#f3e5f5);
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  scroll-behavior:smooth;
+  transition: background 0.5s, color 0.5s;
+}
+
+body.dark-mode {
+  background: linear-gradient(135deg, #0f0f1a, #1a1a2e, #2a0f36);
+  color: #ecf0f1;
+  background-size: 400% 400%;
+  animation: gradientBG 15s ease infinite;
+}
+
+@keyframes gradientBG {
+  0% {background-position:0% 50%;}
+  50% {background-position:100% 50%;}
+  100% {background-position:0% 50%;}
+}
+
+/* ------------------- NAVBAR ------------------- */
+.navbar {
+  background: linear-gradient(90deg,#1976d2,#512da8);
+  color:#fff;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:12px 25px;
+  box-shadow:0 3px 6px rgba(0,0,0,0.2);
+  position:sticky;
+  top:0;
+  z-index:100;
+}
+.navbar h1 { margin:0; font-size:20px; font-weight:bold; }
+.navbar ul { list-style:none; display:flex; gap:15px; margin:0; padding:0; }
+.navbar li a {
+  color:#fff; text-decoration:none; font-weight:500;
+  padding:6px 14px; border-radius:8px;
+  background:linear-gradient(145deg,#1976d2,#512da8);
+  transition:all 0.3s ease;
+}
+.navbar li a:hover {
+  background:linear-gradient(145deg,#1565c0,#4527a0);
+  transform:translateY(-2px);
+}
+body.dark-mode .navbar { background: linear-gradient(90deg,#1a1a2e,#0f0f1a); box-shadow:0 4px 12px rgba(0,0,0,0.5); }
+
+/* ------------------- DARK TOGGLE ------------------- */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 40px;
+  height: 20px;
+}
+.switch input { display:none; }
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: #ccc;
+  transition: .3s;
+  border-radius: 20px;
+}
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 14px; width: 14px;
+  left: 3px; bottom: 3px;
+  background-color: white;
+  transition: .3s;
+  border-radius: 50%;
+}
+input:checked + .slider { background-color: #4caf50; }
+input:checked + .slider:before { transform: translateX(20px); }
+
+/* ------------------- SECTIONS ------------------- */
+section { padding:20px; display:none; }
+section.active { display:block; }
+h2.section-title { text-align:center; font-size:20px; margin-bottom:12px; color:#1976d2; }
+body.dark-mode h2.section-title { color: #f39c12; text-shadow:0 0 6px #f1c40f,0 0 12px #e67e22; }
+
+/* ------------------- LATEST LIST ------------------- */
+.latest-list {
+  max-width:800px;
+  margin:0 auto 20px auto;
+  background:#fff;
+  border-radius:12px;
+  border:2px solid #1976d2;
+  box-shadow:0 0 10px rgba(25,118,210,0.3);
+  padding:10px;
+  display:flex; flex-direction:column; gap:8px;
+}
+body.dark-mode .latest-list {
+  background:#1e1e1e;
+  border:2px solid #4caf50;
+  box-shadow:0 0 10px rgba(76,175,80,0.3);
+}
+.item {
+  background:#e3f2fd;
+  border-radius:8px;
+  padding:8px;
+  font-weight:500;
+  cursor:pointer;
+  opacity:0;
+  transform:translateY(15px);
+  transition: all 0.4s ease;
+}
+.item.show { opacity:1; transform:translateY(0); }
+body.dark-mode .item { background:rgba(26,26,46,0.9); color:#fff; backdrop-filter:blur(6px); }
+
+/* ------------------- TOOLS & WORK LINKS CARDS ------------------- */
+.tools, .work-links { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:12px; padding:10px; flex-grow:1; }
+.card { background:#fff; border-radius:12px; border:2px solid #1976d2; box-shadow:0 0 10px rgba(25,118,210,0.3); padding:10px; text-align:center; transition:transform 0.3s, box-shadow 0.3s; }
+.card:hover { transform:translateY(-3px); }
+.card img { max-width:65%; height:65px; object-fit:contain; margin-bottom:5px; }
+.card h2 { font-size:13px; margin:2px 0; color:#333; }
+.card a { display:inline-block; background:linear-gradient(90deg,#1976d2,#512da8); color:#fff; text-decoration:none; padding:4px 10px; border-radius:14px; font-weight:500; font-size:12px; }
+body.dark-mode .card { background: rgba(26,26,46,0.9); border:2px solid #9b59b6; color:#ecf0f1; box-shadow:0 8px 20px rgba(155, 89, 182, 0.6); backdrop-filter:blur(6px); transition:transform 0.3s, box-shadow 0.3s, border-color 0.3s; }
+body.dark-mode .card:hover { transform:translateY(-6px); border-color:#8e44ad; box-shadow:0 0 20px #8e44ad,0 0 40px #3498db,0 0 60px #8e44ad; }
+body.dark-mode .card h2 { color:#ecf0f1; font-weight:600; text-shadow:0 0 3px #8e44ad,0 0 6px #3498db; }
+body.dark-mode .card a { background:linear-gradient(90deg,#8e44ad,#3498db); color:#fff; font-weight:500; padding:6px 12px; border-radius:16px; }
+body.dark-mode .card a:hover { transform:translateY(-2px); box-shadow:0 0 10px #8e44ad,0 0 20px #3498db,0 0 30px #8e44ad; background:linear-gradient(90deg,#9b59b6,#5dade2); }
+
+/* ------------------- FOOTER ------------------- */
+  /* Footer */
+footer { margin-top: auto; background: #212121; color: #ccc; text-align: center; padding: 12px; font-size: 13px; width: 100%; }
+    footer span { color: #ffd54f; }
+    .social-icons { margin-top: 8px; }
+    .social-icons a { margin: 0 6px; display: inline-block; }
+    .social-icons img { width: 22px; height: 22px; vertical-align: middle; }
+    .dark-toggle {
+      position: fixed; top: 15px; right: 15px;
+      background: #1976d2; color: white; border: none; border-radius: 50%;
+      width: 40px; height: 40px; cursor: pointer; font-size: 18px;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.3); transition: background 0.3s;
+    }
+
+/* ------------------- Add Link Button ------------------- */
+.add-link-btn { background:#1976d2; color:white; padding:6px 12px; border-radius:8px; border:none; cursor:pointer; margin-bottom:10px; float:right; }
+
+/* ------------------- MODAL ------------------- */
+.modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; 
+    background:rgba(0,0,0,0.6); justify-content:center; align-items:center; z-index:200; }
+.modal-content { background:#fff; padding:20px; border-radius:12px; width:320px; max-width:90%; position:relative; }
+.modal-content input { width:100%; margin:6px 0; padding:6px; }
+.modal-content button { margin-top:6px; padding:6px 12px; }
+.modal-content .close-btn { position:absolute; top:8px; right:12px; background:transparent; border:none; font-size:20px; cursor:pointer; }
+</style>
+</head>
+<body>
+
+<nav class="navbar">
+<!-- Updated PUBLIC csc Normal to Clickable button-->
+<h1>
+  <a href="Clock.html" target="_blank" class="premium-btn">
+    Public CSC
+  </a>
+</h1>
+
+<style>
+.premium-btn {
+  position: relative;
+  display: inline-block;
+  padding: 10px 24px;
+  font-size: 20px;
+  font-weight: bold;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 16px;
+  background: rgba(255,255,255,0.05); /* glass effect */
+  backdrop-filter: blur(8px);
+  border: 2px solid;
+  border-image-slice: 1;
+  border-width: 2px;
+  border-image-source: linear-gradient(45deg, #ff4d4d, #ff7f50, #ffdd00, #00bfff, #8a2be2);
+  box-shadow: 0 0 10px rgba(255,255,255,0.2), 0 0 20px rgba(0,191,255,0.2) inset;
+  text-align: center;
+  cursor: pointer;
+  overflow: hidden;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+/* Hover animation */
+.premium-btn:hover {
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 
+    0 0 20px rgba(255,69,0,0.8), 
+    0 0 40px rgba(0,191,255,0.6),
+    0 0 60px rgba(138,43,226,0.4) inset;
+}
+
+/* Shimmer effect */
+.premium-btn::before {
+  content:'';
+  position: absolute;
+  top:0; left:-75%;
+  width:50%;
+  height:100%;
+  background: linear-gradient(120deg, rgba(255,255,255,0.2), rgba(255,255,255,0.5), rgba(255,255,255,0.2));
+  transform: skewX(-25deg);
+  transition: all 0.3s;
+  pointer-events: none;
+  animation: shimmer 2.5s infinite;
+}
+
+@keyframes shimmer {
+  0% { left:-50%; }
+  100% { left:150%; }
+}
+</style>
+
+
+  <ul>
+    <li><a href="#" onclick="showSection('home')">Home</a></li>
+    <li><a href="#" onclick="showSection('tools')">Tools</a></li>
+    <li><a href="#" onclick="showSection('worklinks')">Work Links</a></li>
+  </ul>
+  <label class="switch">
+    <input type="checkbox" id="darkToggle" onchange="toggleDarkMode()">
+    <span class="slider"></span>
+  </label>
+</nav>
+
+<section id="home" class="active"> 
+  <h2 class="section-title">Latest Jobs</h2>
+  <div class="latest-list" id="jobs-list">
+    <div class="item show" onclick="window.open('https://www.fastjobsearchers.com/','_blank')">
+      👉 Click here to view Latest Jobs on FastJobsSearch
+    </div>
+  </div>
+
+  <h2 class="section-title">Latest News (India)</h2>
+  <div class="latest-list" id="news-list">Loading news...</div>
+</section>
+
+
+
+<section id="tools">
+  <h2 class="section-title">Tools</h2>
+  <div class="tools">
+    <div class="card"><img src="pdf Resizer.png"><h2>Pdf Resizer Tool</h2><a href="Pdf Resizer.html">Click Here</a></div>
+    <div class="card"><img src="pic signature.png"><h2>Photo Signature Join Tool</h2><a href="Photo Signature Joiner.html">Click Here</a></div>
+    <div class="card"><img src="Age Calculator.png"><h2>Age Calculator Tool</h2><a href="Age Calculator.html">Click Here</a></div>
+    <div class="card"><img src="Image Resizer.png"><h2>Image Resizer Tool</h2><a href="img resize.html">Click Here</a></div>
+    <div class="card"><img src="Image Format Changer.png"><h2>Image Format Changer Tool</h2><a href="Image Format Changer.html">Click Here</a></div>
+    <div class="card"><img src="Image To PDF.png"><h2>Image To PDF Tool</h2><a href="Image To PDF.html">Click Here</a></div>
+    <div class="card"><img src="resume.png"><h2>Marriage Resume Maker</h2><a href="Marriage Resume Tool.html">Click Here</a></div>
+  </div>
+</section>
+
+<section id="worklinks">
+  <h2 class="section-title">Work Links</h2>
+  <button class="add-link-btn" onclick="openAddLinkModal()">+ Add Link</button>
+  <div class="work-links" id="workLinksContainer"></div>
+</section>
+
+<!-- Add Link Modal -->
+<div id="addLinkModal" class="modal">
+  <div class="modal-content">
+    <h3>Add Work Link</h3>
+    <input type="text" id="linkName" placeholder="Link Name">
+    <input type="url" id="linkURL" placeholder="https://example.com">
+    <button onclick="addWorkLink()">Add</button>
+    <button class="close-btn" onclick="closeAddLinkModal()">&times;</button>
+  </div>
+</div>
+
+<footer>
+    © 2025 <span>Public CSC</span> | All Rights Reserved
+    <div class="social-icons">
+      <a href="https://www.facebook.com/share/1JavTLfsyU/"><img src="https://cdn-icons-png.flaticon.com/512/733/733547.png"></a>
+      <a href="https://t.me/tgdanzer"><img src="https://cdn-icons-png.flaticon.com/512/2111/2111646.png"></a>
+      <a href="https://instagram.com/public.csc"><img src="https://cdn-icons-png.flaticon.com/512/733/733558.png"></a>
+      <a href="https://wa.me/8051450233"><img src="https://cdn-icons-png.flaticon.com/512/733/733585.png"></a>
+    </div>
+  </footer>
+
+<script>
+// ------------------- Navbar Section Toggle -------------------
+function showSection(id){
+  document.querySelectorAll('section').forEach(sec=>sec.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+// ------------------- Dark Mode -------------------
+function toggleDarkMode(){ document.body.classList.toggle('dark-mode'); }
+
+// ------------------- RSS News -------------------
+const NEWS_RSS = "https://news.google.com/rss/search?q=India&hl=en-IN&gl=IN&ceid=IN:en";
+function fetchRSS(url, containerId){
+  fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(url)}`)
+  .then(res=>res.json())
+  .then(data=>{
+    const container=document.getElementById(containerId);
+    container.innerHTML='';
+    data.items.slice(0,50).forEach((item,i)=>{
+      const div=document.createElement("div");
+      div.className="item";
+      div.innerText=item.title;
+      div.onclick=()=>window.open(item.link,"_blank");
+      container.appendChild(div);
+      setTimeout(()=>div.classList.add("show"),i*100);
+    });
+  })
+  .catch(err=>console.error(err));
+}
+setInterval(()=>{ fetchRSS(NEWS_RSS,"news-list"); },15000);
+
+// ------------------- Work Links Feature -------------------
+function openAddLinkModal(){ document.getElementById('addLinkModal').style.display='flex'; }
+function closeAddLinkModal(){ document.getElementById('addLinkModal').style.display='none'; }
+
+function getWorkLinks(){ return JSON.parse(localStorage.getItem('workLinks') || "[]"); }
+function saveWorkLinks(links){ localStorage.setItem('workLinks', JSON.stringify(links)); }
+
+function renderWorkLinks(){
+  const container = document.getElementById('workLinksContainer');
+  container.innerHTML = '';
+  const links = getWorkLinks();
+  links.forEach((link,index)=>{
+    const card = document.createElement('div');
+    card.className='card';
+    card.innerHTML = `<h2>${link.name}</h2><a href="${link.url}" target="_blank">Open Link</a> <button onclick="removeLink(${index})" style="margin-top:4px;padding:2px 6px;">Remove</button>`;
+    container.appendChild(card);
+  });
+}
+
+function addWorkLink(){
+  const name = document.getElementById('linkName').value.trim();
+  const url = document.getElementById('linkURL').value.trim();
+  if(!name || !url){ alert("Enter Name and URL"); return; }
+  const links = getWorkLinks();
+  links.push({name,url});
+  saveWorkLinks(links);
+  renderWorkLinks();
+  document.getElementById('linkName').value='';
+  document.getElementById('linkURL').value='';
+  closeAddLinkModal();
+}
+
+function removeLink(index){
+  const links = getWorkLinks();
+  links.splice(index,1);
+  saveWorkLinks(links);
+  renderWorkLinks();
+}
+
+// Close modal on outside click
+window.onclick = function(e){
+  if(e.target == document.getElementById('addLinkModal')) closeAddLinkModal();
+}
+
+// ------------------- Initial Load -------------------
+
+// ------------------- Navbar Section Toggle -------------------
+function showSection(id){
+  document.querySelectorAll('section').forEach(sec => sec.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo({top:0, behavior:'smooth'});
+
+  // Save current section
+  localStorage.setItem('currentSection', id);
+}
+
+// ------------------- Dark Mode -------------------
+function toggleDarkMode(){
+  document.body.classList.toggle('dark-mode');
+  if(document.body.classList.contains('dark-mode')){
+    localStorage.setItem('darkMode','enabled'); // Save state
+  } else {
+    localStorage.setItem('darkMode','disabled'); // Save state
+  }
+}
+
+// ------------------- Initial Load -------------------
+window.onload = function(){
+  // Restore dark mode
+  if(localStorage.getItem('darkMode') === 'enabled'){
+    document.body.classList.add('dark-mode');
+    document.getElementById('darkToggle').checked = true;
+  } else {
+    document.body.classList.remove('dark-mode');
+    document.getElementById('darkToggle').checked = false;
+  }
+
+  // Restore last opened section
+  const lastSection = localStorage.getItem('currentSection') || "home";
+  showSection(lastSection);
+
+  // Load dynamic content
+  fetchRSS(NEWS_RSS,"news-list");
+  renderWorkLinks();
+};
+</script>
+</body>
+</html>

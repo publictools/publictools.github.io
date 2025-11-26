@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Premium Marriage Resume + VCard</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap');
+    :root{
+      --purple:#8e2de2;
+      --pink:#ec4899;
+      --gold: #d4af37;
+      --glass-bg: rgba(255,255,255,0.08);
+    }
+    html,body{height:100%;}
+    body{
+      font-family: 'Poppins', sans-serif;
+      margin:0;
+      background: linear-gradient(135deg,#f8fafc 0%, #fffaf0 100%);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:18px;
+      flex-direction:column;
+    }
+    /* A4 container */
+    .a4 {
+      width:210mm;
+      min-height:297mm;
+      background: #fff;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+      border-radius: 10px;
+      padding: 18mm 12mm;
+      box-sizing: border-box;
+      position:relative;
+      overflow:hidden;
+    }
+
+    /* Visiting card */
+    .vcard {
+      width:100%;
+      height:90mm;
+      background: linear-gradient(135deg,var(--purple),var(--pink));
+      border-radius: 10px;
+      padding: 16px 20px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      position:relative;
+      box-sizing:border-box;
+      margin-bottom:12mm;
+    }
+
+    /* Golden double frame */
+    .frame-double::before, .frame-double::after{
+      content:"";
+      position:absolute;
+      pointer-events:none;
+      border-radius: 10px;
+    }
+    .frame-double::before{
+      top:8px; left:8px; right:8px; bottom:8px;
+      border: 3px double var(--gold);
+      box-shadow: 0 6px 18px rgba(0,0,0,0.15) inset;
+    }
+    .frame-double::after{
+      top:14px; left:14px; right:14px; bottom:14px;
+      border: 2px solid rgba(212,175,55,0.65);
+    }
+
+    .vcard .left{
+      flex:1;
+      z-index:2;
+      color:#fff;
+      padding-right:12px;
+    }
+    .vcard .left h1{
+      margin:0;
+      font-size:28px;
+      font-weight:700;
+      text-transform:capitalize;
+    }
+    .vcard .left h2{
+      margin:6px 0 12px 0;
+      font-size:16px;
+      font-weight:600;
+      opacity:0.95;
+    }
+    .vcard .left p{margin:6px 0; font-size:14px;}
+    .vcard .left p span.label{display:inline-block; width:80px; font-weight:700; color:rgba(255,255,255,0.95);}    
+
+    #qrcode{
+      margin-top:12px;
+      display:inline-block;
+    }
+
+    .vcard .right{ z-index:2; }
+    .vcard .right img{
+      width:140px;
+      height:170px;
+      object-fit:cover;
+      border-radius:8px;
+      border:4px solid #fff;
+      box-shadow:0 8px 20px rgba(0,0,0,0.35);
+      background:#eee;
+    }
+
+    /* Resume card */
+    .resume-card{
+      width:100%;
+      min-height:120mm;
+      background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(250,250,250,0.98));
+      border-radius:10px;
+      padding:14px 18px;
+      box-sizing:border-box;
+      position:relative;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
+    .resume-card .frame-double::before, .resume-card .frame-double::after{ border-radius: 8px; }
+
+    .resume-header{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+    }
+    .resume-header .title{
+      font-size:22px;
+      color:var(--purple);
+      font-weight:700;
+      letter-spacing:0.6px;
+    }
+    .resume-body{
+      display:flex;
+      gap:18px;
+      margin-top:6px;
+    }
+
+    .col{flex:1; min-width:0;}
+    .card-section{
+      background:var(--glass-bg);
+      padding:12px;
+      border-radius:8px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+    }
+    .card-section h3{
+      margin:0 0 8px 0;
+      display:inline-block;
+      background: linear-gradient(90deg,var(--purple),var(--pink));
+      color:#fff;
+      padding:6px 10px;
+      border-radius:6px;
+      font-size:14px;
+    }
+    .card-section p{margin:6px 0; font-size:13px;}
+    .card-section p span.label{display:inline-block; width:120px; font-weight:700; color:#b91c87;}
+    .card-section p span.value{color:#1e3a8a;}
+
+    .footer-note{font-size:12px; color:#444; margin-top:6px; text-align:center;}
+
+    .actions{
+      margin-top:20px;
+      display:flex; 
+      gap:10px; 
+      z-index:99;
+    }
+    .btn{
+      padding:10px 14px; border-radius:10px; border:none; cursor:pointer; font-weight:700;
+      background:linear-gradient(90deg,var(--purple),var(--pink)); color:#fff; 
+      box-shadow:0 6px 18px rgba(0,0,0,0.18);
+    }
+
+    
+/* Footer */
+.footer{ position:fixed; bottom:0; left:0; width:100%; padding:10px 0; text-align:center;
+  background:linear-gradient(135deg,#f97316,#ea580c,#c2410c); color:#fff; }
+.footer .socials{ display:flex; gap:14px; justify-content:center; margin-top:6px; }
+.footer .socials a{ font-size:18px; color:#fff; transition:.24s; }
+.footer .socials a:hover{ transform:scale(1.2); text-shadow:0 0 8px rgba(255,255,255,0.7); }
+    @media print{
+      body{background:#fff}
+      .actions{display:none}
+      .a4{box-shadow:none; border-radius:0; padding:6mm}
+    }
+  </style>
+
+  <!-- FontAwesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+</head>
+<body>
+  <div class="a4" id="page">
+    <!-- Visiting card -->
+    <div class="vcard frame-double" id="vcard">
+      <div class="left">
+        <h1 id="v-name">Amit Sharma</h1>
+        <h2 id="v-title">Business Analyst</h2>
+        <p><span class="label">Phone:</span> <span id="v-contact">9090909090</span></p>
+        <div id="qrcode"></div>
+      </div>
+      <div class="right">
+        <img id="v-photo" src="" alt="Profile Photo">
+      </div>
+    </div>
+
+    <!-- Resume Card -->
+    <div class="resume-card frame-double" id="resumeCard">
+      <div class="resume-header">
+        <div class="title">Marriage Resume / Biodata</div>
+        <div style="font-size:13px;color:#444;">Generated: <span id="genDate"></span></div>
+      </div>
+
+      <div class="resume-body">
+        <div class="col">
+          <div class="card-section">
+            <h3>Personal Details</h3>
+            <p><span class="label">Name:</span> <span class="value" id="r-name">Amit Sharma</span></p>
+            <p><span class="label">Gender:</span> <span class="value" id="r-gender">Male</span></p>
+            <p><span class="label">DOB:</span> <span class="value" id="r-dob">01-01-1995</span></p>
+            <p><span class="label">Height:</span> <span class="value" id="r-height">5'8"</span></p>
+            <p><span class="label">Complexion:</span> <span class="value" id="r-complexion">Fair</span></p>
+            <p><span class="label">Education:</span> <span class="value" id="r-education">MBA - IIM Bangalore</span></p>
+            <p><span class="label">Occupation:</span> <span class="value" id="r-occupation">Business Analyst</span></p>
+          </div>
+
+          <div class="card-section" style="margin-top:10px;">
+            <h3>Contact Details</h3>
+            <p><span class="label">Phone:</span> <span class="value" id="r-contact">9090909090</span></p>
+            <p><span class="label">Email:</span> <span class="value" id="r-email">example@mail.com</span></p>
+            <p><span class="label">Address:</span> <span class="value" id="r-address">Andheri East, Mumbai</span></p>
+          </div>
+        </div>
+
+        <div class="col">
+          <div class="card-section">
+            <h3>Family Details</h3>
+            <p><span class="label">Father's Name:</span> <span class="value" id="r-fatherName">Rohit Sharma</span></p>
+            <p><span class="label">Father's Occupation:</span> <span class="value" id="r-fatherOcc">Business</span></p>
+            <p><span class="label">Mother's Name:</span> <span class="value" id="r-motherName">Suman Sharma</span></p>
+            <p><span class="label">Mother's Occupation:</span> <span class="value" id="r-motherOcc">Homemaker</span></p>
+          </div>
+
+          <div class="card-section" style="margin-top:10px;">
+            <h3>Other Details</h3>
+            <p><span class="label">Caste:</span> <span class="value" id="r-caste">Sindhi</span></p>
+            <p><span class="label">Manglik:</span> <span class="value" id="r-manglik">No</span></p>
+            <p><span class="label">Languages:</span> <span class="value" id="r-lang">Hindi, English, Marathi</span></p>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-note">This document is created for matrimonial reference. Please verify the details before sharing.</div>
+    </div>
+  </div>
+
+  <!-- Floating actions -->
+  <div class="actions">
+    <label class="btn" title="Upload photo">
+      📁 Upload Photo
+      <input id="photoUpload" type="file" accept="image/*" style="display:none">
+    </label>
+    <button class="btn" onclick="editDetails()">✏️ Edit</button>
+    <button class="btn" onclick="downloadPDF()">⬇️ Download PDF</button>
+  </div>
+
+  <!-- Footer Section -->
+  <footer class="footer">
+  © 2025 <span>Public CSC</span> | All Rights Reserved
+  <div class="socials">
+    <a href="https://instagram.com/public.csc"><i class="fab fa-instagram" style="color:#E4405F;"></i></a>
+    <a href="https://t.me/tgdanzer"><i class="fab fa-telegram" style="color:#0088cc;"></i></a>
+    <a href="https://wa.me/8051450233"><i class="fab fa-whatsapp" style="color:#25D366;"></i></a>
+    <a href="https://www.facebook.com/share/1JavTLfsyU/"><i class="fab fa-facebook" style="color:#1877F2;"></i></a>
+  </div>
+</footer>
+
+<script>
+  // set generated date
+  document.getElementById('genDate').innerText = new Date().toLocaleDateString();
+
+  // Photo upload
+  const photoInput = document.getElementById('photoUpload');
+  photoInput.addEventListener('change', function(){
+    const f = this.files[0];
+    if(!f) return;
+    const reader = new FileReader();
+    reader.onload = ev => {
+      document.getElementById('v-photo').src = ev.target.result;
+    };
+    reader.readAsDataURL(f);
+  });
+
+  // Generate QR Code with WhatsApp text + logo
+  function generateQR(){
+    const phone = document.getElementById('v-contact').innerText.replace(/\D/g,""); 
+    const waLink = `https://wa.me/${phone}`;
+
+    const tempDiv = document.createElement("div");
+    const qr = new QRCode(tempDiv, {
+      text: waLink,
+      width: 200,
+      height: 200,
+      margin: 0,
+      colorDark: "#000000",
+      colorLight: "#00000000",
+      correctLevel: QRCode.CorrectLevel.H
+    });
+
+    setTimeout(()=>{
+      const qrCanvas = tempDiv.querySelector("canvas");
+      if(qrCanvas){
+        const ctx = qrCanvas.getContext("2d");
+        const imgData = ctx.getImageData(0, 0, qrCanvas.width, qrCanvas.height);
+        const data = imgData.data;
+
+        for(let i = 0; i < data.length; i += 4){
+          if(data[i] > 240 && data[i+1] > 240 && data[i+2] > 240){
+            data[i+3] = 0;
+          }
+        }
+        ctx.putImageData(imgData, 0, 0);
+
+        const dataURL = qrCanvas.toDataURL("image/png");
+
+        // ✅ Base64 logo embed so it also appears in PDF
+        const waLogo = "data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjMTI4QzdFIiBoZWlnaHQ9IjUxMiIgdmlld0JveD0iMCAwIDI0IDI0IiB3aWR0aD0iNTEyIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxwYXRoIGQ9Ik0xMiAwQzUuMzcgMCAwIDUuMzcgMCAxMmMwIDIuMDEuNTMgMy45NCAxLjU0IDUuNjNMMCAyNGw2LjU2LTEuNTFjMS42My45IDEuODcuOTkgMy4wOSAxLjA0IDYuNjMuMTEgMTIuMzUtNS4yOSA2LjM1LTEyLjM4QzIwLjkyIDUuMzcgMTYuNjMgMCAxMiAweiBNMTIgMThjLTMuMzEgMC02LTIuNjktNi02cy4wMS00LjU5IDYtNiA2IDIuNjkgNiA2LTIuNjkgNi02IDZ6Ii8+PC9zdmc+";
+
+        document.getElementById("qrcode").innerHTML = `
+          <div style="display:flex;flex-direction:column;align-items:center;gap:8px;margin-top:12px;">
+            <div style="padding:5px;border:3px double gold;border-radius:15px;">
+              <img id="qrImage" src="${dataURL}" style="width:100px;height:100px;">
+            </div>
+            <div style="display:flex;align-items:center;gap:6px;font-size:10px;font-weight:500;color:#128C7E;">
+              <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" style="width:14px;height:14px;"> 
+              <img src="${waLogo}" style="width:10px;height:10px;"> 
+              Scan to WhatsApp
+            </div>
+          </div>
+        `;
+      }
+    }, 500);
+  }
+
+  generateQR();
+
+  // PDF download
+  function downloadPDF(){
+    const a4 = document.getElementById('page');
+    a4.style.boxShadow = 'none';
+    const opt = {
+      margin: [6,6,6,6],
+      filename: 'Marriage_Resume_with_VCard.pdf',
+      image: { type: 'jpeg', quality: 1 },
+      html2canvas: { scale: 3, useCORS:true },
+      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    };
+    html2pdf().set(opt).from(a4).save().then(()=>{
+      a4.style.boxShadow = '';
+      alert('PDF downloaded ✅ (High Quality + QR + WhatsApp text)');
+    });
+  }
+
+
+
+// Edit details
+  function editDetails(){
+    const fields = [
+      ['v-name','Enter full name', document.getElementById('v-name').innerText],
+      ['v-title','Enter designation', document.getElementById('v-title').innerText],
+      ['v-contact','Enter phone', document.getElementById('v-contact').innerText],
+      ['r-name','Enter name (resume)', document.getElementById('r-name').innerText],
+      ['r-gender','Enter gender', document.getElementById('r-gender').innerText],
+      ['r-dob','Enter DOB', document.getElementById('r-dob').innerText],
+      ['r-height','Enter height', document.getElementById('r-height').innerText],
+      ['r-complexion','Enter complexion', document.getElementById('r-complexion').innerText],
+      ['r-education','Enter education', document.getElementById('r-education').innerText],
+      ['r-occupation','Enter occupation', document.getElementById('r-occupation').innerText],
+      ['r-contact','Enter resume phone', document.getElementById('r-contact').innerText],
+      ['r-email','Enter resume email', document.getElementById('r-email').innerText],
+      ['r-address','Enter resume address', document.getElementById('r-address').innerText],
+      ['r-fatherName','Enter father name', document.getElementById('r-fatherName').innerText],
+      ['r-fatherOcc','Enter father occupation', document.getElementById('r-fatherOcc').innerText],
+      ['r-motherName','Enter mother name', document.getElementById('r-motherName').innerText],
+      ['r-motherOcc','Enter mother occupation', document.getElementById('r-motherOcc').innerText],
+      ['r-caste','Enter caste', document.getElementById('r-caste').innerText],
+      ['r-manglik','Enter manglik status', document.getElementById('r-manglik').innerText],
+      ['r-lang','Enter languages', document.getElementById('r-lang').innerText]
+    ];
+
+    for(const f of fields){
+      const el = document.getElementById(f[0]);
+      if(!el) continue;
+      const val = prompt(f[1]+':', f[2]);
+      if(val !== null) el.innerText = val;
+    }
+
+    // regenerate QR with new details
+    generateQR();
+  }
+</script>
+</body>
+</html>
