@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://publictools.github.io/sitemap.xml
