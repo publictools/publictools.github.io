@@ -1,3 +1,4 @@
+
 <!doctype html>
 <html>
 <head>
@@ -13,7 +14,8 @@
 * {box-sizing:border-box; -webkit-tap-highlight-color: transparent;}
 html, body {height:100%; margin:0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background:#0f1220; color:#eaeaf0; overflow-x:hidden;}
 body {padding-bottom: env(safe-area-inset-bottom);}
-  
+
+
 /* Dashboard card ko position relative dena zaroori hai */
 #dashboard {
   position: relative;
@@ -44,12 +46,16 @@ body {padding-bottom: env(safe-area-inset-bottom);}
 /* Mobile par agar dashboard chota hai toh adjustment */
 @media (max-width: 768px) {
   .support-btn {
-   top: 30px;
-    right: 15px;
+   top: 5px;
+    right: 5px;
     width: 45px;
     height: 45px;
   }
 }
+
+
+
+
 
 .social-links {
   border-top: 1px solid rgba(255,255,255,0.1);
@@ -86,6 +92,10 @@ body {padding-bottom: env(safe-area-inset-bottom);}
 .social-icon.yt:hover {
   box-shadow: 0 4px 12px rgba(255, 0, 0, 0.3);
 }
+
+
+
+
 
 .app-container {min-height:100vh; display:flex; flex-direction:column;}
 #lock {max-width:100%; width:100%; margin:0; border-radius:0; height:90vh; display:flex; flex-direction:column; justify-content:center; padding:20px; background:linear-gradient(135deg, #0f1220 0%, #1a1f3a 100%);}
@@ -153,6 +163,102 @@ input:focus {outline:none; border-color:#6d7cff; box-shadow:0 0 0 3px rgba(109,1
   color: white;
   box-shadow: 0 4px 10px rgba(109,124,255,0.3);
 }
+/* Profile Card: Vertical Layout */
+.profile-card {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  padding: 20px 10px;
+  margin-bottom: 25px;
+  display: flex;
+  flex-direction: column; 
+  align-items: center;    
+  text-align: center;
+  gap: 12px;
+  width: 100%; /* Sidebar ki width ke barabar */
+}
+
+.avatar-wrapper {
+  position: relative;
+  display: inline-block;
+  width: 40px; /* Aapke purane code ki height ke barabar */
+  height: 40px;
+}
+
+.profile-img {
+  width: 50px !important; /* Size thoda badhaya */
+  height: 50px !important;
+  border-radius: 50%;
+  overflow: hidden; /* Ye zaroori hai photo ko gol rakhne ke liye */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #6d7cff, #a5b1ff);
+  border: 2px solid rgba(255,255,255,0.1);
+}
+
+.profile-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Photo ko perfect fit karega */
+}
+
+.sidebar {
+  position:fixed; left:-280px; top:0; width:180px; height:100vh; 
+  background:#15193a; z-index:200; padding:20px; 
+  transition:all 0.3s cubic-bezier(0.4,0,0.2,1); 
+  overflow-y:auto; box-shadow:2px 0 15px rgba(0,0,0,0.4);
+  display: flex; /* Naya add kiya */
+  flex-direction: column; /* Naya add kiya */
+}
+
+/* 🔥 Blinking Green Dot Fixed */
+.status-indicator {
+  position: absolute;
+  bottom: 0px;
+  right: 0px;
+  width: 12px;
+  height: 12px;
+  background: #6dff9a;
+  border: 2px solid #15193a;
+  border-radius: 50%;
+  /* Animation call */
+  animation: pulse-dot 1.5s infinite ease-in-out;
+}
+
+/* Animation Keyframes */
+@keyframes pulse-dot {
+  0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(109, 255, 154, 0.7); }
+  70% { transform: scale(1.1); box-shadow: 0 0 0 6px rgba(109, 255, 154, 0); }
+  100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(109, 255, 154, 0); }
+}
+
+.profile-details {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.u-name {
+  font-size: 15px; /* Thoda scannable size */
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 4px;
+  width: 90%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.u-role {
+  font-size: 9px;
+  font-weight: 700;
+  color: #6dff9a;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
 
 
 .sidebar {position:fixed; left:-280px; top:0; width:180px; height:100vh; background:#15193a; z-index:200; padding:20px; transition:all 0.3s cubic-bezier(0.4,0,0.2,1); overflow-y:auto; box-shadow:2px 0 15px rgba(0,0,0,0.4);}
@@ -170,6 +276,10 @@ input:focus {outline:none; border-color:#6d7cff; box-shadow:0 0 0 3px rgba(109,1
 .sidebar h3 {margin:0 0 25px 0; font-size:20px;}
 .sidebar button {width:100%; margin:8px 0; padding:14px; border-radius:12px; text-align:left; font-size:15px; transition:background 0.2s ease;}
 .sidebar button:hover {background:#2f36a3;}
+
+
+
+
 
 .main{ flex:1; padding:14px; padding-bottom:110px; overflow-y:auto; display:flex; flex-direction:column; align-items:center;}
 .card{ width:100%; max-width:520px; background:linear-gradient(180deg,#1b1f3b,#141735); border-radius:22px; padding:22px 18px; margin:12px 0; box-shadow:0 15px 45px rgba(0,0,0,.45);}
@@ -322,7 +432,6 @@ function copyUPI() {
 
 </script>
 
-
 <button id="menuBtn" onclick="toggleSidebar()">☰</button>
 <div id="sidebarOverlay" class="sidebar-overlay" onclick="closeSidebar()"></div>
 
@@ -334,70 +443,103 @@ function copyUPI() {
     <div class="nav-item"><button onclick="showQRModal()">💳</button></div>
   </div>
 
-  <div class="sidebar" id="sidebar">
-    <h3 id="userType">⚡Panel</h3>
-    <button onclick="showSection('dashboard')">📊Dashboard</button>
-    <button onclick="showSection('products')">🛒Accounts</button>
+<div class="sidebar" id="sidebar">
+    <div class="profile-card">
+      <div class="avatar-wrapper">
+        <div class="profile-img" id="sideAvatar">U</div>
+        <div class="status-indicator"></div> 
+      </div>
+      
+      
+      <div class="profile-details">
+        <span class="u-name" id="sideName">Guest</span>
+        <span class="u-role" id="sideRole">User Account</span>
+      </div>
+    </div>
+
+    <button onclick="showSection('dashboard')">📊 Dashboard</button>
+    <button onclick="showSection('products')">🛒 Accounts</button>
     
     <div id="userSection">
-      <button onclick="showSection('mykeys')">🔑My Purchase</button>
-      <button id="payBtn" onclick="showQRModal()">💳Get Access</button>
+      <button onclick="showSection('mykeys')">🔑 My Purchase</button>
+      <button onclick="showQRModal()">💳 Get Access</button>
+      
     </div>
 
     <div id="adminSection" class="hidden">
-      <button class="admin-only" onclick="showSection('manageProducts')">🔧Manage Acc</button>
-      <button class="admin-only" onclick="showSection('manageUsers')">Manage Users</button>
-      <button class="admin-only manual-verify" onclick="showSection('verifyTransactions')">Verify✅Payments</button>
-      <button class="admin-only" onclick="showSection('addProduct')">Add➕Account</button>
-      <button class="manual-give admin-only" onclick="showSection('manualAccess')">Gift🎁Access</button>
-      <button class="admin-only" onclick="showSection('broadcast')">📢Broadcast</button>
+      <hr style="border:0; border-top:1px solid rgba(255,255,255,0.1); margin:10px 0;">
+      <button class="admin-only" onclick="showSection('manageProducts')">🔧 Manage Acc</button>
+      <button class="admin-only" onclick="showSection('manageUsers')">👥 Manage Users</button>
+      <button class="admin-only manual-verify" onclick="showSection('verifyTransactions')">✅ Payments</button>
+      <button class="admin-only" onclick="showSection('addProduct')">➕ Add Acc</button>
+      <button class="admin-only" onclick="showSection('broadcast')">📢 Broadcast</button>
     </div>
 
-    <button onclick="logout()">🚪Logout</button>
-  </div>
-
-
-  <div class="main">
-    <!-- DASHBOARD -->
-    <div id="dashboard" class="card">
-      <h3>📊Dashboard📊</h3>
-      <div class="stats-grid">
-        <div class="stat-card">
-          <b id="userInfo">Loading...</b>
-          <small>User Email</small>
-        </div>
-        <div class="stat-card">
-          <b id="roleBadge" class="ok">Loading...</b>
-          <small>Role</small>
-        </div>
-        <div class="stat-card">
-          <b id="totalProducts">0</b>
-          <small>Total Account</small>
-        </div>
-        <div class="stat-card">
-          <b id="userKeys">0</b>
-          <small>Verified Purchase</small>
-            
-        </div>
-      </div>
-      <p style="font-size: 15px; opacity: 0.5; margin: 15px 0 10px 5px; text-align: center;">Buy Xaiomi Community Bootloader Unlock Permission Account.</p>
-    </div>
-<a href="https://wa.me/918051450233?text=Hlw%Sir%20I%20need%20help
-" target="_blank" class="support-btn" title="Contact Support">
-  <img src="https://cdn-icons-png.flaticon.com/512/3670/3670051.png" alt="Support">
-</a>
-<div class="social-links">
-  <p style="font-size: 11px; opacity: 0.5; margin: 15px 0 10px 5px; text-align: center;">FOLLOW US</p>
-  <div style="display: flex; gap: 10px; padding-left: 5px;">
-    <a href="https://t.me/+rwHkuKp_cQFlZDll" target="_blank" class="social-icon tg">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg" alt="Telegram">
-    </a>
-    
-    <a href="https://youtube.com/@helproot" target="_blank" class="social-icon yt">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/0/09/YouTube_full-color_icon_%282017%29.svg" alt="YouTube">
-    </a>
-  </div>
+    <button onclick="showSection('settings')">⚙️ Settings</button>
 </div>
+
+
+
+
+
+<div class="main">
+
+  <div id="dashboard" class="card">
+    
+    <a href="https://wa.me/918051450233?text=Hlw%Sir%20I%20need%20help" target="_blank" class="support-btn" title="Contact Support">
+      <img src="https://cdn-icons-png.flaticon.com/512/3670/3670051.png" alt="Support">
+    </a>
+
+    <h3>📊 Dashboard 📊</h3>
+    
+    <div class="stats-grid">
+      <div class="stat-card"><b id="userInfo">Loading...</b><small>User Email</small></div>
+      <div class="stat-card"><b id="roleBadge" class="ok">Loading...</b><small>Role</small></div>
+      <div class="stat-card"><b id="totalProducts">0</b><small>Total Account</small></div>
+      <div class="stat-card"><b id="userKeys">0</b><small>Verified Purchase</small></div>
+    </div> 
+<hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.1); margin: 15px 0;">
+    <p style="font-size: 14px; opacity: 0.6; margin: 20px 0 10px 0; text-align: center;">
+      Buy Xiaomi Community Bootloader Unlock Permission Account.
+    </p>
+
+
+
+    <div class="social-links" style="margin-top: 10px;">
+      <p style="font-size: 11px; opacity: 0.5; margin-bottom: 12px; text-align: center; letter-spacing: 1px;">FOLLOW US</p>
+      
+      <div style="display: flex; gap: 20px; justify-content: center; align-items: center;">
+        <a href="https://t.me/+rwHkuKp_cQFlZDll" target="_blank" class="social-icon tg">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg" alt="Telegram" style="width: 30px; height: 30px;">
+        </a>
+        <a href="https://youtube.com/@helproot" target="_blank" class="social-icon yt">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/0/09/YouTube_full-color_icon_%282017%29.svg" alt="YouTube" style="width: 32px; height: 32px;">
+          <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.1); margin: 15px 0;">
+        </a>
+      </div>
+    </div>
+  </div>
+
+ 
+
+  <div id="settings" class="card hidden">
+    <h3>⚙️ User Settings</h3>
+    
+    <div style="margin-bottom: 20px; padding: 15px; background: rgba(255,255,255,0.05); border-radius: 12px; border: 1px solid rgba(109,124,255,0.2);">
+      <p style="margin-bottom: 10px; color: #6dff9a; font-weight: bold;">🖼️ Profile Photo URL</p>
+      <input id="photoUrlInput" placeholder="Paste Image URL (PNG/JPG)">
+      <button class="action" onclick="updateProfilePhoto()" style="width: 100%;">Update Photo</button>
+    </div>
+
+    <div style="margin-bottom: 20px; padding: 15px; background: rgba(255,255,255,0.05); border-radius: 12px; border: 1px solid rgba(255,235,59,0.2);">
+      <p style="margin-bottom: 10px; color: #ffeb3b; font-weight: bold;">🔑 Security</p>
+      <button class="action" onclick="sendPasswordReset()" style="width: 100%; background: #ffeb3b; color: #000;">Change Password (Reset Link)</button>
+    </div>
+
+    <button class="danger" onclick="logout()" style="width: 100%; border-radius: 12px;">🚪 Logout Account</button>
+  </div>
+
+
     <!-- PRODUCTS -->
     <div id="products" class="card hidden">
       <h3>🛒Available Xaiomi Accounts🛒</h3>
@@ -655,23 +797,42 @@ async function loadPendingTransactions() {
   }
 }
 // 🔥 FIXED VERIFY TRANSACTION WITH SOLD OUT FEATURE
+// 🔥 SMART VERIFY: User delete hone par bhi kaam karega
 async function verifyTransaction(txId, userId, productId) {
   if (!confirm('Verify this payment and grant access?')) return;
   
   try {
+    // 1. Pehle check karein ki kya user Firestore mein maujood hai?
+    const userDoc = await db.collection('users').doc(userId).get();
     const batch = db.batch();
-    // Transaction ko verified mark karein taaki user ke screen se "Pending" hat jaye
+
+    if (!userDoc.exists) {
+      console.log("User record missing, recreating during verification...");
+      // Agar admin ne user delete kar diya tha, toh use dobara create karein
+      // Hum payment request se user ki email nikalenge
+      const txDoc = await db.collection('pendingTransactions').doc(txId).get();
+      const txData = txDoc.data();
+      
+      batch.set(db.collection('users').doc(userId), {
+        email: txData.userEmail || "recovered_user@store.com",
+        role: 'user',
+        purchasedProducts: [productId], // Direct product add karein
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+    } else {
+      // Agar user exist karta hai, toh sirf product add karein
+      batch.update(db.collection('users').doc(userId), { 
+        purchasedProducts: firebase.firestore.FieldValue.arrayUnion(productId) 
+      });
+    }
+
+    // 2. Transaction status update karein
     batch.update(db.collection('pendingTransactions').doc(txId), { 
       status: 'verified', 
       verifiedAt: firebase.firestore.FieldValue.serverTimestamp() 
     });
     
-    // User ko product access dein
-    batch.update(db.collection('users').doc(userId), { 
-      purchasedProducts: firebase.firestore.FieldValue.arrayUnion(productId) 
-    });
-    
-    // Product ko sold out karein
+    // 3. Product ko sold out mark karein
     batch.update(db.collection('products').doc(productId), { 
       isSoldOut: true,
       soldAt: firebase.firestore.FieldValue.serverTimestamp(),
@@ -679,14 +840,11 @@ async function verifyTransaction(txId, userId, productId) {
     });
     
     await batch.commit();
-    notify('✅ Approved! User can now see credentials.', 'success');
+    notify('✅ Approved! User data recovered and verified.', 'success');
     loadPendingTransactions();
-    // UI Update karne ke liye
-    if(currentUser.uid === userId) {
-        await loadUserData();
-        renderMyKeys();
-    }
+
   } catch (err) {
+    console.error("Verification error:", err);
     notify('❌ Verification failed: ' + err.message, 'error');
   }
 }
@@ -700,7 +858,7 @@ async function rejectTransaction(txId) {
       status: 'rejected',
       rejectedAt: firebase.firestore.FieldValue.serverTimestamp()
     });
-    notify('❌ Transaction rejected!', 'success');
+    notify('❌Transaction rejected!', 'success');
     loadPendingTransactions();
   } catch (err) {
     notify('❌ Reject failed!', 'error');
@@ -826,121 +984,168 @@ async function renderProductsList() {
 async function renderMyKeys() {
   try {
     const keyList = document.getElementById('myKeyList');
-    keyList.innerHTML = '<div class="item"><div class="spinner"></div> Loading...</div>';
+    keyList.innerHTML = '<div class="item" style="text-align:center;">⌛ Loading your history...</div>';
     
-    // 1. Pehle user ke pending payments fetch karein
-    const pendingSnapshot = await db.collection('pendingTransactions')
+    // 1. User ki saari transaction history fetch karein (Pending, Rejected, Verified)
+    const txSnapshot = await db.collection('pendingTransactions')
       .where('userId', '==', currentUser.uid)
-      .where('status', '==', 'pending')
       .get();
 
-    // 2. Verified products fetch karein
+    // 2. Products data fetch karein credentials dikhane ke liye
     const productsSnapshot = await db.collection('products').get();
-    const products = productsSnapshot.docs.map(doc => ({id: doc.id, ...doc.data()}));
-    const myPurchased = products.filter(p => userProducts.includes(p.id));
+    const allProducts = productsSnapshot.docs.reduce((acc, doc) => {
+      acc[doc.id] = { id: doc.id, ...doc.data() };
+      return acc;
+    }, {});
 
-    let html = '';
+    if (txSnapshot.empty) {
+      keyList.innerHTML = '<div class="item" style="text-align:center;"><p class="bad">No purchase history found.</p></div>';
+      return;
+    }
 
-    // --- PENDING SECTION (Ye naya hai) ---
-    if (!pendingSnapshot.empty) {
-      html += '<h4 style="color:#ffeb3b; margin: 10px 0;">⏳ Verification Pending...... ⏳</h4>';
-      pendingSnapshot.forEach(doc => {
-        const tx = doc.data();
+    // 3. Transactions ko Date ke hisaab se Sort karein (Latest First)
+    const sortedTransactions = txSnapshot.docs.sort((a, b) => 
+      (b.data().submittedAt?.toMillis() || 0) - (a.data().submittedAt?.toMillis() || 0)
+    );
+
+    let html = '<h4 style="color:#ffeb3b; margin: 10px 0 15px 0;">📅 Order History (Date Wise)</h4>';
+
+    sortedTransactions.forEach(doc => {
+      const tx = doc.data();
+      const subDate = tx.submittedAt ? new Date(tx.submittedAt.toDate()).toLocaleString('en-GB') : 'Processing...';
+      const productId = tx.productId;
+      const productInfo = allProducts[productId];
+
+      // Status ke hisaab se UI design set karein
+      let cardStyle = "border-left: 4px solid #ffeb3b; background: rgba(255,235,59,0.05);";
+      let statusLabel = "Pending ⏳";
+      let statusColor = "#ffeb3b";
+
+      if (tx.status === 'rejected') {
+        cardStyle = "border-left: 4px solid #ff4444; background: rgba(255,68,68,0.05);";
+        statusLabel = "Rejected❌";
+        statusColor = "#ff4444";
+      } else if (tx.status === 'verified') {
+        cardStyle = "border-left: 4px solid #6dff9a; background: rgba(109,255,154,0.05);";
+        statusLabel = "Verified & Added ✅";
+        statusColor = "#6dff9a";
+      }
+
+      // Base Transaction Card
+      html += `
+        <div class="item" style="${cardStyle} margin-bottom:15px; padding:15px;">
+          <div style="display:flex; justify-content:space-between; align-items:start; margin-bottom:8px;">
+            <b style="font-size:14px; color:#fff;">ID: ${productId}</b>
+            <span style="font-size:12px; font-weight:bold; color:${statusColor};">${statusLabel}</span>
+          </div>
+          <div style="font-size:12px; opacity:0.8; line-height:1.6;">
+            📅 <b>Submitted:</b> ${subDate}<br>
+            💳 <b>UTR:</b> ${tx.transactionId}
+          </div>
+      `;
+
+      // Agar Verified hai toh credentials (ID/Key) niche hi dikhayenge
+      if (tx.status === 'verified' && productInfo) {
         html += `
-          <div class="item" style="border-left: 4px solid #ffeb3b; background: rgba(255,235,59,0.05);">
-            <b>Order for Product ID: ${tx.productId}</b><br>
-            <small>UTR: ${tx.transactionId}</small>
-            <div class="product-creds pending" style="margin-top:8px; font-size:13px;">
-               Please wait—admin verifying your payment.
+          <div class="product-creds" style="margin-top:12px; background:rgba(0,0,0,0.2); border:1px solid #6dff9a;">
+            <div style="margin-bottom:8px;">
+              <b style="color:#6dff9a;">🆔 Login ID:</b> <span style="word-break:break-all;">${productInfo.loginId}</span>
+              <button class="copy-btn" style="width:100%; margin-top:5px; padding:5px;" onclick="copyToClipboard('${productInfo.loginId}', this)">Copy ID</button>
             </div>
+            ${productInfo.key ? `
+            <div>
+              <b style="color:#6dff9a;">🔑 Password:</b> <span>${productInfo.key}</span>
+              <button class="copy-btn" style="width:100%; margin-top:5px; padding:5px;" onclick="copyToClipboard('${productInfo.key}', this)">Copy Key</button>
+            </div>` : ''}
           </div>
         `;
-      });
-    }
-
-    // --- PURCHASED SECTION ---
-    if (myPurchased.length > 0) {
-      html += '<h4 style="color:#6dff9a; margin: 20px 0 10px 0;">✅ My Accounts</h4>';
-      myPurchased.forEach(p => {
-        const creds = p.loginId || p.key || 'N/A';
-        html += `
-          <div class="item">
-            <b>${p.name}</b>
-            <div class="product-creds">
-              <b>🆔 ID:</b> <span class="ok">${p.loginId}</span>
-              <div class="copy-row">
-                <button class="copy-btn" onclick="copyToClipboard('${p.loginId}', this)">Copy ID</button>
-              </div>
-              ${p.key ? `<b>🔑 Key:</b> <span class="ok">${p.key}</span><div class="copy-row"><button class="copy-btn" onclick="copyToClipboard('${p.key}', this)">Copy Key</button></div>` : ''}
-            </div>
-          </div>
-        `;
-      });
-    }
-
-    if (pendingSnapshot.empty && myPurchased.length === 0) {
-      html = '<div class="item" style="text-align:center;"><p class="bad">Purchases or pending requests were not found.</p></div>';
-    }
+      }
+      
+      html += `</div>`; // Closing transaction card
+    });
 
     keyList.innerHTML = html;
-  } catch(err) {
+  } catch (err) {
     console.error(err);
-    document.getElementById('myKeyList').innerHTML = '<div class="item"><p class="bad">Error loading data</p></div>';
+    document.getElementById('myKeyList').innerHTML = '<div class="item"><p class="bad">Error loading history. Please refresh.</p></div>';
   }
 }
 
 
 
 // 🔥 FIXED LOAD USER DATA
+// 1. Photo Update Function
+// 🔥 FIXED: Photo Update & Refresh
+async function updateProfilePhoto() {
+  const url = document.getElementById('photoUrlInput').value.trim();
+  if(!url) return notify('❌ Please paste an Image URL!', 'error');
+  
+  try {
+    await db.collection('users').doc(currentUser.uid).update({ 
+      profilePhoto: url 
+    });
+    notify('✅ Profile Photo Updated!', 'success');
+    document.getElementById('photoUrlInput').value = '';
+    
+    // Turant UI update karne ke liye dobara load karein
+    await loadUserData(); 
+  } catch(err) { 
+    notify('❌ Update failed!', 'error'); 
+  }
+}
+
+// 🔥 FIXED: Sidebar Photo Rendering
 async function loadUserData() {
   try {
-    // 1. User ka data aur role check karna
     const userDoc = await db.collection('users').doc(currentUser.uid).get();
+    let photoUrl = "";
+    
     if(userDoc.exists) {
       const data = userDoc.data();
       userRole = data.role || 'user';
       userProducts = data.purchasedProducts || [];
+      photoUrl = data.profilePhoto || ""; 
     }
     
-    // 2. Sidemenu mein Name aur Role set karna (Gmail se naam nikal kar)
-    const displayName = currentUser.email.split('@')[0].toUpperCase();
-    document.getElementById('userType').innerHTML = `
-      <div style="text-align:left; padding-left:10px;">
-        <span style="font-size:18px; color:#fff;">👤${displayName}✅</span><br>
-        <span style="font-size:14px; color:#6dff9a;">${userRole === 'admin' ? '👑 ADMIN PANEL' : '   User Panel'}</span>
-      </div>
-    `;
+    const userEmail = currentUser.email;
+    const sideAvatar = document.getElementById('sideAvatar');
 
-    // 3. DASHBOARD FIX: Admin aur User ke liye alag logic
-    const allProductsSnap = await db.collection('products').get(); // Saare accounts
-    const availableProductsSnap = await db.collection('products').where('isSoldOut', '==', false).get(); // Khali available
-
-    if (userRole === 'admin') {
-      // Admin ko dashboard par total (bikay huye + available) saare dikhao
-      document.getElementById('totalProducts').textContent = allProductsSnap.size;
+    // --- PHOTO DISPLAY LOGIC ---
+    if(photoUrl && photoUrl !== "") {
+      // Agar database mein photo link hai toh <img> tag dalo
+      sideAvatar.innerHTML = `<img src="${photoUrl}" onerror="this.src='https://ui-avatars.com/api/?name=${userEmail}&background=6d7cff&color=fff'">`;
     } else {
-      // User ko sirf wahi dikhao jo abhi stock mein hain
-      document.getElementById('totalProducts').textContent = availableProductsSnap.size;
+      // Agar photo nahi hai toh Email ka pehla letter
+      sideAvatar.innerHTML = `<span style="font-size:20px; font-weight:bold; color:white;">${userEmail.charAt(0).toUpperCase()}</span>`;
     }
 
-    // 4. Baki stats update karna
-    document.getElementById('userInfo').textContent = currentUser.email;
+    // Sidebar Name & Role
+    let namePart = userEmail.split('@')[0].toUpperCase();
+    if(namePart.length > 10) namePart = namePart.substring(0, 8) + "..";
+    document.getElementById('sideName').textContent = namePart;
+    document.getElementById('sideRole').textContent = userRole === 'admin' ? '👑 Administrator' : 'Verified User ✅';
+
+    // Dashboard Stats
+    document.getElementById('userInfo').textContent = userEmail;
     document.getElementById('roleBadge').textContent = userRole.toUpperCase();
-    document.getElementById('userKeys').textContent = userProducts.length;
+
+    const prodSnapshot = await db.collection('products').get();
+    const availableOnly = prodSnapshot.docs.filter(p => !p.data().isSoldOut).length;
     
-    // 5. Admin/User ke buttons show-hide karna
+    document.getElementById('totalProducts').textContent = availableOnly; 
+    document.getElementById('userKeys').textContent = userProducts.length;
+
     if(userRole === 'admin') {
       document.getElementById('adminSection').classList.remove('hidden');
       document.getElementById('userSection').classList.add('hidden');
-    } else {
-      document.getElementById('userSection').classList.remove('hidden');
-      document.getElementById('adminSection').classList.add('hidden');
     }
-
-  } catch(err) {
-    console.error("Dashboard Error:", err);
+  } catch(err) { 
+    console.error("Profile Load Error:", err); 
   }
 }
+
+
+
 
 
 
@@ -1080,17 +1285,33 @@ function logout() {
   closeSidebar();
 }
 
-// 2. Login Status Check (Isse Dashboard aur Broadcast khulega)
-auth.onAuthStateChanged(async(user) => {
-  if(user) {
+// 🔥 MODIFIED: Auto-recreate user if deleted from Firestore
+auth.onAuthStateChanged(async (user) => {
+  if (user) {
     currentUser = user;
-    await loadUserData(); // Dashboard ka data load hoga
-    unlockApp();          // App khulega
-    checkBroadcasts();    // 👈 Ye line database se saved message uthayegi
+    
+    // Check if user exists in Firestore
+    const userDoc = await db.collection('users').doc(user.uid).get();
+    
+    if (!userDoc.exists) {
+      // Agar user Firestore me nahi hai (aapne delete kiya tha), toh use dobara "user" role ke sath create karo
+      console.log("Re-creating missing user record...");
+      await db.collection('users').doc(user.uid).set({
+        email: user.email,
+        role: 'user',
+        purchasedProducts: [],
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+    }
+
+    await loadUserData(); // Dashboard data load karein
+    unlockApp();          // App open karein
+    checkBroadcasts();    
   } else {
-    showLockScreen();     // Login page dikhega
+    showLockScreen();     
   }
 });
+
 
 // 3. App Unlock logic
 function unlockApp() {
@@ -1164,85 +1385,157 @@ async function giveManualAccess() {
 
 // 🔥 PERFECTLY FIXED - NO MORE "Error loading users"
 async function loadUserManagement() {
-  if (userRole !== 'admin') {
-    notify('❌ Admin only!', 'error');
-    return;
-  }
+  if (userRole !== 'admin') return notify('❌ Admin only!', 'error');
   
   try {
     document.getElementById('userManagementList').innerHTML = 'Loading users...';
-    
-    // 🔥 ADMIN CAN READ ALL USERS WITH PROPER SECURITY
     const snapshot = await db.collection('users').get();
-    
-    if (snapshot.empty) {
-      document.getElementById('userManagementList').innerHTML = '<div class="item"><p class="bad">No users found</p></div>';
-      document.getElementById('usersCount').textContent = '0';
-      return;
-    }
     
     let html = '';
     snapshot.docs.forEach(doc => {
       const u = doc.data();
-      const productsCount = u.purchasedProducts?.length || 0;
-      const productsPreview = u.purchasedProducts?.slice(0, 3).join(', ') || 'None';
-      
       html += `
-        <div class="item">
-          <b>${u.email || 'No email'}</b> 
+        <div class="item" style="border-left: 4px solid #6d7cff;">
+          <b>${u.email}</b> 
           <span style="color: ${u.role === 'admin' ? '#ff6b35' : '#6dff9a'}">
-            ${u.role === 'admin' ? '👑ADMIN' : '👤USER'}
+            [${u.role.toUpperCase()}]
           </span><br>
-          <small>Purchases: ${productsCount} | 
-            Products: ${productsPreview}${productsCount > 3 ? '...' : ''}
-          </small><br>
           <div class="row">
-            <button class="action" onclick="editUser('${doc.id}')">Edit</button>
-          <button class="danger" onclick="deleteUser('${doc.id}')">Delete</button>
+            <button class="manual-verify" onclick="viewUserHistory('${doc.id}', '${u.email}')">👁️ View History</button>
+            <button class="danger" onclick="deleteUser('${doc.id}')">🗑️ Delete User</button>
           </div>
         </div>
       `;
     });
-    
     document.getElementById('userManagementList').innerHTML = html;
     document.getElementById('usersCount').textContent = snapshot.size;
-    
-    
   } catch(err) {
-    console.error('User management error:', err);
-    document.getElementById('userManagementList').innerHTML = 
-      `<div class="item"><p class="bad">Error: ${err.message}</p></div>`;
+    notify('❌ Error loading users', 'error');
+  }
+}
+async function viewUserHistory(userId, userEmail) {
+  try {
+    const txSnapshot = await db.collection('pendingTransactions')
+      .where('userId', '==', userId)
+      .get();
+
+    let html = `<h3>📜 History for: ${userEmail}</h3>`;
+    html += `<button class="action" onclick="showSection('manageUsers')" style="margin-bottom:15px;">⬅️ Back to Users</button>`;
+
+    if (txSnapshot.empty) {
+      html += '<p style="text-align:center; padding:20px;">No history found for this user.</p>';
+    } else {
+      const sorted = txSnapshot.docs.sort((a,b) => (b.data().submittedAt?.toMillis() || 0) - (a.data().submittedAt?.toMillis() || 0));
+      
+      sorted.forEach(doc => {
+        const tx = doc.data();
+        const date = tx.submittedAt ? new Date(tx.submittedAt.toDate()).toLocaleString() : 'N/A';
+        const color = tx.status === 'verified' ? '#6dff9a' : (tx.status === 'rejected' ? '#ff4444' : '#ffeb3b');
+
+        html += `
+          <div class="item" style="border-left: 4px solid ${color};">
+            <div style="display:flex; justify-content:space-between;">
+              <b>ID: ${tx.productId}</b>
+              <b style="color:${color}">${tx.status.toUpperCase()}</b>
+            </div>
+            <small>📅 ${date} | 💳 UTR: ${tx.transactionId}</small>
+            <div class="row">
+              <button class="danger" style="padding:5px; font-size:12px;" onclick="deleteTransaction('${doc.id}', '${userId}', '${userEmail}')">🗑️ Delete History Entry</button>
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    // Is result ko Manage Users waale div mein hi dikha denge
+    document.getElementById('userManagementList').innerHTML = html;
+  } catch (err) {
+    notify('❌ Error fetching history', 'error');
   }
 }
 
+// Function to delete specific history entry
+async function deleteTransaction(txId, userId, userEmail) {
+  if(!confirm('Are you sure you want to delete this history record?')) return;
+  try {
+    await db.collection('pendingTransactions').doc(txId).delete();
+    notify('✅ History deleted!');
+    viewUserHistory(userId, userEmail); // Refresh list
+  } catch(err) {
+    notify('❌ Delete failed', 'error');
+  }
+}
+
+// 🔥 UPDATED: Admin can now see WHO bought the product
 async function loadProductManagement() {
   try {
     document.getElementById('productManagementList').innerHTML = 'Loading products...';
-    const snapshot = await db.collection('products').get();
-    if(snapshot.empty) {
+    
+    const [prodSnapshot, userSnapshot] = await Promise.all([
+      db.collection('products').get(),
+      db.collection('users').get()
+    ]);
+
+    const userMap = {};
+    userSnapshot.forEach(doc => { userMap[doc.id] = doc.data().email; });
+
+    if(prodSnapshot.empty) {
       document.getElementById('productManagementList').innerHTML = '<p class="bad">No products found</p>';
       document.getElementById('productsCount').textContent = '0';
       return;
     }
+
     let html = '';
-    snapshot.docs.forEach(doc => {
+    prodSnapshot.docs.forEach(doc => {
       const p = doc.data();
-      const status = p.isSoldOut ? '🔴 SOLD OUT' : '🟢 Available';
-      html += `<div class="item">
-        <b>${p.name}</b> ${status}<br>
-        <small>ID: <span class="ok">${doc.id}</span> | Key: ${p.key} | Price: ₹${p.price}</small><br>
-        <div class="row">
-          <button class="action" onclick="editProduct('${doc.id}','${p.name}','${p.loginId}','${p.key}',${p.price})">Edit</button>
-          <button class="danger" onclick="deleteProduct('${doc.id}')">Delete</button>
-        </div>
-      </div>`;
+      const isSold = p.isSoldOut;
+      const status = isSold ? '🔴 SOLD OUT' : '🟢 Available';
+      
+      // 🔥 DATE FORMATTING LOGIC ADDED HERE
+      let dateStr = "New";
+      if (p.submittedAt) {
+          const d = p.submittedAt.toDate();
+          dateStr = d.toLocaleDateString('en-IN') + " " + d.toLocaleTimeString('en-IN', {hour: '2-digit', minute:'2-digit'});
+      }
+
+      const buyerEmail = isSold && p.soldTo ? (userMap[p.soldTo] || "Unknown User") : null;
+
+      html += `
+        <div class="item" style="border-left: 4px solid ${isSold ? '#ff4444' : '#6dff9a'};">
+          <div style="display:flex; justify-content:space-between; align-items:start;">
+            <b>${p.name}</b>
+            <b style="color:${isSold ? '#ff4444' : '#6dff9a'}">${status}</b>
+          </div>
+          
+          <div style="margin-top:8px; font-size:13px; opacity:0.9;">
+            ID: <span class="ok">${doc.id}</span> | Price: ₹${p.price}<br>
+            Key: <span style="color:#ffeb3b">${p.key}</span><br>
+            <span style="color:#a5b1ff; font-size:11px;">📅 Added: ${dateStr}</span>
+          </div>
+
+          ${isSold ? `
+            <div style="margin-top:10px; padding:8px; background:rgba(255,68,68,0.1); border-radius:8px; border:1px solid rgba(255,68,68,0.2);">
+              <b style="color:#ff4444; font-size:12px;">👤 BOUGHT BY:</b><br>
+              <span style="font-size:13px; color:#fff;">${buyerEmail}</span>
+            </div>
+          ` : ''}
+
+          <div class="row" style="margin-top:12px;">
+            <button class="action" onclick="editProduct('${doc.id}','${p.name}','${p.loginId}','${p.key}',${p.price})">Edit</button>
+            <button class="danger" onclick="deleteProduct('${doc.id}')">Delete</button>
+          </div>
+        </div>`;
     });
+    
     document.getElementById('productManagementList').innerHTML = html;
-    document.getElementById('productsCount').textContent = snapshot.size;
+    document.getElementById('productsCount').textContent = prodSnapshot.size;
   } catch(err) {
+    console.error(err);
     document.getElementById('productManagementList').innerHTML = '<p class="bad">Error loading products</p>';
   }
 }
+
+
 
 async function addProduct() {
   const name = document.getElementById('productName').value;
@@ -1256,34 +1549,38 @@ async function addProduct() {
 
   try {
     if (editingProductId) {
+      // 🔥 Edit karte waqt bhi timestamp update hoga (Optional)
       await db.collection('products').doc(editingProductId).update({
-        name, loginId: accessId, key, price
+        name, loginId: accessId, key, price,
+        lastUpdated: firebase.firestore.FieldValue.serverTimestamp() 
       });
       notify('✅ Product updated!');
       editingProductId = null;
     } else {
+      // 🔥 Naya product add karte waqt server date
       await db.collection('products').add({
-    name: name, 
-    loginId: accessId, 
-    key: key, 
-    price: price, 
-    isSoldOut: false,
-    submittedAt: firebase.firestore.FieldValue.serverTimestamp() // 🔥 Ye line date record karegi
-  });
+        name: name, 
+        loginId: accessId, 
+        key: key, 
+        price: price, 
+        isSoldOut: false,
+        submittedAt: firebase.firestore.FieldValue.serverTimestamp() 
+      });
       notify('✅ Product added!');
     }
 
+    // Inputs Clear karein
     document.getElementById('productName').value = '';
     document.getElementById('productAccessId').value = '';
     document.getElementById('productKey').value = '';
     document.getElementById('productPrice').value = '';
 
-    loadUserData();
-    renderProductsList();
+    loadProductManagement(); // Turant list refresh karein
   } catch (err) {
     notify('Error adding product!', 'error');
   }
 }
+
 
 function editProduct(productId, name, accessId, key, price) {
   editingProductId = productId;
