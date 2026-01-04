@@ -53,6 +53,34 @@ body {padding-bottom: env(safe-area-inset-bottom);}
   }
 }
 
+/* Live Indicator Animation */
+.live-dot {
+  height: 8px;
+  width: 8px;
+  background-color: #6dff9a;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 5px;
+  box-shadow: 0 0 8px #6dff9a;
+  animation: blink-live 1.5s infinite;
+}
+
+@keyframes blink-live {
+  0% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(1.2); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+.live-status {
+  font-size: 11px;
+  color: #6dff9a;
+  font-weight: bold;
+  letter-spacing: 1px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 10px;
+}
 
 
 
@@ -352,9 +380,15 @@ body.login-mode #menuBtn, body.login-mode #sidebar, body.login-mode #mobileBotto
   color: #ffeb3b !important; 
 }
 
+
+let currentUser = null;
+let currentProductPrice = 0; // Ye add karein
+let currentQRProduct = null;  // Ye add karein
+
 </style>
 </head>
 <body>
+<audio id="successPing" src="https://www.soundjay.com/buttons/sounds/button-37a.mp3" preload="auto"></audio>
 
 <!-- BROADCAST POPUP -->
 <div id="broadcastPopup" class="broadcast-popup">
@@ -363,66 +397,46 @@ body.login-mode #menuBtn, body.login-mode #sidebar, body.login-mode #mobileBotto
   <button class="broadcast-close" onclick="closeBroadcast()">Got it! 🎁</button>
 </div>
 
-<!-- QR CODE MODAL -->
-<div id="qrModal">
-  <button class="qr-close" onclick="closeQRModal()">✕</button>
+<div id="qrModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:9999; align-items:center; justify-content:center;">
+    
+    <div class="qr-container" style="background:#1b1f3b; padding:25px; border-radius:20px; text-align:center; position:relative; width:90%; max-width:380px; border:1px solid #2a2f4a;">
+        
+        <button class="qr-close" onclick="closeQRModal()" style="position:absolute; top:10px; right:15px; background:none; border:none; color:#fff; font-size:24px; cursor:pointer;">✕</button>
+        
+        <h3 style="margin-top:0; color:#fff;">Pay with UPI</h3>
+        
+        <div style="position:relative; display:inline-block; margin-bottom:15px; background:#fff; padding:10px; border-radius:12px;">
+            <img src="https://helproot.github.io/images/qr.png" style="width:180px; display:block; border-radius:5px;">
+            
+            <a href="https://helproot.github.io/images/qr.png" download="PaymentQR.png" 
+               style="position:absolute; bottom:5px; right:5px; background:#ffda6a; width:30px; height:30px; line-height:30px; border-radius:50%; text-decoration:none; color:#000; font-size:14px; box-shadow: 0 2px 5px rgba(0,0,0,0.3);">
+               ⬇️
+            </a>
+        </div>
 
-  <div class="qr-container">
-    <h3>Manual Payment Required</h3>
+        <div style="margin-bottom: 20px;">
+            <button onclick="handleUPIPayment()" style="background:#00d4aa; color:white; border:none; padding:14px; border-radius:12px; font-weight:bold; cursor:pointer; width:100%; font-size:15px;">
+                🚀 Pay with PhonePe / GPay / Paytm
+            </button>
+        </div>
 
-    <!-- QR + Download -->
-    <div style="position:relative; display:inline-block;">
-      <img
-        id="qrCodeImg"
-        src="https://helproot.github.io/images/qr.png"
-        alt="QR Code"
-        style="width:220px;height:220px;border-radius:0px;"
-      />
+        
+            <p style="font-size:13px; color:#aaa; margin-bottom:10px;">Enter 12 Digit UTR / Ref. Number:</p>
+            
+            <input id="transactionId" type="text" maxlength="12" placeholder="e.g. 412345678901" 
+                   style="width:100%; padding:12px; border-radius:10px; border:1px solid #3d4465; background:#15193a; color:white; text-align:center; font-size:16px; margin-bottom:10px;">
+            
+            <button class="action" onclick="submitTransaction()" style="width:100%; background:#6d7cff; color:#fff; border:none; padding:12px; border-radius:10px; font-weight:bold;">
+                ✅ Submit Transaction
+            </button>
+        </div>
 
-      <!-- Download Icon -->
-      <a href="https://helproot.github.io/images/qr.png"
-         download
-         title="Download QR"
-         style="
-           position:absolute;
-           bottom:4px;
-           right:2px;
-           background:#ffda6a;
-           padding:2px;
-           border-radius:0%;
-           text-decoration:none;
-           color:#fff;
-           font-size:16px;
-         ">
-        ⬇️
-      </a>
+        <p style="font-size:13px; color:#ffda6a; margin-top:15px; font-weight:500;">
+          ⏳ Admin will verify within 5m ⏳
+        </p>
     </div>
-
-    <!-- UPI + Copy -->
-    <p style="font-size:14px;color:#ffda6a; display:flex; align-items:center; justify-content:center; gap:6px;">
-      💳 UPI ID: 
-      <span id="upiId">igrishu2024@okaxis</span>
-      <span
-        onclick="copyUPI()"
-        title="Copy UPI ID"
-        style="cursor:pointer;">
-        📋
-      </span>
-    </p>
-
-    <p>Pay via UPI/GPay and submit transaction ID below:</p>
-
-    <input id="transactionId" placeholder="Enter Transaction ID / UTR">
-
-    <button class="action" onclick="submitTransaction()">
-      Submit Payment Proof
-    </button>
-
-    <p style="font-size:14px;color:#ffda6a;">
-      ⏳ Admin will verify within 5m ⏳
-    </p>
-  </div>
 </div>
+
 <script>
 function copyUPI() {
   const upi = document.getElementById("upiId").innerText;
@@ -440,7 +454,7 @@ function copyUPI() {
     <div class="nav-item"><button class="nav-active" onclick="showSection('dashboard', true)">📊</button></div>
     <div class="nav-item"><button onclick="showSection('products', true)">🛒</button></div>
     <div class="nav-item"><button onclick="showSection('mykeys', true)">🔑</button></div>
-    <div class="nav-item"><button onclick="showQRModal()">💳</button></div>
+    <div class="nav-item"><button onclick="showSection('settings')">⚙️</button></div>
   </div>
 
 <div class="sidebar" id="sidebar">
@@ -457,22 +471,23 @@ function copyUPI() {
       </div>
     </div>
 
-    <button onclick="showSection('dashboard')">📊Dashboard</button>
-    <button onclick="showSection('products')">🛒Accounts</button>
+    <button onclick="showSection('dashboard')">📊 Dashboard</button>
+    <button onclick="showSection('products')">🛒 Accounts</button>
     
     <div id="userSection">
-      <button onclick="showSection('mykeys')">🔑My Purchase</button>
-      <button onclick="showQRModal()">💳Get Access</button>
+      <button onclick="showSection('mykeys')">🔑 My Purchase</button>
+      
       
     </div>
 
     <div id="adminSection" class="hidden">
       <button class="admin-only" onclick="showSection('manageProducts')">🔧Manage Acc</button>
-      <button class="admin-only" onclick="showSection('manageUsers')">👥All Users</button>
-      <button class="admin-only manual-verify" onclick="showSection('verifyTransactions')">Payments✅</button>
+      <button class="admin-only" onclick="showSection('manageUsers')">Manage👥Users</button>
+      <button class="admin-only manual-verify" onclick="showSection('verifyTransactions')">✅ Payments</button>
       <button class="admin-only" onclick="showSection('addProduct')">➕Add Acc</button>
-      <button class="admin-only" onclick="showSection('manualAccess')">🎁Access🎁</button>
       <button class="admin-only" onclick="showSection('broadcast')">📢Broadcast</button>
+      <button class="admin-only" onclick="showSection('manualAccess')">🎁Access🎁</button>
+      
     </div>
 
     <button onclick="showSection('settings')">⚙️Settings</button>
@@ -490,7 +505,7 @@ function copyUPI() {
       <img src="https://cdn-icons-png.flaticon.com/512/3670/3670051.png" alt="Support">
     </a>
 
-    <h3>📊 Dashboard 📊</h3>
+    <h3>📊Dashboard📊</h3>
     
     <div class="stats-grid">
       <div class="stat-card"><b id="userInfo">Loading...</b><small>User Email</small></div>
@@ -607,6 +622,25 @@ function copyUPI() {
 <div id="lock">
   <div class="card">
     <h3>🎛️Xaiomi Accounts Store🎛️</h3>
+    
+    <div class="live-status">
+  <span class="live-dot"></span> STORE ONLINE - FETCHING LIVE DATA
+</div>
+
+    <div id="loginStats" style="display: flex; justify-content: space-around; margin-bottom: 20px; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 12px; border: 1px solid rgba(109,124,255,0.1);">
+  <div style="text-align: center;">
+    <small style="display: block; font-size: 10px; color: #8a8fc4; text-transform: uppercase;">Stock</small>
+    <b id="loginStock" style="color: #6dff9a; font-size: 18px;">--</b>
+    <small style="display: block; font-size: 9px; opacity: 0.7;">Available</small>
+  </div>
+  <div style="width: 1px; background: rgba(255,255,255,0.1);"></div>
+  <div style="text-align: center;">
+    <small style="display: block; font-size: 10px; color: #8a8fc4; text-transform: uppercase;">Sold</small>
+    <b id="loginSold" style="color: #ff6b35; font-size: 18px;">--</b>
+    <small style="display: block; font-size: 9px; opacity: 0.7;">Out Today</small>
+  </div>
+</div>
+
     <div style="display:flex;gap:12px;margin-bottom:10px">
       <button class="action" style="flex:1" onclick="showLoginType('user')">User👤Login</button>
       <button class="action" style="flex:1;background:#ff6b35" onclick="showLoginType('admin')">Admin👑Login</button>
@@ -798,6 +832,7 @@ async function loadPendingTransactions() {
 }
 // 🔥 FIXED VERIFY TRANSACTION WITH SOLD OUT FEATURE
 // 🔥 SMART VERIFY: User delete hone par bhi kaam karega
+
 async function verifyTransaction(txId, userId, productId) {
   if (!confirm('Verify this payment and grant access?')) return;
   
@@ -808,19 +843,16 @@ async function verifyTransaction(txId, userId, productId) {
 
     if (!userDoc.exists) {
       console.log("User record missing, recreating during verification...");
-      // Agar admin ne user delete kar diya tha, toh use dobara create karein
-      // Hum payment request se user ki email nikalenge
       const txDoc = await db.collection('pendingTransactions').doc(txId).get();
       const txData = txDoc.data();
       
       batch.set(db.collection('users').doc(userId), {
         email: txData.userEmail || "recovered_user@store.com",
         role: 'user',
-        purchasedProducts: [productId], // Direct product add karein
+        purchasedProducts: [productId], 
         createdAt: firebase.firestore.FieldValue.serverTimestamp()
       });
     } else {
-      // Agar user exist karta hai, toh sirf product add karein
       batch.update(db.collection('users').doc(userId), { 
         purchasedProducts: firebase.firestore.FieldValue.arrayUnion(productId) 
       });
@@ -839,7 +871,16 @@ async function verifyTransaction(txId, userId, productId) {
       soldTo: userId
     });
     
+    // Batch commit (Database update)
     await batch.commit();
+
+    // 🔥 NAYA: SOUND LOGIC 🔥
+    const sound = document.getElementById("successPing");
+    if (sound) {
+      sound.currentTime = 0; // Har baar shuru se bajne ke liye
+      sound.play().catch(e => console.log("Sound error:", e));
+    }
+
     notify('✅ Approved! User data recovered and verified.', 'success');
     loadPendingTransactions();
 
@@ -848,6 +889,7 @@ async function verifyTransaction(txId, userId, productId) {
     notify('❌ Verification failed: ' + err.message, 'error');
   }
 }
+
 
 
 async function rejectTransaction(txId) {
@@ -967,7 +1009,7 @@ async function renderProductsList() {
             </div>
             <small>Listed on: ${dateStr}</small><br>
             <div style="margin:0px 0;">
-              <button class="action" onclick="showQRModal('${p.id}')">💳 Buy Now</button>
+              <button class="action" onclick="openQRModal(${p.price}, '${p.id}')">💳 Buy Now</button>
             </div>
           </div>`;
       }
@@ -1346,6 +1388,130 @@ function showUserForgot() {
   document.getElementById('userForgot').classList.remove('hidden');
   document.getElementById('userLogin').classList.add('hidden');
 }
+
+function handleUPIPayment() {
+    const upiId = "igrishu2024@okaxis"; 
+    const storeName = "Xiaomi Store";
+
+    // Debugging ke liye alert (Check karne ke liye ki function chal raha hai)
+    console.log("Paying Amount:", currentProductPrice);
+
+    if (!currentProductPrice || currentProductPrice <= 0) {
+        alert("❌ Error: Price zero hai! Please product ko phir se select karein.");
+        return;
+    }
+
+    // UPI Link
+    const upiLink = `upi://pay?pa=${upiId}&pn=${encodeURIComponent(storeName)}&am=${currentProductPrice}&cu=INR`;
+
+    if (/Android|iPhone|iPad/i.test(navigator.userAgent)) {
+        // Mobile par app kholne ki koshish karega
+        window.location.href = upiLink;
+        
+        // Agar 2 second tak kuch na ho (matlab link kaam nahi kiya)
+        setTimeout(() => {
+            alert("Agar UPI App nahi khula, toh please QR code scan karein.");
+        }, 2000);
+    } else {
+        alert("Desktop par UPI Apps nahi khulte. Please phone se QR scan karein.");
+    }
+}
+
+
+// --- MODAL FUNCTIONS (FIXED) ---
+
+// Ye function 'Buy Now' click karne par modal kholega
+function openQRModal(price, productId) {
+    currentProductPrice = parseFloat(price);
+    currentQRProduct = productId;
+    
+    const modal = document.getElementById('qrModal');
+    if (modal) {
+        modal.style.display = 'flex';
+        // Input box ko khali kar dega naye transaction ke liye
+        document.getElementById('transactionId').value = '';
+    }
+}
+
+// Ye 'X' button click karne par modal band karega
+function closeQRModal() {
+    const modal = document.getElementById('qrModal');
+    if (modal) {
+        modal.style.display = 'none';
+    }
+}
+
+// Ye Submit button ke liye hai (Firebase mein data jayega)
+async function submitTransaction() {
+    const txInput = document.getElementById('transactionId');
+    const txId = txInput ? txInput.value.trim() : "";
+
+    if (!currentQRProduct) {
+        alert("❌ Error: First Select Xaiomi Account ! then click Buy now");
+        return;
+    }
+    if (!txId) {
+        alert("❌ UTR / Transaction ID daalna zaroori hai.");
+        return;
+    }
+
+    try {
+        // Firebase Firestore mein entry
+        await db.collection('pendingTransactions').add({
+            userId: auth.currentUser.uid,
+            userEmail: auth.currentUser.email,
+            transactionId: txId,
+            productId: currentQRProduct,
+            amount: currentProductPrice,
+            status: 'pending',
+            submittedAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+
+        alert("✅ Success! Admin 5m mein aprove kar dega");
+        closeQRModal(); 
+
+    } catch (error) {
+        alert("❌ Error: " + error.message);
+    }
+}
+
+
+
+// --- YEH LOGIN PAGE STATS KA CODE HAI ---
+
+async function fetchPublicStats() {
+  try {
+    // Bina login kiye products ka count lene ke liye
+    const snapshot = await db.collection('products').get();
+    let available = 0;
+    let sold = 0;
+
+    snapshot.forEach(doc => {
+      if (doc.data().isSoldOut === true) {
+        sold++;
+      } else {
+        available++;
+      }
+    });
+
+    // Dashboard IDs ke saath confusion na ho isliye checks lagaye hain
+    const stockEl = document.getElementById('loginStock');
+    const soldEl = document.getElementById('loginSold');
+    
+    if(stockEl) stockEl.textContent = available;
+    if(soldEl) soldEl.textContent = sold;
+    
+  } catch (err) {
+    console.error("Public Stats Error:", err);
+  }
+}
+
+// Page load hote hi ise turant chalana hai
+fetchPublicStats();
+
+// Har 30 second mein automatic update (Optional)
+setInterval(fetchPublicStats, 30000); 
+
 // Admin functions
 async function giveManualAccess() {
   if (userRole !== 'admin') {
