@@ -1,4 +1,3 @@
-
 <!doctype html>
 <html>
 <head>
@@ -125,9 +124,39 @@ body {padding-bottom: env(safe-area-inset-bottom);}
 
 
 
-.app-container {min-height:100vh; display:flex; flex-direction:column;}
-#lock {max-width:100%; width:100%; margin:0; border-radius:0; height:90vh; display:flex; flex-direction:column; justify-content:center; padding:20px; background:linear-gradient(135deg, #0f1220 0%, #1a1f3a 100%);}
-#lock .card {max-width:100%; width:100%; padding:25px; border-radius:20px; box-shadow:0 20px 40px rgba(0,0,0,0.3);}
+#lock {
+  max-width: 100%;
+  width: 100%;
+  margin: 0;
+  border-radius: 0;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* yaha se aap login page ko up down center kar sakte bas end ko change karna i */
+  padding: 30px;
+  padding-top: 150px;
+  position: relative; /* Overlay ke liye zaroori hai */
+  overflow: hidden;
+
+  /* Background Wallpaper */
+  background: url('https://helproot.github.io/images/wallpaper-2.png');
+  background-size: cover;
+  background-position: center;
+}
+
+/* Card ko blur ke upar dikhane ke liye */
+#lock .card {
+  position: relative;
+  z-index: 2; /* Blur layer se upar rakhne ke liye */
+  background: rgba(27, 31, 59, 0.6);
+  backdrop-filter: blur(7px); /* Card ke andar extra depth */
+  -webkit-backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.6);
+  border-radius: 30px; /* Thoda zyada rounded modern look ke liye */
+}
+
+
 
 button {padding:14px 20px; margin:8px 0; border:0; border-radius:12px; font-size:16px; font-weight:600; cursor:pointer; min-height:48px; touch-action:manipulation;}
 .action {background:#6d7cff; color:#fff;}
@@ -416,7 +445,7 @@ let currentQRProduct = null;  // Ye add karein
 
         <div style="margin-bottom: 20px;">
             <button onclick="handleUPIPayment()" style="background:#00d4aa; color:white; border:none; padding:14px; border-radius:12px; font-weight:bold; cursor:pointer; width:100%; font-size:15px;">
-                🚀 Pay with PhonePe / GPay / Paytm
+                🚀Pay with PhonePe/GPay/Paytm
             </button>
         </div>
 
@@ -427,12 +456,12 @@ let currentQRProduct = null;  // Ye add karein
                    style="width:100%; padding:12px; border-radius:10px; border:1px solid #3d4465; background:#15193a; color:white; text-align:center; font-size:16px; margin-bottom:10px;">
             
             <button class="action" onclick="submitTransaction()" style="width:100%; background:#6d7cff; color:#fff; border:none; padding:12px; border-radius:10px; font-weight:bold;">
-                ✅ Submit Transaction
+              Submit Transaction✅
             </button>
         </div>
 
         <p style="font-size:13px; color:#ffda6a; margin-top:15px; font-weight:500;">
-          ⏳ Admin will verify within 5m ⏳
+          ⏳Admin will verify within 5m⏳
         </p>
     </div>
 </div>
@@ -471,11 +500,11 @@ function copyUPI() {
       </div>
     </div>
 
-    <button onclick="showSection('dashboard')">📊 Dashboard</button>
-    <button onclick="showSection('products')">🛒 Accounts</button>
+    <button onclick="showSection('dashboard')">📊Dashboard</button>
+    <button onclick="showSection('products')">🛒Accounts</button>
     
     <div id="userSection">
-      <button onclick="showSection('mykeys')">🔑 My Purchase</button>
+      <button onclick="showSection('mykeys')">🔑My Purchase</button>
       
       
     </div>
@@ -541,17 +570,17 @@ function copyUPI() {
     <h3>⚙️ User Settings</h3>
     
     <div style="margin-bottom: 20px; padding: 15px; background: rgba(255,255,255,0.05); border-radius: 12px; border: 1px solid rgba(109,124,255,0.2);">
-      <p style="margin-bottom: 10px; color: #6dff9a; font-weight: bold;">🖼️ Profile Photo URL</p>
+      <p style="margin-bottom: 10px; color: #6dff9a; font-weight: bold;">🖼️Profile Photo URL🖼️</p>
       <input id="photoUrlInput" placeholder="Paste Image URL (PNG/JPG)">
       <button class="action" onclick="updateProfilePhoto()" style="width: 100%;">Update Photo</button>
     </div>
 
     <div style="margin-bottom: 20px; padding: 15px; background: rgba(255,255,255,0.05); border-radius: 12px; border: 1px solid rgba(255,235,59,0.2);">
-      <p style="margin-bottom: 10px; color: #ffeb3b; font-weight: bold;">🔑 Security</p>
+      <p style="margin-bottom: 10px; color: #ffeb3b; font-weight: bold;">🔑Security🔑</p>
       <button class="action" onclick="sendPasswordReset()" style="width: 100%; background: #ffeb3b; color: #000;">Change Password (Reset Link)</button>
     </div>
 
-    <button class="danger" onclick="logout()" style="width: 100%; border-radius: 12px;">🚪 Logout Account</button>
+    <button class="danger" onclick="logout()" style="width: 100%; border-radius: 12px;">🚪Logout Account🚪</button>
   </div>
 
 
@@ -574,7 +603,7 @@ function copyUPI() {
       <div class="broadcast-section">
         <input id="broadcastTitleInput" placeholder="Offer Title (e.g. 50% OFF SALE)">
         <textarea id="broadcastMessageInput" placeholder="Offer message... Make it exciting! 🎉"></textarea>
-        <button class="action" onclick="sendBroadcast()">🚀 Send to All Users</button>
+        <button class="action" onclick="sendBroadcast()">🚀Send to All Users</button>
       </div>
     </div>
 
@@ -621,10 +650,10 @@ function copyUPI() {
 <!-- LOGIN SCREEN -->
 <div id="lock">
   <div class="card">
-    <h3>🎛️Xaiomi Accounts Store🎛️</h3>
+    <h3>Xaiomi BTunlock Accounts Store</h3>
     
     <div class="live-status">
-  <span class="live-dot"></span> STORE ONLINE - FETCHING LIVE DATA
+  <span class="live-dot"></span> STOCK ONLINE - FETCHING LIVE DATA..
 </div>
 
     <div id="loginStats" style="display: flex; justify-content: space-around; margin-bottom: 20px; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 12px; border: 1px solid rgba(109,124,255,0.1);">
@@ -816,7 +845,7 @@ async function loadPendingTransactions() {
             <button class="manual-verify" onclick="verifyTransaction('${doc.id}','${data.userId}','${data.productId}')">
               ✅ VERIFY
             </button>
-            <button class="danger" onclick="rejectTransaction('${doc.id}')">❌ REJECT</button>
+            <button class="danger" onclick="rejectTransaction('${doc.id}')">❌REJECT</button>
           </div>
         </div>
       `;
@@ -1009,7 +1038,7 @@ async function renderProductsList() {
             </div>
             <small>Listed on: ${dateStr}</small><br>
             <div style="margin:0px 0;">
-              <button class="action" onclick="openQRModal(${p.price}, '${p.id}')">💳 Buy Now</button>
+              <button class="action" onclick="openQRModal(${p.price}, '${p.id}')">💳Buy Now</button>
             </div>
           </div>`;
       }
@@ -1026,7 +1055,7 @@ async function renderProductsList() {
 async function renderMyKeys() {
   try {
     const keyList = document.getElementById('myKeyList');
-    keyList.innerHTML = '<div class="item" style="text-align:center;">⌛ Loading your history...</div>';
+    keyList.innerHTML = '<div class="item" style="text-align:center;">⌛Loading your history...</div>';
     
     // 1. User ki saari transaction history fetch karein (Pending, Rejected, Verified)
     const txSnapshot = await db.collection('pendingTransactions')
@@ -1050,7 +1079,7 @@ async function renderMyKeys() {
       (b.data().submittedAt?.toMillis() || 0) - (a.data().submittedAt?.toMillis() || 0)
     );
 
-    let html = '<h4 style="color:#ffeb3b; margin: 10px 0 15px 0;">📅 Order History (Date Wise)</h4>';
+    let html = '<h4 style="color:#ffeb3b; margin: 10px 0 15px 0;">📅Order History (Date Wise)</h4>';
 
     sortedTransactions.forEach(doc => {
       const tx = doc.data();
@@ -1091,12 +1120,12 @@ async function renderMyKeys() {
         html += `
           <div class="product-creds" style="margin-top:12px; background:rgba(0,0,0,0.2); border:1px solid #6dff9a;">
             <div style="margin-bottom:8px;">
-              <b style="color:#6dff9a;">🆔 Login ID:</b> <span style="word-break:break-all;">${productInfo.loginId}</span>
+              <b style="color:#6dff9a;">🆔Login ID:</b> <span style="word-break:break-all;">${productInfo.loginId}</span>
               <button class="copy-btn" style="width:100%; margin-top:5px; padding:5px;" onclick="copyToClipboard('${productInfo.loginId}', this)">Copy ID</button>
             </div>
             ${productInfo.key ? `
             <div>
-              <b style="color:#6dff9a;">🔑 Password:</b> <span>${productInfo.key}</span>
+              <b style="color:#6dff9a;">🔑Password:</b> <span>${productInfo.key}</span>
               <button class="copy-btn" style="width:100%; margin-top:5px; padding:5px;" onclick="copyToClipboard('${productInfo.key}', this)">Copy Key</button>
             </div>` : ''}
           </div>
@@ -1126,7 +1155,7 @@ async function updateProfilePhoto() {
     await db.collection('users').doc(currentUser.uid).update({ 
       profilePhoto: url 
     });
-    notify('✅ Profile Photo Updated!', 'success');
+    notify('✅Profile Photo Updated!', 'success');
     document.getElementById('photoUrlInput').value = '';
     
     // Turant UI update karne ke liye dobara load karein
@@ -1165,7 +1194,7 @@ async function loadUserData() {
     let namePart = userEmail.split('@')[0].toUpperCase();
     if(namePart.length > 10) namePart = namePart.substring(0, 8) + "..";
     document.getElementById('sideName').textContent = namePart;
-    document.getElementById('sideRole').textContent = userRole === 'admin' ? '👑 Administrator' : 'Verified User ✅';
+    document.getElementById('sideRole').textContent = userRole === 'admin' ? '👑Administrator' : 'Verified User✅';
 
     // Dashboard Stats
     document.getElementById('userInfo').textContent = userEmail;
@@ -1397,7 +1426,7 @@ function handleUPIPayment() {
     console.log("Paying Amount:", currentProductPrice);
 
     if (!currentProductPrice || currentProductPrice <= 0) {
-        alert("❌ Error: Price zero hai! Please product ko phir se select karein.");
+        alert("❌Error: Price zero hai! Please product ko phir se select karein.");
         return;
     }
 
@@ -1410,7 +1439,7 @@ function handleUPIPayment() {
         
         // Agar 2 second tak kuch na ho (matlab link kaam nahi kiya)
         setTimeout(() => {
-            alert("Agar UPI App nahi khula, toh please QR code scan karein.");
+            alert("If UPI apps are not open right now, kindly scan the QR code.");
         }, 2000);
     } else {
         alert("Desktop par UPI Apps nahi khulte. Please phone se QR scan karein.");
@@ -1515,19 +1544,19 @@ setInterval(fetchPublicStats, 30000);
 // Admin functions
 async function giveManualAccess() {
   if (userRole !== 'admin') {
-    notify('❌ Admin only!', 'error');
+    notify('❌Admin only!', 'error');
     return;
   }
   const userEmail = document.getElementById('manualUserEmail').value.trim();
   const productId = document.getElementById('manualProductId').value.trim();
   if (!userEmail || !productId) {
-    notify('❌ Enter both email & product ID!', 'error');
+    notify('❌Enter both email & product ID!', 'error');
     return;
   }
   try {
     const usersSnapshot = await db.collection('users').where('email', '==', userEmail).get();
     if (usersSnapshot.empty) {
-      notify('❌ User not found!', 'error');
+      notify('❌User not found!', 'error');
       return;
     }
     const userDoc = usersSnapshot.docs[0];
@@ -1551,7 +1580,7 @@ async function giveManualAccess() {
 
 // 🔥 PERFECTLY FIXED - NO MORE "Error loading users"
 async function loadUserManagement() {
-  if (userRole !== 'admin') return notify('❌ Admin only!', 'error');
+  if (userRole !== 'admin') return notify('❌Admin only!', 'error');
   
   try {
     document.getElementById('userManagementList').innerHTML = 'Loading users...';
@@ -1567,8 +1596,8 @@ async function loadUserManagement() {
             [${u.role.toUpperCase()}]
           </span><br>
           <div class="row">
-            <button class="manual-verify" onclick="viewUserHistory('${doc.id}', '${u.email}')">👁️ View History</button>
-            <button class="danger" onclick="deleteUser('${doc.id}')">🗑️ Delete User</button>
+            <button class="manual-verify" onclick="viewUserHistory('${doc.id}', '${u.email}')">👁️View History</button>
+            <button class="danger" onclick="deleteUser('${doc.id}')">🗑️Delete User</button>
           </div>
         </div>
       `;
@@ -1576,7 +1605,7 @@ async function loadUserManagement() {
     document.getElementById('userManagementList').innerHTML = html;
     document.getElementById('usersCount').textContent = snapshot.size;
   } catch(err) {
-    notify('❌ Error loading users', 'error');
+    notify('❌Error loading users', 'error');
   }
 }
 async function viewUserHistory(userId, userEmail) {
@@ -1585,7 +1614,7 @@ async function viewUserHistory(userId, userEmail) {
       .where('userId', '==', userId)
       .get();
 
-    let html = `<h3>📜 History for: ${userEmail}</h3>`;
+    let html = `<h3>📜History for: ${userEmail}</h3>`;
     html += `<button class="action" onclick="showSection('manageUsers')" style="margin-bottom:15px;">⬅️ Back to Users</button>`;
 
     if (txSnapshot.empty) {
@@ -1676,12 +1705,12 @@ async function loadProductManagement() {
           <div style="margin-top:8px; font-size:13px; opacity:0.9;">
             ID: <span class="ok">${doc.id}</span> | Price: ₹${p.price}<br>
             Key: <span style="color:#ffeb3b">${p.key}</span><br>
-            <span style="color:#a5b1ff; font-size:11px;">📅 Added: ${dateStr}</span>
+            <span style="color:#a5b1ff; font-size:11px;">📅Added: ${dateStr}</span>
           </div>
 
           ${isSold ? `
             <div style="margin-top:10px; padding:8px; background:rgba(255,68,68,0.1); border-radius:8px; border:1px solid rgba(255,68,68,0.2);">
-              <b style="color:#ff4444; font-size:12px;">👤 BOUGHT BY:</b><br>
+              <b style="color:#ff4444; font-size:12px;">👤BOUGHT BY:</b><br>
               <span style="font-size:13px; color:#fff;">${buyerEmail}</span>
             </div>
           ` : ''}
