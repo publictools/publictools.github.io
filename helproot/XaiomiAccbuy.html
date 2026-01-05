@@ -185,6 +185,45 @@ input {padding:16px; margin:10px 0; border-radius:12px; border:1px solid #2a2f4a
 input::placeholder {color:#8a8fc4;}
 input:focus {outline:none; border-color:#6d7cff; box-shadow:0 0 0 3px rgba(109,124,255,0.2);}
 
+
+
+#toast {
+  visibility: hidden;
+  min-width: 300px;
+  background-color: #1b1f3b; 
+  color: #ffffff;
+  text-align: center;
+  border-radius: 15px;
+  padding: 16px;
+  
+  /* Ye 3 lines sabse important hain */
+  position: fixed; 
+  z-index: 999999 !important; /* Isse ye har ek cheez ke upar aa jayega */
+  bottom: 10%; /* Screen ke niche se 10% upar */
+  
+  left: 50%;
+  transform: translateX(-50%);
+  border: 2px solid #6d7cff;
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.8), 0 0 15px rgba(109, 124, 255, 0.5);
+  font-size: 14px;
+  font-weight: 600;
+  backdrop-filter: none !important; /* Ispe khud pe blur mat lagao taaki saaf dikhe */
+}
+
+#toast.show {
+  visibility: visible;
+  animation: fadein 0.5s ease-out;
+}
+
+@keyframes fadein {
+  from { bottom: 0; opacity: 0; }
+  to { bottom: 10%; opacity: 1; }
+}
+
+
+
+
+
 /* --- COMPACT MOBILE NAV CSS --- */
 #mobileBottomNav {
   position: fixed; 
@@ -418,6 +457,7 @@ let currentQRProduct = null;  // Ye add karein
 </head>
 <body>
 <audio id="successPing" src="https://www.soundjay.com/buttons/sounds/button-37a.mp3" preload="auto"></audio>
+<div id="toast">If UPI apps are not open, kindly scan the QR code.</div>
 
 <!-- BROADCAST POPUP -->
 <div id="broadcastPopup" class="broadcast-popup">
@@ -1437,10 +1477,15 @@ function handleUPIPayment() {
         // Mobile par app kholne ki koshish karega
         window.location.href = upiLink;
         
-        // Agar 2 second tak kuch na ho (matlab link kaam nahi kiya)
         setTimeout(() => {
-            alert("If UPI apps are not open right now, kindly scan the QR code.");
-        }, 2000);
+    // Alert ki jagah Toast dikhayega
+    var x = document.getElementById("toast");
+    x.className = "show";
+    
+    // 5 second baad toast apne aap gayab ho jayega
+    setTimeout(function(){ x.className = x.className.replace("show", ""); }, 4000);
+}, 1000);
+
     } else {
         alert("Desktop par UPI Apps nahi khulte. Please phone se QR scan karein.");
     }
