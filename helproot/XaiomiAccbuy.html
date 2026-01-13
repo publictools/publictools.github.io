@@ -574,18 +574,51 @@ function copyUPI() {
       <img src="https://cdn-icons-png.flaticon.com/512/3670/3670051.png" alt="Support">
     </a>
 
-    <h3>📊Dashboard📊</h3>
-    
-    <div class="stats-grid">
-      <div class="stat-card"><b id="userInfo">Loading...</b><small>User Email</small></div>
-      <div class="stat-card"><b id="roleBadge" class="ok">Loading...</b><small>Role</small></div>
-      <div class="stat-card"><b id="totalProducts">0</b><small>Total Account</small></div>
-      <div class="stat-card"><b id="userKeys">0</b><small>Verified Purchase</small></div>
-    </div> 
-<hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.1); margin: 15px 0;">
-    <p style="font-size: 14px; opacity: 0.6; margin: 20px 0 10px 0; text-align: center;">
-      Buy Xiaomi Community Bootloader Unlock Permission Account.
-    </p>
+    <div style="text-align:center; padding: 10px 0 20px 0;">
+  <h3 style="margin: 0; font-size: 20px; color: #fff; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase;">
+    <span style="color: #6d7cff;">📊</span> Dashboard <span style="color: #6d7cff;">📊</span>
+  </h3>
+</div>
+
+<div class="stats-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 5px;">
+  
+  <div style="background: linear-gradient(145deg, rgba(35, 42, 94, 0.9), rgba(21, 25, 58, 0.9)); border: 1px solid rgba(109, 124, 255, 0.15); border-radius: 22px; padding: 18px; text-align: center; box-shadow: 0 8px 32px rgba(0,0,0,0.3);">
+    <div style="background: rgba(109, 124, 255, 0.1); width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 10px auto;">
+       <span style="font-size: 16px;">📧</span>
+    </div>
+    <b id="userInfo" style="font-size: 12px; color: #fff; word-break: break-all; display: block; min-height: 32px; line-height: 1.4;">Loading...</b>
+    <small style="color: #a5b1ff; opacity: 0.5; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">User Email</small>
+  </div>
+
+  <div style="background: linear-gradient(145deg, rgba(35, 42, 94, 0.9), rgba(21, 25, 58, 0.9)); border: 1px solid rgba(109, 124, 255, 0.15); border-radius: 22px; padding: 18px; text-align: center; box-shadow: 0 8px 32px rgba(0,0,0,0.3);">
+    <div style="background: rgba(109, 255, 154, 0.1); width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 10px auto;">
+       <span style="font-size: 16px;">🛡️</span>
+    </div>
+    <b id="roleBadge" class="ok" style="font-size: 15px; color: #6dff9a; display: block; margin-bottom: 5px; font-weight: 800;">Loading...</b>
+    <small style="color: #a5b1ff; opacity: 0.5; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Account Role</small>
+  </div>
+
+  <div onclick="showSection('products')" style="background: linear-gradient(145deg, #2b357a, #1a214d); border: 1px solid rgba(109, 124, 255, 0.4); border-radius: 22px; padding: 20px; text-align: center; cursor: pointer; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 0 10px 20px rgba(109, 124, 255, 0.15);" onmouseover="this.style.transform='translateY(-5px)'; this.style.borderColor='#6d7cff';" onmouseout="this.style.transform='translateY(0)'; this.style.borderColor='rgba(109, 124, 255, 0.4)';">
+    <div style="font-size: 10px; color: #6dff9a; margin-bottom: 5px; font-weight: 800;">LIVE STOCK</div>
+    <b id="totalProducts" style="font-size: 28px; color: #fff; display: block; line-height: 1;">0</b>
+    <small style="color: #fff; font-weight: 700; font-size: 11px; margin-top: 8px; display: block; opacity: 0.9;">Total Accounts</small>
+  </div>
+
+  <div onclick="showSection('mykeys')" style="background: linear-gradient(145deg, #2b357a, #1a214d); border: 1px solid rgba(109, 124, 255, 0.4); border-radius: 22px; padding: 20px; text-align: center; cursor: pointer; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 0 10px 20px rgba(109, 124, 255, 0.15);" onmouseover="this.style.transform='translateY(-5px)'; this.style.borderColor='#6d7cff';" onmouseout="this.style.transform='translateY(0)'; this.style.borderColor='rgba(109, 124, 255, 0.4)';">
+    <div style="font-size: 10px; color: #ffeb3b; margin-bottom: 5px; font-weight: 800;">OWNED</div>
+    <b id="userKeys" style="font-size: 28px; color: #fff; display: block; line-height: 1;">0</b>
+    <small style="color: #fff; font-weight: 700; font-size: 11px; margin-top: 8px; display: block; opacity: 0.9;">My Purchases</small>
+  </div>
+
+</div> 
+
+<div style="margin-top: 25px; background: rgba(109, 124, 255, 0.05); border-radius: 15px; padding: 15px; border: 1px dashed rgba(109, 124, 255, 0.2);">
+  <p style="font-size: 13px; color: #a5b1ff; line-height: 1.5; margin: 0; text-align: center; font-style: italic;">
+    "Unlock the true potential of your Xiaomi device with our verified bootloader accounts."
+  </p>
+</div>
+
+
 
 
 
@@ -615,10 +648,33 @@ function copyUPI() {
       <button class="action" onclick="updateProfilePhoto()" style="width: 100%;">Update Photo</button>
     </div>
 
-    <div style="margin-bottom: 20px; padding: 15px; background: rgba(255,255,255,0.05); border-radius: 12px; border: 1px solid rgba(255,235,59,0.2);">
-      <p style="margin-bottom: 10px; color: #ffeb3b; font-weight: bold;">🔑Security🔑</p>
-      <button class="action" onclick="sendPasswordReset()" style="width: 100%; background: #ffeb3b; color: #000;">Change Password (Reset Link)</button>
-    </div>
+<div style="background: rgba(26, 31, 60, 0.8); border-radius: 15px; padding: 15px; margin-top: 15px; border: 1px solid rgba(109, 124, 255, 0.2);">
+  <h3 style="margin: 0 0 12px 0; font-size: 14px; color: #ffeb3b; display: flex; align-items: center; gap: 6px; justify-content: center;">
+    🔐 Update Security
+  </h3>
+
+  <div style="display: flex; flex-direction: column; gap: 8px;">
+    <input type="password" id="currPass" placeholder="Current Password" 
+      style="width: 100%; padding: 10px; border-radius: 10px; background: #0d1127; border: 1px solid #303651; color: #fff; font-size: 13px; outline: none;">
+
+    <input type="password" id="newPass" placeholder="New Password" 
+      style="width: 100%; padding: 10px; border-radius: 10px; background: #0d1127; border: 1px solid #303651; color: #fff; font-size: 13px; outline: none;">
+
+    <input type="password" id="reNewPass" placeholder="Retype New Password" 
+      style="width: 100%; padding: 10px; border-radius: 10px; background: #0d1127; border: 1px solid #303651; color: #fff; font-size: 13px; outline: none;">
+
+    <button onclick="updateUserPassword()" style="
+      background: linear-gradient(90deg, #6d7cff, #8e99ff);
+      color: #fff; border: none; padding: 12px; border-radius: 10px;
+      font-weight: 700; cursor: pointer; margin-top: 5px;
+      font-size: 13px; letter-spacing: 0.5px;
+    ">
+      SAVE NEW PASSWORD
+    </button>
+  </div>
+</div>
+
+
 
     <button class="danger" onclick="logout()" style="width: 100%; border-radius: 12px;">🚪Logout Account🚪</button>
   </div>
@@ -849,56 +905,57 @@ async function submitTransaction() {
 
 // 🔥 FIXED LOAD PENDING TRANSACTIONS
 // 🔥 NO INDEX NEEDED - PERFECTLY WORKS!
-async function loadPendingTransactions() {
+async function verifyTransaction(txId, userId, productId) {
+  if (!confirm('Verify this payment and grant access?')) return;
+  
   try {
-    document.getElementById('transactionList').innerHTML = 'Loading...';
+    const userDoc = await db.collection('users').doc(userId).get();
+    const batch = db.batch();
     
-    // 🔥 SIMPLE QUERY - NO INDEX REQUIRED
-    const snapshot = await db.collection('pendingTransactions').get();
-    
-    // Filter pending transactions in code
-    const pendingTx = snapshot.docs.filter(doc => {
-      const data = doc.data();
-      return data.status === 'pending';
-    }).sort((a, b) => {
-      // Sort by timestamp (newest first)
-      return (b.data().submittedAt?.toMillis() || 0) - (a.data().submittedAt?.toMillis() || 0);
-    });
+    // ✅ AAJ KI DATE (DD/MM/YYYY) - Ye user side pe dikhegi
+    const todayStr = new Date().toLocaleDateString('en-GB');
 
-    if (pendingTx.length === 0) {
-      document.getElementById('transactionList').innerHTML = 
-        '<div class="item"><p style="text-align:center;color:#ffeb3b;">No pending payments</p></div>';
-      document.getElementById('pendingCount').textContent = '0';
-      return;
+    if (!userDoc.exists) {
+      const txDoc = await db.collection('pendingTransactions').doc(txId).get();
+      const txData = txDoc.data();
+      batch.set(db.collection('users').doc(userId), {
+        email: txData.userEmail || "user@store.com",
+        role: 'user',
+        purchasedProducts: [productId], 
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+    } else {
+      batch.update(db.collection('users').doc(userId), { 
+        purchasedProducts: firebase.firestore.FieldValue.arrayUnion(productId) 
+      });
     }
 
-    let html = '';
-    pendingTx.forEach((doc) => {
-      const data = doc.data();
-      html += `
-        <div class="item" style="border-left:4px solid #ffeb3b;">
-          <b>${data.userEmail}</b><br>
-          <small>TX ID: ${data.transactionId}</small><br>
-          <small>Product: ${data.productId}</small><br>
-          <small>Time: ${data.submittedAt ? new Date(data.submittedAt.toDate()).toLocaleString() : 'Now'}</small>
-          <div class="row">
-            <button class="manual-verify" onclick="verifyTransaction('${doc.id}','${data.userId}','${data.productId}')">
-              ✅ VERIFY
-            </button>
-            <button class="danger" onclick="rejectTransaction('${doc.id}')">❌REJECT</button>
-          </div>
-        </div>
-      `;
+    batch.update(db.collection('pendingTransactions').doc(txId), { 
+      status: 'verified', 
+      verifiedAt: firebase.firestore.FieldValue.serverTimestamp() 
     });
     
-    document.getElementById('transactionList').innerHTML = html;
-    document.getElementById('pendingCount').textContent = pendingTx.length;
+    // 🔥 FIX: soldDate (Text) aur soldAt (Timestamp) dono save kar rahe hain
+    batch.update(db.collection('products').doc(productId), { 
+      isSoldOut: true,
+      soldDate: todayStr, // Isse 'Recently' ki problem solve hogi
+      soldAt: firebase.firestore.FieldValue.serverTimestamp(),
+      soldTo: userId
+    });
     
-  } catch(error) {
-    console.error('Error:', error);
-    document.getElementById('transactionList').innerHTML = `<p class="bad">Error: ${error.message}</p>`;
+    await batch.commit();
+
+    const sound = document.getElementById("successPing");
+    if (sound) { sound.currentTime = 0; sound.play().catch(e => {}); }
+
+    notify('✅ Payment Verified & Date Saved!', 'success');
+    loadPendingTransactions();
+
+  } catch (err) {
+    notify('❌ Error: ' + err.message, 'error');
   }
 }
+
 // 🔥 FIXED VERIFY TRANSACTION WITH SOLD OUT FEATURE
 // 🔥 SMART VERIFY: User delete hone par bhi kaam karega
 
@@ -1026,21 +1083,14 @@ async function renderProductsList() {
     allProducts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
     if (allProducts.length === 0) {
-      document.getElementById('productList').innerHTML = '<p>No products available</p>';
+      document.getElementById('productList').innerHTML = '<p style="text-align:center; opacity:0.5;">No products available</p>';
       return;
     }
 
-    // 🔥 DHAYAN SE DEKHO: Ye hai sorting ka magic
+    // 1. Smart Sorting: Available upar, Sold niche
     allProducts.sort((a, b) => {
-      // 1. Status Check: Jo sold nahi hai (false) wo upar rahega
-      if (a.isSoldOut !== b.isSoldOut) {
-        return a.isSoldOut ? 1 : -1; 
-      }
-      // 2. Date Check: Agar dono available hain, toh naya (Latest) upar dikhao
-      // Note: Iske liye addProduct mein submittedAt hona zaroori hai
-      const dateA = a.submittedAt?.toMillis() || 0;
-      const dateB = b.submittedAt?.toMillis() || 0;
-      return dateB - dateA; // B - A matlab Latest First
+      if (a.isSoldOut !== b.isSoldOut) return a.isSoldOut ? 1 : -1;
+      return (b.submittedAt?.toMillis() || 0) - (a.submittedAt?.toMillis() || 0);
     });
 
     let html = '';
@@ -1048,48 +1098,84 @@ async function renderProductsList() {
       const isPurchased = userProducts.includes(p.id);
       const isSoldOut = p.isSoldOut || false;
       
-      // Date dikhane ke liye format
-      const dateStr = p.submittedAt ? new Date(p.submittedAt.toDate()).toLocaleDateString() : 'New';
+      // ✅ FIX: Listed Date (Undefined handle karne ke liye)
+      let listedDate = "Recently";
+      if (p.submittedAt && p.submittedAt.toDate) {
+          listedDate = new Date(p.submittedAt.toDate()).toLocaleDateString('en-GB');
+      }
       
       if (isSoldOut) {
-        // --- SOLD OUT LOOK (Niche dikhega) ---
+        // ✅ FIX: Sold Date (Agar string na mile toh timestamp check karega)
+        let displaySoldDate = "Recently";
+        if (p.soldDate) {
+            displaySoldDate = p.soldDate; 
+        } else if (p.soldAt && p.soldAt.toDate) {
+            displaySoldDate = new Date(p.soldAt.toDate()).toLocaleDateString('en-GB');
+        }
+
+        // --- SOLD OUT LOOK: Purana simple design ---
         html += `
-          <div class="item" style="opacity: 0.6; border-left: 4px solid #ff4444;">
-            <div style="display:flex; justify-content:space-between;">
-               <b>${p.name}</b>
-               <small style="color:#ff4444; font-weight:bold;">SOLD OUT</small>
+          <div class="item" style="opacity: 0.5; border-left: 4px solid #ff4444; margin-bottom: 12px; background: rgba(255,255,255,0.02); padding: 10px 15px; border-radius: 12px;">
+            <div style="display:flex; justify-content:space-between; align-items: center;">
+               <b style="color: #bbb;">${p.name}</b>
+               <small style="color:#ff4444; font-weight:bold; letter-spacing: 1px;">SOLD OUT</small>
             </div>
-            <small>Price: ₹${p.price} | Sold Date: ${dateStr}</small>
+            <small style="color: #777;">Price: ₹${p.price} | 📅 Sold on: ${displaySoldDate}</small>
           </div>`;
+
       } else if (isPurchased) {
         // --- PURCHASED LOOK ---
         html += `
-          <div class="item" style="border-left: 4px solid #6dff9a;">
-            <b>${p.name}</b> <small class="ok">(Purchased)</small><br>
-            <button class="action" onclick="showSection('mykeys')" style="padding:5px 10px; font-size:12px; margin-top:10px;">View Access</button>
+          <div class="item" style="border-left: 4px solid #6dff9a; background: rgba(109,255,154,0.05); margin-bottom: 12px; border-radius: 12px;">
+            <b style="color: #6dff9a;">${p.name}</b> <small style="color: #6dff9a; opacity: 0.8;">(Purchased ✅)</small><br>
+            <button class="action" onclick="showSection('mykeys')" style="padding:6px 12px; font-size:11px; margin-top:8px; border-radius: 8px;">View My Key</button>
           </div>`;
+
       } else {
-        // --- AVAILABLE LOOK (Upar dikhega) ---
+        // --- AVAILABLE LOOK: Naya premium design ---
         html += `
-          <div class="item" style="border-left: 4px solid #6d7cff;">
-            <div style="display:flex; justify-content:space-between;">
-               <b>${p.name}</b>
-               <b class="ok">₹${p.price}</b>
+          <div style="
+            background: linear-gradient(145deg, #232a5e, #15193a);
+            border: 1px solid rgba(109, 124, 255, 0.5);
+            border-radius: 22px;
+            padding: 18px;
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+          ">
+            <div style="position:absolute; top:-10px; right:-10px; width:60px; height:60px; background:rgba(109,124,255,0.15); filter:blur(20px); border-radius:50%;"></div>
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px;">
+              <div>
+                <h3 style="margin: 0; font-size: 17px; color: #fff; font-weight: 700;">${p.name}</h3>
+                <div style="margin-top: 4px;">
+                  <span style="font-size: 9px; color: #6dff9a; background: rgba(109,255,154,0.1); padding: 2px 8px; border-radius: 10px; border: 1px solid rgba(109,255,154,0.2); font-weight: bold;">⚡ HIGH QUALITY</span>
+                </div>
+              </div>
+              <div style="text-align: right;">
+                <div style="color: #6dff9a; font-size: 22px; font-weight: 900;">₹${p.price}</div>
+                <div style="font-size: 10px; color: #a5b1ff; opacity: 0.6;">Listed: ${listedDate}</div>
+              </div>
             </div>
-            <small>Listed on: ${dateStr}</small><br>
-            <div style="margin:0px 0;">
-              <button class="action" onclick="openQRModal(${p.price}, '${p.id}')">💳Buy Now</button>
-            </div>
-          </div>`;
+            <button onclick="openQRModal(${p.price}, '${p.id}')" style="
+              width: 100%; padding: 12px; border-radius: 14px; border: none; 
+              background: linear-gradient(90deg, #6d7cff, #8e99ff); color: #fff; 
+              font-weight: 800; font-size: 14px; cursor: pointer;
+              box-shadow: 0 5px 15px rgba(109,124,255,0.3);
+            ">
+              💳 BUY THIS ACCOUNT
+            </button>
+          </div>
+        `;
       }
     });
     
     document.getElementById('productList').innerHTML = html;
   } catch (err) {
-    console.error("Sorting Error:", err);
-    document.getElementById('productList').innerHTML = '<p class="bad">Error loading products</p>';
+    console.error("Render Error:", err);
   }
 }
+
 
 // 🔥 FIXED MY KEYS
 async function renderMyKeys() {
@@ -1385,6 +1471,40 @@ async function forgotPassword() {
     document.getElementById('msg').className = 'bad';
   }
 }
+async function updateUserPassword() {
+  const currPass = document.getElementById('currPass').value;
+  const newPass = document.getElementById('newPass').value;
+  const reNewPass = document.getElementById('reNewPass').value;
+  const user = firebase.auth().currentUser;
+
+  if (!currPass || !newPass || !reNewPass) return notify('❌ Fill all fields!', 'error');
+  if (newPass !== reNewPass) return notify('❌ Passwords do not match!', 'error');
+  if (newPass.length < 6) return notify('❌ Min 6 characters required!', 'error');
+
+  try {
+    // Re-verify the user
+    const credential = firebase.auth.EmailAuthProvider.credential(user.email, currPass);
+    await user.reauthenticateWithCredential(credential);
+
+    // Update to new password
+    await user.updatePassword(newPass);
+
+    notify('✅ Password Changed!', 'success');
+    
+    // Clear the form
+    document.getElementById('currPass').value = '';
+    document.getElementById('newPass').value = '';
+    document.getElementById('reNewPass').value = '';
+
+  } catch (error) {
+    if (error.code === 'auth/wrong-password') {
+      notify('❌ Current password wrong!', 'error');
+    } else {
+      notify('❌ Failed: ' + error.message, 'error');
+    }
+  }
+}
+
 
 // 1. Logout Function
 function logout() {
@@ -1631,18 +1751,62 @@ async function loadUserManagement() {
     document.getElementById('userManagementList').innerHTML = 'Loading users...';
     const snapshot = await db.collection('users').get();
     
+    // Sort: New users first
+    const sortedUsers = snapshot.docs.sort((a, b) => {
+      const dateA = a.data().createdAt?.toMillis() || 0;
+      const dateB = b.data().createdAt?.toMillis() || 0;
+      return dateB - dateA;
+    });
+    
     let html = '';
-    snapshot.docs.forEach(doc => {
+    sortedUsers.forEach(doc => {
       const u = doc.data();
+      const regDate = u.createdAt ? new Date(u.createdAt.toDate()).toLocaleDateString('en-GB') : 'N/A';
+      // Purchase Count nikalne ke liye
+      const purchaseCount = u.purchasedProducts ? u.purchasedProducts.length : 0;
+      const userRoleColor = u.role === 'admin' ? '#ff6b35' : '#6dff9a';
+      
       html += `
-        <div class="item" style="border-left: 4px solid #6d7cff;">
-          <b>${u.email}</b> 
-          <span style="color: ${u.role === 'admin' ? '#ff6b35' : '#6dff9a'}">
-            [${u.role.toUpperCase()}]
-          </span><br>
-          <div class="row">
-            <button class="manual-verify" onclick="viewUserHistory('${doc.id}', '${u.email}')">👁️View History</button>
-            <button class="danger" onclick="deleteUser('${doc.id}')">🗑️Delete User</button>
+        <div class="item" style="
+          background: linear-gradient(145deg, #1e244a, #15193a);
+          border: 1px solid rgba(255,255,255,0.05);
+          border-radius: 16px;
+          padding: 12px 15px;
+          margin: 10px 0;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        ">
+          <div style="flex: 1; overflow: hidden; margin-right: 10px;">
+            <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 2px;">
+              <b style="font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #fff;">
+                ${u.email}
+              </b>
+              <span style="color: ${userRoleColor}; font-size: 9px; font-weight: 800; text-transform: uppercase;">
+                [${u.role}]
+              </span>
+            </div>
+            
+            <div style="display: flex; flex-direction: column; gap: 2px;">
+              <small style="font-size: 10px; color: #a5b1ff; opacity: 0.8;">📅 Registered: ${regDate}</small>
+              <div style="display: flex; align-items: center; gap: 4px; margin-top: 2px;">
+                <span style="font-size: 10px; background: rgba(109,124,255,0.2); color: #6d7cff; padding: 2px 8px; border-radius: 20px; font-weight: bold; border: 1px solid rgba(109,124,255,0.3);">
+                  🛒 Purchased: ${purchaseCount}
+                </span>
+              </div>
+            </div>
+          </div>
+          
+          <div style="display: flex; gap: 8px;">
+            <button class="manual-verify" onclick="viewUserHistory('${doc.id}', '${u.email}')" 
+              style="width: 38px; height: 38px; min-width: 38px; border-radius: 12px; padding: 0; display: flex; align-items: center; justify-content: center; font-size: 18px; background: #ffeb3b; border: none;" title="History">
+              👁️
+            </button>
+            <button class="danger" onclick="deleteUser('${doc.id}')" 
+              style="width: 38px; height: 38px; min-width: 38px; border-radius: 12px; padding: 0; display: flex; align-items: center; justify-content: center; font-size: 16px; background: #ff4444; border: none;" title="Delete">
+              🗑️
+            </button>
           </div>
         </div>
       `;
@@ -1653,17 +1817,34 @@ async function loadUserManagement() {
     notify('❌Error loading users', 'error');
   }
 }
+
+
+
 async function viewUserHistory(userId, userEmail) {
   try {
+    // User details fetch karein registration date ke liye
+    const userDoc = await db.collection('users').doc(userId).get();
+    const userData = userDoc.data();
+    const registrationDate = userData.createdAt ? 
+      new Date(userData.createdAt.toDate()).toLocaleString('en-GB', { dateStyle: 'medium', timeStyle: 'short' }) : 
+      'Unknown';
+
     const txSnapshot = await db.collection('pendingTransactions')
       .where('userId', '==', userId)
       .get();
 
     let html = `<h3>📜History for: ${userEmail}</h3>`;
-    html += `<button class="action" onclick="showSection('manageUsers')" style="margin-bottom:15px;">⬅️ Back to Users</button>`;
+    // Registration Date Header
+    html += `
+      <div style="background:rgba(109,124,255,0.1); padding:10px; border-radius:10px; margin-bottom:15px; border:1px solid #6d7cff; text-align:center;">
+        <span style="color:#6dff9a; font-weight:bold;">📅 Joined On:</span> ${registrationDate}
+      </div>
+    `;
+    
+    html += `<button class="action" onclick="showSection('manageUsers')" style="margin-bottom:15px; width:100%;">⬅️ Back to Users List</button>`;
 
     if (txSnapshot.empty) {
-      html += '<p style="text-align:center; padding:20px;">No history found for this user.</p>';
+      html += '<p style="text-align:center; padding:20px; color:#aaa;">No purchase history found for this user.</p>';
     } else {
       const sorted = txSnapshot.docs.sort((a,b) => (b.data().submittedAt?.toMillis() || 0) - (a.data().submittedAt?.toMillis() || 0));
       
@@ -1678,21 +1859,22 @@ async function viewUserHistory(userId, userEmail) {
               <b>ID: ${tx.productId}</b>
               <b style="color:${color}">${tx.status.toUpperCase()}</b>
             </div>
-            <small>📅 ${date} | 💳 UTR: ${tx.transactionId}</small>
+            <small>📅 TX Date: ${date} | 💳 UTR: ${tx.transactionId}</small>
             <div class="row">
-              <button class="danger" style="padding:5px; font-size:12px;" onclick="deleteTransaction('${doc.id}', '${userId}', '${userEmail}')">🗑️ Delete History Entry</button>
+              <button class="danger" style="padding:5px; font-size:12px;" onclick="deleteTransaction('${doc.id}', '${userId}', '${userEmail}')">🗑️ Delete Entry</button>
             </div>
           </div>
         `;
       });
     }
 
-    // Is result ko Manage Users waale div mein hi dikha denge
     document.getElementById('userManagementList').innerHTML = html;
   } catch (err) {
+    console.error(err);
     notify('❌ Error fetching history', 'error');
   }
 }
+
 
 // Function to delete specific history entry
 async function deleteTransaction(txId, userId, userEmail) {
@@ -1719,61 +1901,113 @@ async function loadProductManagement() {
     const userMap = {};
     userSnapshot.forEach(doc => { userMap[doc.id] = doc.data().email; });
 
-    if(prodSnapshot.empty) {
-      document.getElementById('productManagementList').innerHTML = '<p class="bad">No products found</p>';
-      document.getElementById('productsCount').textContent = '0';
+    let products = prodSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+    if(products.length === 0) {
+      document.getElementById('productManagementList').innerHTML = '<p style="text-align:center; opacity:0.5;">No products found</p>';
       return;
     }
 
+    // 🔥 SORTING LOGIC: Available upar (Active), Sold niche
+    products.sort((a, b) => {
+      if (a.isSoldOut !== b.isSoldOut) {
+        return a.isSoldOut ? 1 : -1; // false (Active) pehle, true (Sold) baad mein
+      }
+      // Agar dono same status ke hain toh naya wala upar
+      return (b.submittedAt?.toMillis() || 0) - (a.submittedAt?.toMillis() || 0);
+    });
+
     let html = '';
-    prodSnapshot.docs.forEach(doc => {
-      const p = doc.data();
-      const isSold = p.isSoldOut;
-      const status = isSold ? '🔴 SOLD OUT' : '🟢 Available';
+    products.forEach(p => {
+      const isSold = p.isSoldOut || false;
       
-      // 🔥 DATE FORMATTING LOGIC ADDED HERE
+      // Date Formatting
       let dateStr = "New";
       if (p.submittedAt) {
           const d = p.submittedAt.toDate();
-          dateStr = d.toLocaleDateString('en-IN') + " " + d.toLocaleTimeString('en-IN', {hour: '2-digit', minute:'2-digit'});
+          dateStr = d.toLocaleDateString('en-GB') + " " + d.toLocaleTimeString('en-GB', {hour: '2-digit', minute:'2-digit', hour12: true});
       }
 
       const buyerEmail = isSold && p.soldTo ? (userMap[p.soldTo] || "Unknown User") : null;
 
+      // --- PREMIUM SIMPLE DESIGN ---
       html += `
-        <div class="item" style="border-left: 4px solid ${isSold ? '#ff4444' : '#6dff9a'};">
-          <div style="display:flex; justify-content:space-between; align-items:start;">
-            <b>${p.name}</b>
-            <b style="color:${isSold ? '#ff4444' : '#6dff9a'}">${status}</b>
-          </div>
-          
-          <div style="margin-top:8px; font-size:13px; opacity:0.9;">
-            ID: <span class="ok">${doc.id}</span> | Price: ₹${p.price}<br>
-            Key: <span style="color:#ffeb3b">${p.key}</span><br>
-            <span style="color:#a5b1ff; font-size:11px;">📅Added: ${dateStr}</span>
+        <div style="
+          background: #1a1f3c; 
+          border: 1px solid ${isSold ? 'rgba(255, 68, 68, 0.2)' : 'rgba(109, 255, 154, 0.2)'};
+          border-radius: 20px;
+          padding: 20px;
+          margin-bottom: 15px;
+          position: relative;
+        ">
+          <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+            <div>
+              <h3 style="margin: 0; font-size: 16px; color: #fff; letter-spacing: 0.5px;">${p.name}</h3>
+              <div style="font-size: 10px; color: #6d7cff; margin-top: 4px; opacity: 0.8;">ID: ${p.id}</div>
+            </div>
+            <div style="
+              background: ${isSold ? 'rgba(255, 68, 68, 0.1)' : 'rgba(109, 255, 154, 0.1)'};
+              color: ${isSold ? '#ff4444' : '#6dff9a'};
+              padding: 5px 12px;
+              border-radius: 20px;
+              font-size: 9px;
+              font-weight: 800;
+              border: 1px solid ${isSold ? 'rgba(255, 68, 68, 0.2)' : 'rgba(109, 255, 154, 0.2)'};
+              display: flex; align-items: center; gap: 4px;
+            ">
+              <span style="font-size: 12px;">●</span> ${isSold ? 'SOLD OUT' : 'ACTIVE'}
+            </div>
           </div>
 
+          <div style="margin-top: 15px; display: flex; justify-content: space-between; font-size: 12px;">
+             <span style="color: #bbb;">Price: <b style="color: #6dff9a;">₹${p.price}</b></span>
+             <span style="color: #bbb;">Key: <b style="color: #ffeb3b;">${p.key || '@notset'}</b></span>
+          </div>
+          <div style="color: #555; font-size: 10px; margin-top: 6px;">📅 Added on: ${dateStr}</div>
+
           ${isSold ? `
-            <div style="margin-top:10px; padding:8px; background:rgba(255,68,68,0.1); border-radius:8px; border:1px solid rgba(255,68,68,0.2);">
-              <b style="color:#ff4444; font-size:12px;">👤BOUGHT BY:</b><br>
-              <span style="font-size:13px; color:#fff;">${buyerEmail}</span>
+            <div style="margin-top: 15px; padding: 12px; background: rgba(255,68,68,0.05); border-radius: 12px; border: 1px dashed rgba(255,68,68,0.3);">
+              <div style="color: #ff8a8a; font-size: 9px; font-weight: bold; text-transform: uppercase; margin-bottom: 4px;">👤 BOUGHT BY</div>
+              <div style="color: #fff; font-size: 12px; opacity: 0.9;">${buyerEmail}</div>
             </div>
           ` : ''}
 
-          <div class="row" style="margin-top:12px;">
-            <button class="action" onclick="editProduct('${doc.id}','${p.name}','${p.loginId}','${p.key}',${p.price})">Edit</button>
-            <button class="danger" onclick="deleteProduct('${doc.id}')">Delete</button>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 18px;">
+            <button onclick="editProduct('${p.id}','${p.name}','${p.loginId}','${p.key}',${p.price})" style="
+              background: transparent;
+              color: #6d7cff;
+              border: 1px solid rgba(109, 124, 255, 0.4);
+              padding: 10px;
+              border-radius: 12px;
+              font-size: 13px;
+              font-weight: 600;
+              cursor: pointer;
+              display: flex; align-items: center; justify-content: center; gap: 6px;
+            ">✏️ Edit</button>
+            
+            <button onclick="deleteProduct('${p.id}')" style="
+              background: transparent;
+              color: #ff4444;
+              border: 1px solid rgba(255, 68, 68, 0.4);
+              padding: 10px;
+              border-radius: 12px;
+              font-size: 13px;
+              font-weight: 600;
+              cursor: pointer;
+              display: flex; align-items: center; justify-content: center; gap: 6px;
+            ">🗑️ Delete</button>
           </div>
         </div>`;
     });
     
     document.getElementById('productManagementList').innerHTML = html;
-    document.getElementById('productsCount').textContent = prodSnapshot.size;
+    document.getElementById('productsCount').textContent = products.length;
   } catch(err) {
     console.error(err);
-    document.getElementById('productManagementList').innerHTML = '<p class="bad">Error loading products</p>';
+    document.getElementById('productManagementList').innerHTML = '<p style="color:#ff4444; text-align:center;">Error loading list</p>';
   }
 }
+
 
 
 
