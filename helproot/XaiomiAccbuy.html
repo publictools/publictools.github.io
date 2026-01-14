@@ -905,56 +905,60 @@ async function submitTransaction() {
 
 // 🔥 FIXED LOAD PENDING TRANSACTIONS
 // 🔥 NO INDEX NEEDED - PERFECTLY WORKS!
-async function verifyTransaction(txId, userId, productId) {
-  if (!confirm('Verify this payment and grant access?')) return;
+async function loadPendingTransactions() {
+  if (userRole !== 'admin') return;
+
+  const listDiv = document.getElementById('transactionList');
+  const countSpan = document.getElementById('pendingCount');
   
   try {
-    const userDoc = await db.collection('users').doc(userId).get();
-    const batch = db.batch();
+    listDiv.innerHTML = '<div style="text-align:center; padding:20px;">⌛ Fetching Payments...</div>';
     
-    // ✅ AAJ KI DATE (DD/MM/YYYY) - Ye user side pe dikhegi
-    const todayStr = new Date().toLocaleDateString('en-GB');
+    // Sabhi pending payments fetch karein
+    const snapshot = await db.collection('pendingTransactions')
+      .where('status', '==', 'pending')
+      .get();
 
-    if (!userDoc.exists) {
-      const txDoc = await db.collection('pendingTransactions').doc(txId).get();
-      const txData = txDoc.data();
-      batch.set(db.collection('users').doc(userId), {
-        email: txData.userEmail || "user@store.com",
-        role: 'user',
-        purchasedProducts: [productId], 
-        createdAt: firebase.firestore.FieldValue.serverTimestamp()
-      });
-    } else {
-      batch.update(db.collection('users').doc(userId), { 
-        purchasedProducts: firebase.firestore.FieldValue.arrayUnion(productId) 
-      });
+    countSpan.textContent = snapshot.size;
+
+    if (snapshot.empty) {
+      listDiv.innerHTML = '<p style="text-align:center; padding:30px; color:#6dff9a; font-weight:bold;">✨ No Pending Payments! ✨</p>';
+      return;
     }
 
-    batch.update(db.collection('pendingTransactions').doc(txId), { 
-      status: 'verified', 
-      verifiedAt: firebase.firestore.FieldValue.serverTimestamp() 
+    let html = '';
+    // Sorting: Newest first (Manually sorting because no index required)
+    const docs = snapshot.docs.sort((a, b) => (b.data().submittedAt?.toMillis() || 0) - (a.data().submittedAt?.toMillis() || 0));
+
+    docs.forEach(doc => {
+      const tx = doc.data();
+      const time = tx.submittedAt ? new Date(tx.submittedAt.toDate()).toLocaleString('en-GB') : 'Just now';
+      
+      html += `
+        <div class="item" style="border-left: 5px solid #ffeb3b; background: rgba(255,235,59,0.05);">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <b style="color:#fff;">📧 ${tx.userEmail}</b>
+            <span style="background:#ffeb3b; color:#000; padding:2px 8px; border-radius:8px; font-weight:900;">₹${tx.amount || 'PAY'}</span>
+          </div>
+          <div style="margin: 10px 0; background:rgba(0,0,0,0.2); padding:10px; border-radius:10px;">
+            <div style="font-size:12px; color:#aaa;">UTR / Ref Number:</div>
+            <div style="font-size:16px; color:#6dff9a; font-weight:bold; letter-spacing:1px;">${tx.transactionId}</div>
+          </div>
+          <div style="font-size:11px; color:#888;">📅 ${time} | Product: ${tx.productId}</div>
+          <div class="row" style="margin-top:15px;">
+            <button class="manual-give" onclick="verifyTransaction('${doc.id}', '${tx.userId}', '${tx.productId}')" style="background:#6dff9a !important; font-weight:bold;">✅ APPROVE</button>
+            <button class="danger" onclick="rejectTransaction('${doc.id}')" style="font-weight:bold;">❌ REJECT</button>
+          </div>
+        </div>
+      `;
     });
-    
-    // 🔥 FIX: soldDate (Text) aur soldAt (Timestamp) dono save kar rahe hain
-    batch.update(db.collection('products').doc(productId), { 
-      isSoldOut: true,
-      soldDate: todayStr, // Isse 'Recently' ki problem solve hogi
-      soldAt: firebase.firestore.FieldValue.serverTimestamp(),
-      soldTo: userId
-    });
-    
-    await batch.commit();
-
-    const sound = document.getElementById("successPing");
-    if (sound) { sound.currentTime = 0; sound.play().catch(e => {}); }
-
-    notify('✅ Payment Verified & Date Saved!', 'success');
-    loadPendingTransactions();
-
+    listDiv.innerHTML = html;
   } catch (err) {
-    notify('❌ Error: ' + err.message, 'error');
+    console.error(err);
+    listDiv.innerHTML = '<div class="bad">❌ Error: Use Chrome Console to check if Indexing is needed.</div>';
   }
 }
+
 
 // 🔥 FIXED VERIFY TRANSACTION WITH SOLD OUT FEATURE
 // 🔥 SMART VERIFY: User delete hone par bhi kaam karega
