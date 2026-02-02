@@ -1,4 +1,3 @@
-/* 🔻 YAHAN SE */
 const firebaseConfig = {
   apiKey: "AIzaSyCDCijRwIxpHJK0gYmElkocvu8tNKFykpc",
   authDomain: "generalstore-b6e17.firebaseapp.com",
@@ -467,10 +466,6 @@ purchasedIds.forEach(pId => {
   }
 });
 
-
-
-
-
     keyList.innerHTML = html;
   } catch (err) {
     console.error(err);
@@ -706,25 +701,38 @@ function showSection(id, fromNav = false) {
         document.body.classList.remove('login-mode');
     }
 
-    // 2. Section visibility
+    // 2. Section visibility (Safe hide)
     document.querySelectorAll('.card').forEach(c => c.classList.add('hidden'));
     const target = document.getElementById(id);
     if(target) target.classList.remove('hidden');
     
-    // 3. Menu Button visibility (Sirf Dashboard + Not Login Mode)
+    // 3. Menu Button visibility
     const menuBtn = document.getElementById('menuBtn');
-    if (id === 'dashboard' && window.innerWidth < 768) {
-        menuBtn.style.display = 'flex';
-    } else {
-        menuBtn.style.display = 'none';
+    if (menuBtn) {
+        menuBtn.style.display = (id === 'dashboard' && window.innerWidth < 768) ? 'flex' : 'none';
     }
+
+    // 🔥 4. NAV HIGHLIGHT - NO ID MISMATCH FIX
+    // Pehle saare buttons se active class hatao
+    const navButtons = document.querySelectorAll('#mobileBottomNav button');
+    navButtons.forEach(btn => btn.classList.remove('nav-active'));
+
+    // Sahi button dhundne ka sabse safe tarika:
+    navButtons.forEach(btn => {
+        // Agar button ke onclick text mein wo 'id' hai, toh usse active kar do
+        if (btn.getAttribute('onclick').includes(`'${id}'`)) {
+            btn.classList.add('nav-active');
+        }
+    });
   
-  if(id === 'products') renderProductsList();
-  if(id === 'mykeys') renderMyKeys();
-  if(id === 'manageUsers') loadUserManagement();
-  if(id === 'manageProducts') loadProductManagement();
-  if(id === 'verifyTransactions') loadPendingTransactions();
+    // 5. Data Render Calls (Aapka original logic)
+    if(id === 'products') renderProductsList();
+    if(id === 'mykeys') renderMyKeys();
+    if(id === 'manageUsers') loadUserManagement();
+    if(id === 'manageProducts') loadProductManagement();
+    if(id === 'verifyTransactions') loadPendingTransactions();
 }
+
 
 
 function notify(msg, type='success'){
@@ -1371,7 +1379,7 @@ async function viewUserHistory(userId, userEmail) {
                     </div>
                     <div style="margin-top:12px;">
                         <button class="danger" style="width:100%; padding:10px; background:#ff4444; border-radius:8px; border:none; color:#fff; font-weight:bold; cursor:pointer;" 
-                        onclick="deleteTransaction('${doc.id}', '${userId}', '${userEmail}')">🗑️ Delete Entry & Revoke Access</button>
+                        onclick="deleteTransaction('${doc.id}', '${userId}', '${userEmail}')">🗑️Delete& Remove Access</button>
                     </div>
                 </div>`;
             });
@@ -1393,7 +1401,7 @@ purchasedIds.forEach(pId => {
                 🎁 <b>Type:</b> Administrator Gift
             </div>
             <button class="danger" style="width:100%; padding:10px; background:#e67e22; border:none; border-radius:8px; color:#fff; font-weight:bold; cursor:pointer;" 
-            onclick="revokeDirectAccess('${userId}', '${pId}', '${userEmail}')">⚠️ Revoke Access</button>
+            onclick="revokeDirectAccess('${userId}', '${pId}', '${userEmail}')">⚠️Remove Access</button>
         </div>`;
     }
 });
@@ -1526,7 +1534,7 @@ async function loadProductManagement() {
 
           ${isSold ? `
             <div style="margin-top: 15px; padding: 12px; background: rgba(255,68,68,0.05); border-radius: 12px; border: 1px dashed rgba(255,68,68,0.3);">
-              <div style="color: #ff8a8a; font-size: 9px; font-weight: bold; text-transform: uppercase; margin-bottom: 4px;">👤 BOUGHT BY</div>
+              <div style="color: #ff8a8a; font-size: 9px; font-weight: bold; text-transform: uppercase; margin-bottom: 4px;">👤BOUGHT BY</div>
               <div style="color: #fff; font-size: 12px; opacity: 0.9;">${buyerEmail}</div>
             </div>
           ` : ''}
@@ -1542,7 +1550,7 @@ async function loadProductManagement() {
               font-weight: 600;
               cursor: pointer;
               display: flex; align-items: center; justify-content: center; gap: 6px;
-            ">✏️ Edit</button>
+            ">✏️Edit</button>
             
             <button onclick="deleteProduct('${p.id}')" style="
               background: transparent;
@@ -1554,7 +1562,7 @@ async function loadProductManagement() {
               font-weight: 600;
               cursor: pointer;
               display: flex; align-items: center; justify-content: center; gap: 6px;
-            ">🗑️ Delete</button>
+            ">🗑️Delete</button>
           </div>
         </div>`;
     });
@@ -1603,16 +1611,18 @@ async function addProduct() {
     }
 
     // Inputs Clear karein
-    document.getElementById('productName').value = '';
+    document.getElementById('productName').value = 'Xiaomi Account';
     document.getElementById('productAccessId').value = '';
-    document.getElementById('productKey').value = '';
-    document.getElementById('productPrice').value = '';
+    document.getElementById('productKey').value = '@helproot';
+    document.getElementById('productPrice').value = '1000';
 
     loadProductManagement(); // Turant list refresh karein
   } catch (err) {
     notify('Error adding product!', 'error');
   }
 }
+
+
 
 
 function editProduct(productId, name, accessId, key, price) {
@@ -1851,9 +1861,3 @@ setInterval(updateDashboardTip, 12000);
 // ==========================================
 // -- Automatic suggest end
 // ==========================================
-
-
-
-function editUser(userId) {
-  notify('Edit user coming soon!');
-}
