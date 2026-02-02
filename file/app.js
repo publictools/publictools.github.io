@@ -374,11 +374,11 @@ async function renderMyKeys() {
 
     // Agar na transaction hai na purchased array mein kuch hai
     if (txSnapshot.empty && purchasedIds.length === 0) {
-      keyList.innerHTML = '<div class="item" style="text-align:center;"><p class="bad">No purchase history found.</p></div>';
+      keyList.innerHTML = '<div class="item" style="text-align:center;"><p class="bad">No purchases found. Go to the Accounts section to purchase.</p></div>';
       return;
     }
 
-    let html = '<h4 style="color:#ffeb3b; margin: 10px 0 15px 0;">👉My Orders & Access</h4>';
+    let html = '<h4 style="color:#ffeb3b; margin: 10px 0 15px 0;">👉My Purchase & Access</h4>';
 
     // --- PART A: TRANSACTION HISTORY (Pending, Rejected, Verified) ---
     const sortedTransactions = txSnapshot.docs.sort((a, b) => 
@@ -899,27 +899,38 @@ auth.onAuthStateChanged(async (user) => {
   if (user) {
     currentUser = user;
     
-    // Check if user exists in Firestore
-    const userDoc = await db.collection('users').doc(user.uid).get();
+    const userDocRef = db.collection('users').doc(user.uid);
+    const userDoc = await userDocRef.get();
     
     if (!userDoc.exists) {
-      // Agar user Firestore me nahi hai (aapne delete kiya tha), toh use dobara "user" role ke sath create karo
       console.log("Re-creating missing user record...");
-      await db.collection('users').doc(user.uid).set({
+      await userDocRef.set({
         email: user.email,
         role: 'user',
         purchasedProducts: [],
-        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+        timer: { isRunning: false, savedRemaining: 72 * 60 * 60 * 1000, totalBase: 72 * 60 * 60 * 1000 }
       });
     }
 
-    await loadUserData(); // Dashboard data load karein
-    unlockApp();          // App open karein
+    // --- USER SPECIFIC TIMER SYNC ---
+    // Real-time listener taaki Admin ya User kahin se bhi change kare to update ho jaye
+    userDocRef.onSnapshot((doc) => {
+      const userData = doc.data();
+      if (userData && userData.timer) {
+        syncUserTimer(userData.timer);
+      }
+    });
+
+    await loadUserData();
+    unlockApp();
     checkBroadcasts();    
   } else {
     showLockScreen();     
+    clearInterval(timerInterval); // Logout par timer band
   }
 });
+
 
 
 // 3. App Unlock logic
@@ -1861,3 +1872,132 @@ setInterval(updateDashboardTip, 12000);
 // ==========================================
 // -- Automatic suggest end
 // ==========================================
+
+
+
+
+// Global Variable
+let timerInterval = null;
+const DEFAULT_MS = 72 * 60 * 60 * 1000;
+
+// --- 1. SYNC WITH FIREBASE ---
+function syncUserTimer(timerData) {
+    clearInterval(timerInterval);
+    const startBtn = document.getElementById("timerBtn");
+
+    if (timerData.isRunning && timerData.endTime) {
+        if (startBtn) startBtn.style.display = "none";
+        
+        // Live calculation from Server EndTime
+        timerInterval = setInterval(() => {
+            const now = new Date().getTime();
+            const distance = timerData.endTime - now;
+
+            if (distance <= 0) {
+                clearInterval(timerInterval);
+                updateClockUI(0, timerData.totalBase || DEFAULT_MS);
+                handleExpiry();
+                return;
+            }
+            updateClockUI(distance, timerData.totalBase || DEFAULT_MS);
+        }, 1000);
+    } else {
+        if (startBtn) startBtn.style.display = "inline-block";
+        const displayTime = timerData.savedRemaining || timerData.totalBase || DEFAULT_MS;
+        updateClockUI(displayTime, timerData.totalBase || DEFAULT_MS);
+    }
+}
+
+// --- 2. START TIMER (Save to Firestore) ---
+async function toggleTimer() {
+    if (!currentUser) return;
+    const userRef = db.collection('users').doc(currentUser.uid);
+    const doc = await userRef.get();
+    const timerData = doc.data().timer || {};
+
+    if (!timerData.isRunning) {
+        const duration = timerData.savedRemaining || timerData.totalBase || DEFAULT_MS;
+        const endTime = new Date().getTime() + duration;
+        
+        await userRef.update({
+            "timer.isRunning": true,
+            "timer.endTime": endTime
+        });
+        if(window.showToast) showToast("Timer Started! 🚀");
+    }
+}
+
+// --- 3. STOP TIMER (Save Remaining to Firestore) ---
+async function stopTimer() {
+    if (!currentUser) return;
+    const userRef = db.collection('users').doc(currentUser.uid);
+    const doc = await userRef.get();
+    const timerData = doc.data().timer;
+
+    if (timerData && timerData.isRunning) {
+        const now = new Date().getTime();
+        const remaining = Math.max(0, timerData.endTime - now);
+        
+        await userRef.update({
+            "timer.isRunning": false,
+            "timer.savedRemaining": remaining,
+            "timer.endTime": null
+        });
+        if(window.showToast) showToast("Timer Paused! ⏸️");
+    }
+}
+
+// --- 4. RESET & EDIT (For Individual User) ---
+async function resetTimer() {
+    if (!currentUser) return;
+    const userRef = db.collection('users').doc(currentUser.uid);
+    const doc = await userRef.get();
+    const base = doc.data().timer.totalBase || DEFAULT_MS;
+
+    await userRef.update({
+        "timer.isRunning": false,
+        "timer.savedRemaining": base,
+        "timer.endTime": null
+    });
+}
+
+async function editTime() {
+    const h = prompt("Enter custom hours for your account:", "72");
+    if (h && !isNaN(h) && currentUser) {
+        const ms = parseInt(h) * 60 * 60 * 1000;
+        await db.collection('users').doc(currentUser.uid).update({
+            "timer.totalBase": ms,
+            "timer.savedRemaining": ms,
+            "timer.isRunning": false,
+            "timer.endTime": null
+        });
+        showToast("Access time updated!");
+    }
+}
+
+// --- 5. UI UPDATE (Line moves based on user's own totalBase) ---
+function updateClockUI(distance, totalBase) {
+    const h = Math.floor(distance / (1000 * 60 * 60));
+    const m = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+    const s = Math.floor((distance % (1000 * 60)) / 1000);
+    
+    document.getElementById("hrs").innerText = h.toString().padStart(2, '0');
+    document.getElementById("mins").innerText = m.toString().padStart(2, '0');
+    document.getElementById("secs").innerText = s.toString().padStart(2, '0');
+    
+    // Percentage Logic for Line
+    const progressPercent = (distance / totalBase) * 100;
+    const line = document.getElementById("timerProgress");
+    if (line) {
+        line.style.width = Math.max(0, Math.min(100, progressPercent)) + "%";
+        // Color Change
+        line.style.background = progressPercent < 15 ? "#ff4444" : "linear-gradient(90deg, #00d4ff, #00ff88)";
+    }
+}
+
+function toggleSettings() {
+    const panel = document.getElementById("settingsPanel");
+    const icon = document.getElementById("settingsToggle");
+    panel.style.display = (panel.style.display === "none" || panel.style.display === "") ? "flex" : "none";
+    icon.innerText = panel.style.display === "flex" ? "❌" : "⚙️";
+}
