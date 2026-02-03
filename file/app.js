@@ -300,39 +300,63 @@ async function renderProductsList() {
       } else {
         // --- AVAILABLE LOOK: Naya premium design ---
         html += `
-          <div style="
-            background: linear-gradient(145deg, #232a5e, #15193a);
-            border: 1px solid rgba(109, 124, 255, 0.5);
-            border-radius: 22px;
-            padding: 18px;
-            margin-bottom: 20px;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.4);
-          ">
-            <div style="position:absolute; top:-10px; right:-10px; width:60px; height:60px; background:rgba(109,124,255,0.15); filter:blur(20px); border-radius:50%;"></div>
-            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px;">
-              <div>
-                <h3 style="margin: 0; font-size: 17px; color: #fff; font-weight: 700;">${p.name}</h3>
-                <div style="margin-top: 4px;">
-                  <span style="font-size: 9px; color: #6dff9a; background: rgba(109,255,154,0.1); padding: 2px 8px; border-radius: 10px; border: 1px solid rgba(109,255,154,0.2); font-weight: bold;">⚡ HIGH QUALITY</span>
-                </div>
-              </div>
-              <div style="text-align: right;">
-                <div style="color: #6dff9a; font-size: 22px; font-weight: 900;">₹${p.price}</div>
-                <div style="font-size: 10px; color: #a5b1ff; opacity: 0.6;">Listed: ${listedDate}</div>
-              </div>
+  <div style="
+    position: relative;
+    margin-bottom: 25px;
+    /* Card Shape with Cut-outs using Clip-Path */
+    clip-path: polygon(0% 0%, 100% 0%, 100% 62%, 97% 65%, 100% 68%, 100% 100%, 0% 100%, 0% 68%, 3% 65%, 0% 62%);
+    filter: drop-shadow(0 10px 20px rgba(0,0,0,0.4));
+  ">
+    <div style="
+      background: #1a1d2e;
+      /* 1. White Lining jo Cut ke sath ghumegi */
+      border: 1.5px solid rgba(255, 255, 255, 0.25);
+      border-radius: 28px;
+      position: relative;
+      overflow: hidden;
+    ">
+      
+      <div style="position: absolute; left: -16px; top: 65%; transform: translateY(-50%); width: 32px; height: 32px; background: #0f121d; border-radius: 50%; border: 1.5px solid rgba(255,255,255,0.25); z-index: 10;"></div>
+      
+      <div style="position: absolute; right: -16px; top: 65%; transform: translateY(-50%); width: 32px; height: 32px; background: #0f121d; border-radius: 50%; border: 1.5px solid rgba(255,255,255,0.25); z-index: 10;"></div>
+
+      <div style="width: 100%; height: 160px; background: #000; overflow: hidden;">
+          <img src="${p.image || 'https://blog.boon.so/wp-content/uploads/2024/03/Xiaomi-Logo-scaled.jpg'}" style="width: 100%; height: 100%; object-fit: cover;">
+      </div>
+
+      <div style="padding: 20px;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+          <div>
+            <h3 style="margin: 0; font-size: 19px; color: #fff; font-weight: 700;">${p.name}</h3>
+            <div style="margin-top: 6px;">
+              <span style="font-size: 10px; color: #00ff88; background: rgba(0, 255, 136, 0.1); padding: 4px 12px; border-radius: 50px; border: 1px solid rgba(0, 255, 136, 0.2); font-weight: 800;">
+                ⚡ 100% Working
+              </span>
             </div>
+          </div>
+          <div style="text-align: right;">
+            <div style="color: #00ff88; font-size: 24px; font-weight: 900;">₹${p.price}</div>
+            <div style="font-size: 10px; color: rgba(255,255,255,0.3); margin-top: 4px;">Listed: ${listedDate}</div>
+          </div>
+        </div>
+
+        <div style="margin: 22px -20px; border-bottom: 1.5px dashed rgba(255,255,255,0.15); height: 1px;"></div>
+
+        <div style="margin-top: 10px;">
             <button onclick="openQRModal(${p.price}, '${p.id}')" style="
-              width: 100%; padding: 12px; border-radius: 14px; border: none; 
-              background: linear-gradient(90deg, #6d7cff, #8e99ff); color: #fff; 
-              font-weight: 800; font-size: 14px; cursor: pointer;
-              box-shadow: 0 5px 15px rgba(109,124,255,0.3);
+              width: 100%; padding: 16px; border-radius: 20px; border: none; 
+              background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%); 
+              color: #fff; font-weight: 800; font-size: 14px; text-transform: uppercase;
+              letter-spacing: 1.5px; cursor: pointer;
+              box-shadow: none;
             ">
               💳 BUY THIS ACCOUNT
             </button>
-          </div>
-        `;
+        </div>
+      </div>
+    </div>
+  </div>
+`;
       }
     });
     
