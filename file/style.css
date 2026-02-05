@@ -1,4 +1,3 @@
-
 /* [ALL YOUR EXISTING STYLES REMAIN SAME - NO CHANGES NEEDED] */
 * {box-sizing:border-box; -webkit-tap-highlight-color: transparent;}
 html, body {height:100%; margin:0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background:#0f1220; color:#eaeaf0; overflow-x:hidden;}
@@ -486,6 +485,36 @@ input:focus {
 
 #notify {position:fixed; top:20px; right:20px; left:20px; max-width:400px; margin:0 auto; background:#6d7cff; color:#fff; padding:16px 20px; border-radius:16px; box-shadow:0 10px 30px rgba(0,0,0,0.4); display:none; z-index:9999; font-weight:500;}
 .hidden {display:none !important;}
+#notify {
+    position: fixed;
+    top: 25px;
+    right: 20px;
+    left: 20px;
+    max-width: 350px; /* Thoda sleek size */
+    margin: 0 auto;
+    color: #fff;
+    padding: 14px 18px;
+    border-radius: 14px;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+    display: none;
+    z-index: 10001;
+    font-weight: 500;
+    backdrop-filter: blur(8px); /* Glass effect */
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+/* Success State - Emerald Green Glow */
+.notify-success {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.9), rgba(5, 150, 105, 0.9)) !important;
+    border-bottom: 3px solid #10b981 !important;
+}
+
+/* Error State - Ruby Red Glow */
+.notify-error {
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.9), rgba(185, 28, 28, 0.9)) !important;
+    border-bottom: 3px solid #ef4444 !important;
+}
 
 body.login-mode #menuBtn, body.login-mode #sidebar, body.login-mode #mobileBottomNav { display: none !important;}
 
@@ -719,4 +748,13 @@ body.glass-mode .whatsapp-float {
   justify-content: center;
   background: linear-gradient(135deg, #6d7cff, #a5b1ff);
   border: 2px solid rgba(255,255,255,0.1);
+}
+
+
+
+
+
+@keyframes slideDown {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
 }
