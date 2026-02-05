@@ -36,7 +36,7 @@ async function sendBroadcast() {
       sentAt: firebase.firestore.FieldValue.serverTimestamp()
     }, { merge: false }); // merge: false matlab purana data poori tarah khatam
     
-    notify('message send Success✅', 'success');
+    notify('message send Success', 'success');
     
     // Naya message turant dikhane ke liye
     showBroadcast(title, message);
@@ -91,7 +91,7 @@ async function submitTransaction() {
       status: 'pending',
       submittedAt: firebase.firestore.FieldValue.serverTimestamp()
     });
-    notify('✅ TX Submitted! Checking status...', 'success');
+    notify(' TX Submitted! Checking status...', 'success');
     closeQRModal();
     showSection('mykeys'); // <-- Ye line user ko status page par le jayegi
   } catch (error) {
@@ -147,7 +147,7 @@ async function loadPendingTransactions() {
           </div>
           <div style="font-size:11px; color:#888;">📅 ${time} | Product: ${tx.productId}</div>
           <div class="row" style="margin-top:15px;">
-            <button class="manual-give" onclick="verifyTransaction('${doc.id}', '${tx.userId}', '${tx.productId}')" style="background:#6dff9a !important; font-weight:bold;">✅ APPROVE</button>
+            <button class="manual-give" onclick="verifyTransaction('${doc.id}', '${tx.userId}', '${tx.productId}')" style="background:#6dff9a !important; font-weight:bold;">APPROVE</button>
             <button class="danger" onclick="rejectTransaction('${doc.id}')" style="font-weight:bold;">❌ REJECT</button>
           </div>
         </div>
@@ -212,7 +212,7 @@ async function verifyTransaction(txId, userId, productId) {
       sound.play().catch(e => console.log("Sound error:", e));
     }
 
-    notify('✅ Approved! User data recovered and verified.', 'success');
+    notify(' Approved! User data recovered and verified.', 'success');
     loadPendingTransactions();
 
   } catch (err) {
@@ -280,36 +280,107 @@ async function renderProductsList() {
         }
 
         // --- SOLD OUT LOOK: Purana simple design ---
-        html += `
-          <div class="item" style="opacity: 0.5; border-left: 4px solid #ff4444; margin-bottom: 12px; background: rgba(255,255,255,0.02); padding: 10px 15px; border-radius: 12px;">
-            <div style="display:flex; justify-content:space-between; align-items: center;">
-               <b style="color: #bbb;">${p.name}</b>
-               <small style="color:#ff4444; font-weight:bold; letter-spacing: 1px;">SOLD OUT</small>
+        // --- SOLD OUT LOOK: Premium Punched Ticket Design ---
+html += `
+  <div style="position: relative; margin-bottom: 25px; width: 100%; overflow: hidden; border-radius: 28px;">
+    
+    <div style="
+        position: absolute;
+        top: 20px;
+        right: -35px;
+        background: #ff0000 !important; 
+        color: white;
+        padding: 6px 40px;
+        transform: rotate(45deg);
+        font-size: 12px;
+        font-weight: 900;
+        z-index: 100;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+        letter-spacing: 1px;
+    ">SOLD OUT</div>
+
+    <div style="
+      background: #111422;
+      border: 1.5px solid rgba(255, 255, 255, 0.1);
+      border-radius: 28px;
+      position: relative;
+      clip-path: polygon(0% 0%, 100% 0%, 100% 62%, 97% 65%, 100% 68%, 100% 100%, 0% 100%, 0% 68%, 3% 65%, 0% 62%);
+    ">
+      
+      <div style="filter: grayscale(1) brightness(0.6); pointer-events: none;">
+          
+          <div style="position: absolute; left: -16px; top: 65%; transform: translateY(-50%); width: 32px; height: 32px; background: #0f121d; border-radius: 50%; border: 1.5px solid rgba(255,255,255,0.1); z-index: 10;"></div>
+          <div style="position: absolute; right: -16px; top: 65%; transform: translateY(-50%); width: 32px; height: 32px; background: #0f121d; border-radius: 50%; border: 1.5px solid rgba(255,255,255,0.1); z-index: 10;"></div>
+
+          <div style="width: 100%; height: 160px; background: #000; overflow: hidden;">
+              <img src="${p.image || 'https://blog.boon.so/wp-content/uploads/2024/03/Xiaomi-Logo-scaled.jpg'}" style="width: 100%; height: 100%; object-fit: cover; opacity: 0.5;">
+          </div>
+
+          <div style="padding: 20px;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+              <div>
+                <h3 style="margin: 0; font-size: 17px; color: #888;">${p.name}</h3>
+                <div style="margin-top: 6px;">
+                  <span style="font-size: 10px; color: #fff; background: rgba(255,255,255,0.1); padding: 4px 12px; border-radius: 50px; border: 1px solid rgba(255,255,255,0.1); font-weight: 800;">❌ OUT OF STOCK</span>
+                </div>
+              </div>
+              <div style="text-align: right;">
+                <div style="color: #666; font-size: 24px; font-weight: 900;">₹${p.price}</div>
+                
+<div style="
+    font-size: 10px; 
+    color: #ffffff; 
+    background: rgba(255, 255, 255, 0.1); 
+    padding: 4px 10px; 
+    border-radius: 6px; 
+    display: flex;        /* Flex se icon aur text ek line mein rahenge */
+    align-items: center;
+    gap: 4px;             /* Icon aur text ke beech thodi jagah */
+    font-weight: 700; 
+    border: 1px solid rgba(255, 255, 255, 0.1); 
+    white-space: nowrap;  /* Date niche nahi giregi */
+    line-height: 1;
+">
+    <span style="font-size: 12px;">📅</span> 
+    Sold on: ${displaySoldDate}
+</div>
+
+
+              </div>
             </div>
-            <small style="color: #777;">Price: ₹${p.price} | 📅 Sold on: ${displaySoldDate}</small>
-          </div>`;
+            
+            <div style="margin: 22px -20px; border-bottom: 1.5px dashed rgba(255,255,255,0.05); height: 1px;"></div>
+            
+            <div style="margin-top: 10px;">
+                <button disabled style="width: 100%; padding: 16px; border-radius: 20px; border: none; background: #222; color: #555; font-weight: 800;">NOT AVAILABLE</button>
+            </div>
+          </div>
+      </div>
+    </div>
+  </div>
+`;
+
 
       } else if (isPurchased) {
         // --- PURCHASED LOOK ---
         html += `
           <div class="item" style="border-left: 4px solid #6dff9a; background: rgba(109,255,154,0.05); margin-bottom: 12px; border-radius: 12px;">
-            <b style="color: #6dff9a;">${p.name}</b> <small style="color: #6dff9a; opacity: 0.8;">(Purchased ✅)</small><br>
+            <b style="color: #6dff9a;">${p.name}</b> <small style="color: #6dff9a; opacity: 0.8;">(Purchased)</small><br>
             <button class="action" onclick="showSection('mykeys')" style="padding:6px 12px; font-size:11px; margin-top:8px; border-radius: 8px;">View My Key</button>
           </div>`;
 
       } else {
         // --- AVAILABLE LOOK: Naya premium design ---
-        html += `
+        // --- AVAILABLE LOOK: Naya premium design with Coupon ---
+html += `
   <div style="
     position: relative;
     margin-bottom: 25px;
-    /* Card Shape with Cut-outs using Clip-Path */
     clip-path: polygon(0% 0%, 100% 0%, 100% 62%, 97% 65%, 100% 68%, 100% 100%, 0% 100%, 0% 68%, 3% 65%, 0% 62%);
     filter: drop-shadow(0 10px 20px rgba(0,0,0,0.4));
   ">
     <div style="
       background: #1a1d2e;
-      /* 1. White Lining jo Cut ke sath ghumegi */
       border: 1.5px solid rgba(255, 255, 255, 0.25);
       border-radius: 28px;
       position: relative;
@@ -317,7 +388,6 @@ async function renderProductsList() {
     ">
       
       <div style="position: absolute; left: -16px; top: 65%; transform: translateY(-50%); width: 32px; height: 32px; background: #0f121d; border-radius: 50%; border: 1.5px solid rgba(255,255,255,0.25); z-index: 10;"></div>
-      
       <div style="position: absolute; right: -16px; top: 65%; transform: translateY(-50%); width: 32px; height: 32px; background: #0f121d; border-radius: 50%; border: 1.5px solid rgba(255,255,255,0.25); z-index: 10;"></div>
 
       <div style="width: 100%; height: 160px; background: #000; overflow: hidden;">
@@ -335,28 +405,48 @@ async function renderProductsList() {
             </div>
           </div>
           <div style="text-align: right;">
-            <div style="color: #00ff88; font-size: 24px; font-weight: 900;">₹${p.price}</div>
+            <div id="price-display-${p.id}" style="color: #00ff88; font-size: 24px; font-weight: 900;">₹${p.price}</div>
             <div style="font-size: 10px; color: rgba(255,255,255,0.3); margin-top: 4px;">Listed: ${listedDate}</div>
           </div>
         </div>
 
-        <div style="margin: 22px -20px; border-bottom: 1.5px dashed rgba(255,255,255,0.15); height: 1px;"></div>
+<div style="margin-top: 15px;">
+    <div onclick="toggleCouponCard('${p.id}')" style="display: flex; align-items: center; justify-content: space-between; cursor: pointer; background: rgba(255,255,255,0.03); padding: 10px 15px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.08);">
+        <span style="font-size: 12px; color: #ffeb3b; font-weight: 600;">🎁 Have a promo code?</span>
+        <span id="arrow-${p.id}" style="transition: 0.3s; font-size: 12px; color: #ffeb3b;">▼</span>
+    </div>
+
+    <div id="coupon-box-${p.id}" style="display: none; margin-top: 10px; animation: slideDown 0.3s ease-out;">
+        <div style="display: flex; gap: 8px;">
+            <input type="text" id="coupon-input-${p.id}" placeholder="ENTER YOUR CUPON CODE" 
+                   style="flex: 1; background: #0f121d; border: 1px solid #ffeb3b44; border-radius: 8px; color: #ffeb3b; padding: 10px; font-size: 11px; outline: none;">
+            <button onclick="applyCardCoupon('${p.id}', ${p.price})" 
+                    style="background: #ffeb3b; color: #000; border: none; padding: 0 12px; border-radius: 12px; font-weight: bold; font-size: 15px; cursor: pointer;">
+                APPLY
+            </button>
+        </div>
+        <p id="coupon-status-${p.id}" style="font-size: 10px; margin: 5px 0 0 5px; min-height: 12px;"></p>
+    </div>
+</div>
+
+
 
         <div style="margin-top: 10px;">
-            <button onclick="openQRModal(${p.price}, '${p.id}')" style="
-              width: 100%; padding: 16px; border-radius: 20px; border: none; 
-              background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%); 
-              color: #fff; font-weight: 800; font-size: 14px; text-transform: uppercase;
-              letter-spacing: 1.5px; cursor: pointer;
-              box-shadow: none;
-            ">
-              💳 BUY THIS ACCOUNT
-            </button>
+
+<button id="buy-btn-${p.id}" onclick="openQRModal(${p.price}, '${p.id}')" style="
+    width: 100%; padding: 16px; border-radius: 30px; border: none; 
+    background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%); 
+    color: #fff; font-weight: 800; font-size: 14px; text-transform: uppercase;
+    letter-spacing: 1.5px; cursor: pointer;">
+    💳 BUY THIS ACCOUNT
+</button>
+
         </div>
       </div>
     </div>
   </div>
 `;
+
       }
     });
     
@@ -367,7 +457,179 @@ async function renderProductsList() {
 }
 
 
-// 🔥 FIXED MY KEYS
+// ==========================================
+// --Cupon Box ko Hide/Show karne ka function---
+// ==========================================
+
+function toggleCouponCard(prodId) {
+    const box = document.getElementById(`coupon-box-${prodId}`);
+    const arrow = document.getElementById(`arrow-${prodId}`);
+    
+    if (box.style.display === "none") {
+        box.style.display = "block";
+        arrow.style.transform = "rotate(180deg)";
+    } else {
+        box.style.display = "none";
+        arrow.style.transform = "rotate(0deg)";
+    }
+}
+
+
+// ==========================================
+// -- 2. Coupon Apply logic (Updated for Card)---
+// ==========================================
+async function applyCardCoupon(prodId, originalPrice) {
+    const input = document.getElementById(`coupon-input-${prodId}`);
+    const status = document.getElementById(`coupon-status-${prodId}`);
+    const priceDisplay = document.getElementById(`price-display-${prodId}`);
+    const buyBtn = document.getElementById(`buy-btn-${prodId}`);
+    const code = input.value.trim().toUpperCase();
+
+    if (!code || !currentUser) return;
+    status.innerText = "Verifying...";
+    status.style.color = "#aaa";
+
+    try {
+        // 1. Check Coupon Existence
+        const snap = await db.collection('coupons').where('code', '==', code).get();
+        if (snap.empty) throw new Error("Invalid Code!");
+
+        const d = snap.docs[0].data();
+        const couponId = snap.docs[0].id;
+
+        // 2. Double Check Usage for THIS USER
+        const alreadyUsedSnap = await db.collection('pendingTransactions')
+            .where('userId', '==', currentUser.uid)
+            .get(); // Fetch user's all transactions to be safe
+
+        let isUsed = false;
+        alreadyUsedSnap.forEach(doc => {
+            if(doc.data().couponCode === code) isUsed = true;
+        });
+
+        if (isUsed) throw new Error("You already used this code!");
+
+        // 3. Expiry & Limit Check
+        const today = new Date().getTime();
+        const expDate = d.expiryDate && d.expiryDate !== "No Expiry" ? new Date(d.expiryDate).getTime() : null;
+        if (expDate && expDate < today) throw new Error("Coupon Expired!");
+        if (d.usedCount >= d.usageLimit) throw new Error("Coupon Limit Reached!");
+
+        // 4. Price Calculation
+        let discount = (d.type === 'fixed') ? d.value : (originalPrice * d.value) / 100;
+        let finalPrice = Math.max(0, originalPrice - discount);
+
+        // Global Variable Set (Important)
+        discountApplied = discount;
+        window.appliedCouponId = couponId;
+        window.currentCouponCode = code; 
+
+        // 5. UI Updates
+        priceDisplay.innerText = `₹${finalPrice}`;
+        priceDisplay.style.color = "#ffeb3b";
+        status.innerText = `🎉 ₹${discount} Saved!`;
+        status.style.color = "#6dff9a";
+
+        if (finalPrice === 0) {
+            buyBtn.innerText = "🎁 CLAIM FOR FREE";
+            buyBtn.setAttribute('onclick', `directClaimFree('${prodId}', '${couponId}', '${code}')`);
+        } else {
+            buyBtn.innerText = "💳 BUY NOW";
+            buyBtn.setAttribute('onclick', `openQRModal(${finalPrice}, '${prodId}')`);
+        }
+
+    } catch (e) {
+        status.innerText = e.message;
+        status.style.color = "#ff4d4d";
+        priceDisplay.innerText = `₹${originalPrice}`;
+        priceDisplay.style.color = "#00ff88";
+        window.currentCouponCode = null;
+    }
+}
+
+
+// ==========================================
+// --100% buy Cupon Se direct access ---
+// ==========================================
+async function directClaimFree(productId, couponDocId, code) {
+    if (!auth.currentUser) return;
+
+    const buyBtn = document.getElementById(`buy-btn-${productId}`);
+    const originalText = buyBtn.innerText;
+    buyBtn.innerText = "Processing... ⏳";
+    buyBtn.disabled = true;
+
+    try {
+        const userId = auth.currentUser.uid;
+        const userEmail = auth.currentUser.email; // Buyer ka email lein
+        const userRef = db.collection('users').doc(userId);
+
+        // 1. Transaction Record
+        await db.collection('pendingTransactions').add({
+            userId: userId,
+            userEmail: userEmail,
+            productId: productId,
+            couponCode: code,
+            amount: 0,
+            status: 'completed',
+            transactionId: "FREE_" + Date.now(),
+            submittedAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+
+        // 🔥 2. PRODUCT UPDATE FIX: Buyer details add karein
+        // Isse Admin panel par "null" ki jagah email dikhega
+        await db.collection('products').doc(productId).update({
+            status: 'sold',
+            isSoldOut: true,
+            soldTo: userId,        // Buyer ID
+            buyerEmail: userEmail, // Admin yahi field read karta hai display ke liye
+            soldAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+
+        // 3. User Profile Update (For Dashboard Sync)
+        await userRef.update({
+            purchasedProducts: firebase.firestore.FieldValue.arrayUnion(productId)
+        });
+
+        // 4. Coupon Update
+        await db.collection('coupons').doc(couponDocId).update({
+            usedCount: firebase.firestore.FieldValue.increment(1)
+        });
+
+        // Celebration
+        if (typeof confetti === 'function') {
+            confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, zIndex: 9999 });
+        }
+
+        alert("🎁 Success! Account claimed.");
+
+        // Data Sync
+        await loadUserData(); 
+        await renderProductsList();
+
+        setTimeout(() => {
+            showSection('mykeys');
+        }, 500); 
+
+    } catch (error) {
+        console.error("Claim Error:", error);
+        alert("❌ Error: " + error.message);
+        buyBtn.innerText = originalText;
+        buyBtn.disabled = false;
+    }
+}
+
+// ==========================================
+// --100% buy Cupon Se direct access ---end
+// ==========================================
+
+
+
+
+// ==========================================
+/// 🔥 FIXED MY KEYS ---
+// ==========================================
+
 async function renderMyKeys() {
   try {
     const keyList = document.getElementById('myKeyList');
@@ -376,85 +638,90 @@ async function renderMyKeys() {
     keyList.innerHTML = `
         <div class="loading-container">
             <div class="loader"></div>
-            <span>Loading your products...</span>
+            <span>Refreshing your products...</span>
         </div>`;
 
-    // 1. User ka data fetch karein (Direct access products check karne ke liye)
+    // 1. User & Transaction data fetch
     const userDoc = await db.collection('users').doc(currentUser.uid).get();
     const userData = userDoc.data() || {};
     const purchasedIds = userData.purchasedProducts || [];
 
-    // 2. Transaction history fetch karein
     const txSnapshot = await db.collection('pendingTransactions')
       .where('userId', '==', currentUser.uid)
       .get();
 
-    // 3. Products data fetch karein
     const productsSnapshot = await db.collection('products').get();
     const allProducts = productsSnapshot.docs.reduce((acc, doc) => {
       acc[doc.id] = { id: doc.id, ...doc.data() };
       return acc;
     }, {});
 
-    // Agar na transaction hai na purchased array mein kuch hai
     if (txSnapshot.empty && purchasedIds.length === 0) {
       keyList.innerHTML = '<div class="item" style="text-align:center;"><p class="bad">No purchases found. Go to the Accounts section to purchase.</p></div>';
       return;
     }
 
-    let html = '<h4 style="color:#ffeb3b; margin: 10px 0 15px 0;">👉My Purchase & Access</h4>';
+    let html = '<h4 style="color:#ffeb3b; margin: 10px 0 15px 0;">👉 My Purchase & Access</h4>';
 
-    // --- PART A: TRANSACTION HISTORY (Pending, Rejected, Verified) ---
     const sortedTransactions = txSnapshot.docs.sort((a, b) => 
       (b.data().submittedAt?.toMillis() || 0) - (a.data().submittedAt?.toMillis() || 0)
     );
 
-    // Un IDs ko track karne ke liye jo transaction ke raste aayi hain
     const displayedViaTx = new Set();
 
     sortedTransactions.forEach(doc => {
-    const tx = doc.data();
-    const productId = tx.productId;
-    displayedViaTx.add(productId);
+        const tx = doc.data();
+        const productId = tx.productId;
+        displayedViaTx.add(productId);
+        
+        const productInfo = allProducts[productId];
+        const subDate = tx.submittedAt ? new Date(tx.submittedAt.toDate()).toLocaleString('en-GB') : 'Just Now';
+
+        // --- STATUS LOGIC FIX ---
+        let cardStyle = "border-left: 4px solid #ffeb3b; background: rgba(255,235,59,0.05);";
+        let statusLabel = "Pending ⏳";
+        let statusColor = "#ffeb3b";
+        let isUnlocked = false;
+
+        if (tx.status === 'rejected') {
+            cardStyle = "border-left: 4px solid #ff4444; background: rgba(255,68,68,0.05);";
+            statusLabel = "Rejected❌";
+            statusColor = "#ff4444";
+        } 
+        else if (tx.status === 'verified') {
+            cardStyle = "border-left: 4px solid #6dff9a; background: rgba(109,255,154,0.05);";
+            statusLabel = "Verified";
+            statusColor = "#00ff88";
+            isUnlocked = true;
+        }
+        // 🔥 NAYA FIX: Coupon/Free claim ke liye
+        else if (tx.status === 'completed' || tx.amount === 0) {
+            cardStyle = "border-left: 4px solid #00ff88; background: rgba(0,255,136,0.1);";
+            statusLabel = "🎁Claim (Active)";
+            statusColor = "#00ff88";
+            isUnlocked = true;
+        }
+
+        const detailedInfo = `
+            📅 <b>Date:</b> ${subDate}<br>
+            🆔 <b>Product ID:</b> ${productId}<br>
+            💰 <b>Amount:</b> ₹${tx.amount || '0'}<br>
+            💳 <b>Type:</b> ${tx.amount === 0 ? '💲🎁Coupon Claim' : '💲Manual Payment'}
+        `;
+
+        html += renderCardUI(
+            productId, 
+            statusLabel, 
+            statusColor, 
+            cardStyle, 
+            detailedInfo, 
+            productInfo, 
+            isUnlocked
+        );
+    });
+
+
     
-    const productInfo = allProducts[productId];
-    const subDate = tx.submittedAt ? new Date(tx.submittedAt.toDate()).toLocaleString('en-GB') : 'Processing...';
-
-    let cardStyle = "border-left: 4px solid #ffeb3b; background: rgba(255,235,59,0.05);";
-    let statusLabel = "Pending ⏳";
-    let statusColor = "#ffeb3b";
-
-    if (tx.status === 'rejected') {
-        cardStyle = "border-left: 4px solid #ff4444; background: rgba(255,68,68,0.05);";
-        statusLabel = "Rejected ❌";
-        statusColor = "#ff4444";
-    } else if (tx.status === 'verified') {
-        cardStyle = "border-left: 4px solid #6dff9a; background: rgba(109,255,154,0.05);";
-        statusLabel = "Verified & Added ✅";
-        statusColor = "#6dff9a";
-    }
-
-    // Details Jo Har Card (Pending/Rejected/Verified) Mein Dikhegi
-    const detailedInfo = `
-        📅 <b>Submitted:</b> ${subDate}<br>
-        🆔 <b>Product ID:</b> ${productId}<br>
-        💰 <b>Amount:</b> ₹${tx.amount || '0'}<br>
-        💳 <b>UTR:</b> ${tx.transactionId}
-    `;
-
-    html += renderCardUI(
-        productId, 
-        statusLabel, 
-        statusColor, 
-        cardStyle, 
-        detailedInfo, 
-        productInfo, 
-        tx.status === 'verified'
-    );
-});
-
-
-    // --- PART B: DIRECT ADMIN ACCESS (Jo Transactions mein nahi hain) ---
     // --- PART B: DIRECT ACCESS LOGIC (In renderMyKeys) ---
 purchasedIds.forEach(pId => {
   if (!displayedViaTx.has(pId)) {
@@ -552,7 +819,7 @@ async function updateProfilePhoto() {
     await db.collection('users').doc(currentUser.uid).update({ 
       profilePhoto: url 
     });
-    notify('✅Profile Photo Updated!', 'success');
+    notify('Profile Photo Updated!', 'success');
     document.getElementById('photoUrlInput').value = '';
     
     // Turant UI update karne ke liye dobara load karein
@@ -574,90 +841,109 @@ async function updateProfilePhoto() {
 
 async function loadUserData() {
   try {
-    // OFFLINE DATA LOAD (Pehle screen par purana data dikhao)
+    // 1. OFFLINE DATA LOAD
     const cachedData = localStorage.getItem('userDashboardData');
     if (cachedData) {
       const offlineData = JSON.parse(cachedData);
-      renderUI(offlineData.userData, offlineData.userEmail, offlineData.availableOnly);
+      renderUI(offlineData.userData, offlineData.userEmail, offlineData.availableOnly, offlineData.actualPurchaseCount || 0);
     }
 
-    // ONLINE DATA FETCH (Agar net hai toh fresh data lao)
+    // 2. ONLINE DATA FETCH
     if (navigator.onLine && currentUser) {
-      const userDoc = await db.collection('users').doc(currentUser.uid).get();
-      const prodSnapshot = await db.collection('products').get();
+      // Parallel fetch: Profile aur Transactions dono mangwao
+      const [userDoc, transSnap, prodSnapshot] = await Promise.all([
+        db.collection('users').doc(currentUser.uid).get(),
+        db.collection('pendingTransactions')
+          .where('userId', '==', currentUser.uid)
+          .where('status', '==', 'completed')
+          .get(),
+        db.collection('products').get()
+      ]);
       
-      let userData = {
-        role: 'user',
-        purchasedProducts: [],
-        profilePhoto: ""
-      };
-
+      let userData = { role: 'user', purchasedProducts: [], profilePhoto: "" };
       if (userDoc.exists) {
         userData = userDoc.data();
-        // Global variables ko update karna zaroori hai admin features ke liye
-        userRole = userData.role || 'user'; 
+        userRole = userData.role || 'user';
         userProducts = userData.purchasedProducts || [];
       }
+
+      // --- 🔥 TOTAL COUNT LOGIC START ---
+      
+      // 1. Manual/Old items jo user profile array mein hain
+      const profileIds = userData.purchasedProducts || [];
+      
+      // 2. New items jo transactions table mein hain
+      const transIds = transSnap.docs.map(doc => doc.data().productId);
+      
+      // 3. MERGE & UNIQUE: Dono ko milao aur duplicates hatao
+      // Isse Manual + Coupon dono jud jayenge
+      const allUniqueIds = [...new Set([...profileIds, ...transIds])];
+      const totalCombinedCount = allUniqueIds.length;
+
+      // --- TOTAL COUNT LOGIC END ---
 
       const userEmail = currentUser.email;
       const availableOnly = prodSnapshot.docs.filter(p => !p.data().isSoldOut).length;
 
-      // Data save karo agli baar ke liye
+      // Local storage update
       localStorage.setItem('userDashboardData', JSON.stringify({
         userData,
         userEmail,
-        availableOnly
+        availableOnly,
+        actualPurchaseCount: totalCombinedCount
       }));
 
       // Fresh UI update
-      renderUI(userData, userEmail, availableOnly);
+      renderUI(userData, userEmail, availableOnly, totalCombinedCount);
     }
   } catch (err) {
     console.error("Profile Load Error:", err);
   }
 }
 
+
+
 // 2. renderUI: Sidebar aur Settings dono jagah data dikhana
-function renderUI(userData, userEmail, availableOnly) {
+function renderUI(userData, userEmail, availableOnly, actualPurchaseCount = 0) {
   const currentRole = userData.role || 'user';
-  const currentProducts = userData.purchasedProducts || [];
   const photoUrl = userData.profilePhoto || "";
 
-  // PHOTO/AVATAR LOGIC (Sidebar + Settings Dono ke liye)
+  // 1. PHOTO/AVATAR LOGIC
   const photoHTML = (photoUrl && photoUrl !== "") 
     ? `<img src="${photoUrl}" style="width:100%; height:100%; border-radius:50%; object-fit:cover;" onerror="this.src='https://ui-avatars.com/api/?name=${userEmail}&background=6d7cff&color=fff'">`
     : `<span style="font-size:20px; font-weight:bold; color:white;">${userEmail.charAt(0).toUpperCase()}</span>`;
   
-  const sideAvatar = document.getElementById('sideAvatar');
-  const settingsAvatar = document.getElementById('settingsAvatar');
-  
-  if(sideAvatar) sideAvatar.innerHTML = photoHTML;
-  if(settingsAvatar) settingsAvatar.innerHTML = photoHTML;
+  if(document.getElementById('sideAvatar')) document.getElementById('sideAvatar').innerHTML = photoHTML;
+  if(document.getElementById('settingsAvatar')) document.getElementById('settingsAvatar').innerHTML = photoHTML;
 
-  // NAME & ROLE TEXT
+  // 2. NAME & ROLE TEXT LOGIC
   let namePart = userEmail.split('@')[0].toUpperCase();
   if(namePart.length > 10) namePart = namePart.substring(0, 8) + "..";
   const roleDisplayText = currentRole === 'admin' ? '👑Administrator' : 'Verified User✅';
 
-  // Sidebar Updates
+  // Sidebar & Settings Display Updates
   if(document.getElementById('sideName')) document.getElementById('sideName').textContent = namePart;
   if(document.getElementById('sideRole')) document.getElementById('sideRole').textContent = roleDisplayText;
-  
-  // Settings Page Updates
   if(document.getElementById('set-userName')) document.getElementById('set-userName').textContent = namePart;
   if(document.getElementById('set-userRole')) document.getElementById('set-userRole').textContent = roleDisplayText;
   if(document.getElementById('set-userEmail')) document.getElementById('set-userEmail').textContent = userEmail;
 
-  // DASHBOARD STATS
+  // 3. DASHBOARD STATS (Actual Fix Yahan Hai)
   if(document.getElementById('userInfo')) document.getElementById('userInfo').textContent = userEmail;
   if(document.getElementById('roleBadge')) document.getElementById('roleBadge').textContent = currentRole.toUpperCase();
   if(document.getElementById('totalProducts')) document.getElementById('totalProducts').textContent = availableOnly;
-  if(document.getElementById('userKeys')) document.getElementById('userKeys').textContent = currentProducts.length;
+  
+  // 🔥 ASLI FIX: Dashboard Count
+  // Hum loadUserData se already merged count (Manual + Coupon) bhej rahe hain.
+  // Ab yahan kisi extra logic ki zaroorat nahi, seedha count display karein.
+  if(document.getElementById('userKeys')) {
+      document.getElementById('userKeys').textContent = actualPurchaseCount;
+  }
 
-  // ADMIN SECTION CONTROL (Fix: Isse admin section sahi se dikhega)
+  // 4. ADMIN SECTION VISIBILITY
   const adminSec = document.getElementById('adminSection');
   const userSec = document.getElementById('userSection');
-
+  
   if(currentRole === 'admin') {
     if(adminSec) adminSec.classList.remove('hidden');
     if(userSec) userSec.classList.add('hidden');
@@ -666,6 +952,8 @@ function renderUI(userData, userEmail, availableOnly) {
     if(userSec) userSec.classList.remove('hidden');
   }
 }
+
+
 
 // ==========================================
 // 🔥 FIXED: Sidebar Photo Rendering end
@@ -759,13 +1047,40 @@ function showSection(id, fromNav = false) {
 
 
 
-function notify(msg, type='success'){
-  const n = document.getElementById("notify");
-  n.textContent = msg;
-  n.style.background = type==='success' ? '#6dff9a' : '#ff7b7b';
-  n.style.display = "block";
-  setTimeout(()=>n.style.display = "none", 4000);
+function notify(msg, type = 'success') {
+    const n = document.getElementById("notify");
+    if (!n) return;
+
+    // 1. Icon aur Message set karein
+    const icon = type === 'success' ? '✅' : '❌';
+    n.innerHTML = `<div style="display:flex; align-items:center; gap:12px;">
+                     <span style="font-size:1.2rem;">${icon}</span>
+                     <span>${msg}</span>
+                   </div>`;
+
+    // 2. Class apply karein
+    n.className = type === 'success' ? 'notify-success' : 'notify-error';
+
+    // 3. Animation: Niche se upar slide hona
+    n.style.display = "block";
+    n.style.opacity = "0";
+    n.style.transform = "translateY(-20px)";
+
+    setTimeout(() => {
+        n.style.opacity = "1";
+        n.style.transform = "translateY(0)";
+    }, 10);
+
+    // 4. Auto-hide logic (4 second baad)
+    setTimeout(() => {
+        n.style.opacity = "0";
+        n.style.transform = "translateY(-20px)";
+        setTimeout(() => {
+            n.style.display = "none";
+        }, 300);
+    }, 4000);
 }
+
 
 function showBroadcast(title, message) {
   document.getElementById('broadcastTitle').textContent = title;
@@ -861,7 +1176,7 @@ async function updateUserPassword() {
     // Update to new password
     await user.updatePassword(newPass);
 
-    notify('✅ Password Changed!', 'success');
+    notify('Password Changed!', 'success');
     
     // Clear the form
     document.getElementById('currPass').value = '';
@@ -918,42 +1233,69 @@ function logout() {
   closeSidebar();
 }
 
+
+
 // 🔥 MODIFIED: Auto-recreate user if deleted from Firestore
+// Variable ko script mein sabse upar (onAuthStateChanged ke bahar) rakhein
+let couponListenerStarted = false; 
+
 auth.onAuthStateChanged(async (user) => {
   if (user) {
     currentUser = user;
     
     const userDocRef = db.collection('users').doc(user.uid);
-    const userDoc = await userDocRef.get();
+    let userDoc = await userDocRef.get();
     
+    // 1. User Record Check & Creation
     if (!userDoc.exists) {
       console.log("Re-creating missing user record...");
-      await userDocRef.set({
+      const newUserData = {
         email: user.email,
         role: 'user',
-        purchasedProducts: [],
+        purchasedProducts: [], 
         createdAt: firebase.firestore.FieldValue.serverTimestamp(),
         timer: { isRunning: false, savedRemaining: 72 * 60 * 60 * 1000, totalBase: 72 * 60 * 60 * 1000 }
-      });
+      };
+      await userDocRef.set(newUserData);
     }
 
-    // --- USER SPECIFIC TIMER SYNC ---
-    // Real-time listener taaki Admin ya User kahin se bhi change kare to update ho jaye
+    // 2. --- COUPON AUTO-LOAD ---
+    if (!couponListenerStarted) {
+        loadActiveCoupons();
+        couponListenerStarted = true;
+    }
+
+    // 3. --- REAL-TIME SYNC ---
     userDocRef.onSnapshot((doc) => {
       const userData = doc.data();
-      if (userData && userData.timer) {
-        syncUserTimer(userData.timer);
+      if (userData) {
+          if (userData.timer) syncUserTimer(userData.timer);
+          
+          // ✅ FIX: updateDashboard hata diya, loadUserData call kiya
+          // Isse count hamesha sync rahega
+          loadUserData(); 
       }
     });
 
+    // 4. App Initialization
     await loadUserData();
     unlockApp();
-    checkBroadcasts();    
+    if (typeof checkBroadcasts === 'function') checkBroadcasts();    
+    
   } else {
     showLockScreen();     
-    clearInterval(timerInterval); // Logout par timer band
+    if(typeof timerInterval !== 'undefined') clearInterval(timerInterval); 
+    couponListenerStarted = false;
   }
 });
+
+// ✅ Error Backup: Agar code mein kahin aur updateDashboard call ho raha ho
+// toh ye function error aane se rokega
+function updateDashboard() {
+    loadUserData();
+}
+
+
 
 
 
@@ -1274,7 +1616,7 @@ async function giveManualAccess() {
       soldAt: firebase.firestore.FieldValue.serverTimestamp(),
       soldTo: userDoc.id
     });
-    notify(`✅ Access granted to ${userEmail}! Product marked SOLD OUT`, 'success');
+    notify(`Access granted to ${userEmail}!`, 'success');
     document.getElementById('manualUserEmail').value = '';
     document.getElementById('manualProductId').value = '';
     renderProductsList();
@@ -1289,10 +1631,17 @@ async function loadUserManagement() {
   
   try {
     document.getElementById('userManagementList').innerHTML = 'Loading users...';
-    const snapshot = await db.collection('users').get();
+    
+    // 1. Users aur Transactions dono ka data fetch karein
+    const [userSnapshot, transSnapshot] = await Promise.all([
+      db.collection('users').get(),
+      db.collection('pendingTransactions').get() // Humne status filter hata diya taaki sab fetch ho
+    ]);
+    
+    const allTransactions = transSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
     
     // Sort: New users first
-    const sortedUsers = snapshot.docs.sort((a, b) => {
+    const sortedUsers = userSnapshot.docs.sort((a, b) => {
       const dateA = a.data().createdAt?.toMillis() || 0;
       const dateB = b.data().createdAt?.toMillis() || 0;
       return dateB - dateA;
@@ -1301,9 +1650,18 @@ async function loadUserManagement() {
     let html = '';
     sortedUsers.forEach(doc => {
       const u = doc.data();
+      const userId = doc.id;
       const regDate = u.createdAt ? new Date(u.createdAt.toDate()).toLocaleDateString('en-GB') : 'N/A';
-      // Purchase Count nikalne ke liye
-      const purchaseCount = u.purchasedProducts ? u.purchasedProducts.length : 0;
+      
+      // ✅ FIX: Transactions aur Array dono ka combination use karein
+      // Pehle Transactions table se completed gino
+      const transCount = allTransactions.filter(t => t.userId === userId && t.status === 'completed').length;
+      // Phir backup ke liye purane profile array ki length dekho agar transactions 0 hain
+      const arrayCount = u.purchasedProducts ? u.purchasedProducts.length : 0;
+      
+      // Jo zyada ho wahi asli count hai (Purana data + Naya data merge)
+      const purchaseCount = Math.max(transCount, arrayCount);
+      
       const userRoleColor = u.role === 'admin' ? '#ff6b35' : '#6dff9a';
       
       html += `
@@ -1324,7 +1682,7 @@ async function loadUserManagement() {
                 ${u.email}
               </b>
               <span style="color: ${userRoleColor}; font-size: 9px; font-weight: 800; text-transform: uppercase;">
-                [${u.role}]
+                [${u.role || 'user'}]
               </span>
             </div>
             
@@ -1339,24 +1697,28 @@ async function loadUserManagement() {
           </div>
           
           <div style="display: flex; gap: 8px;">
-            <button class="manual-verify" onclick="viewUserHistory('${doc.id}', '${u.email}')" 
-              style="width: 38px; height: 38px; min-width: 38px; border-radius: 12px; padding: 0; display: flex; align-items: center; justify-content: center; font-size: 18px; background: #ffeb3b; border: none;" title="History">
+            <button class="manual-verify" onclick="viewUserHistory('${userId}', '${u.email}')" 
+              style="width: 38px; height: 38px; min-width: 38px; border-radius: 12px; padding: 0; display: flex; align-items: center; justify-content: center; font-size: 18px; background: #ffeb3b; border: none; cursor: pointer;" title="History">
               👁️
             </button>
-            <button class="danger" onclick="deleteUser('${doc.id}')" 
-              style="width: 38px; height: 38px; min-width: 38px; border-radius: 12px; padding: 0; display: flex; align-items: center; justify-content: center; font-size: 16px; background: #ff4444; border: none;" title="Delete">
+            <button class="danger" onclick="deleteUser('${userId}')" 
+              style="width: 38px; height: 38px; min-width: 38px; border-radius: 12px; padding: 0; display: flex; align-items: center; justify-content: center; font-size: 16px; background: #ff4444; border: none; cursor: pointer;" title="Delete">
               🗑️
             </button>
           </div>
         </div>
       `;
     });
+    
     document.getElementById('userManagementList').innerHTML = html;
-    document.getElementById('usersCount').textContent = snapshot.size;
+    document.getElementById('usersCount').textContent = userSnapshot.size;
+    
   } catch(err) {
-    notify('❌Error loading users', 'error');
+    console.error(err);
+    notify('❌ Error loading users', 'error');
   }
 }
+
 
 
 // ==========================================
@@ -1429,7 +1791,7 @@ purchasedIds.forEach(pId => {
         <div class="item" style="border-left: 4px solid #6d7cff; background: rgba(109,124,255,0.05); margin-bottom:15px; padding:15px; border-radius:10px;">
             <div style="display:flex; justify-content:space-between; align-items:center;">
                 <b style="color:#fff;">📦 ${pInfo.name}</b>
-                <b style="color:#6d7cff; font-size:12px; border:1px solid #6d7cff; padding:2px 6px; border-radius:4px;">DIRECT ACCESS 👑</b>
+                <b style="color:#6d7cff; font-size:12px; border:1px solid #6d7cff; padding:2px 6px; border-radius:4px;">DIRECT ACCESS👑</b>
             </div>
             <div style="font-size:12px; margin:10px 0; color:#aaa;">
                 🆔 <b>Product ID:</b> ${pId}<br>
@@ -1451,21 +1813,40 @@ async function deleteTransaction(docId, userId, userEmail) {
 
     try {
         const txDoc = await db.collection('pendingTransactions').doc(docId).get();
+        
         if (txDoc.exists) {
             const txData = txDoc.data();
-            // Agar verified tha toh user ke purchased array se nikalo
-            if (txData.status === 'verified') {
+            const pId = txData.productId;
+
+            // 🔥 BUG FIX: Status chahe 'verified' ho ya 'completed' (Coupon wala), access remove hona chahiye
+            const successfulStatuses = ['verified', 'completed', 'success'];
+            
+            if (successfulStatuses.includes(txData.status)) {
+                // 1. User ke array se ID nikalo
                 await db.collection('users').doc(userId).update({
-                    purchasedProducts: firebase.firestore.FieldValue.arrayRemove(txData.productId)
+                    purchasedProducts: firebase.firestore.FieldValue.arrayRemove(pId)
+                });
+
+                // 2. OPTIONAL: Product ko wapas 'available' mark karein agar aap chahte hain
+                await db.collection('products').doc(pId).update({
+                    status: 'available',
+                    isSoldOut: false,
+                    buyerEmail: null,
+                    soldTo: null
                 });
             }
         }
-        // Ab document uda do
+
+        // 3. Transaction record uda do
         await db.collection('pendingTransactions').doc(docId).delete();
-        notify('Deleted & Access✅', 'success');
-        viewUserHistory(userId, userEmail); // List refresh
+        
+        notify('History & Access Deleted!', 'success');
+        
+        // Refresh the history view
+        viewUserHistory(userId, userEmail); 
+        
     } catch (err) {
-        console.error(err);
+        console.error("Delete Error:", err);
         notify('❌ Delete Failed', 'error');
     }
 }
@@ -1473,20 +1854,32 @@ async function deleteTransaction(docId, userId, userEmail) {
 
 
 
+
 // Function to delete specific history entry
 async function revokeDirectAccess(userId, productId, userEmail) {
-    if (!confirm("Are you sure Remove this gifted product?")) return;
+    if (!confirm("Are you sure you want to remove this product?")) return;
 
     try {
+        // Access remove karein
         await db.collection('users').doc(userId).update({
             purchasedProducts: firebase.firestore.FieldValue.arrayRemove(productId)
         });
-        notify('✅ Access Revoked Successfully', 'success');
+
+        // Product ko wapas list mein layein
+        await db.collection('products').doc(productId).update({
+            status: 'available',
+            isSoldOut: false,
+            buyerEmail: null,
+            soldTo: null
+        });
+
+        notify('Access Remove&Account Restored', 'success');
         viewUserHistory(userId, userEmail); 
     } catch (err) {
         notify('❌ Revoke Failed', 'error');
     }
 }
+
 
 
 
@@ -1630,7 +2023,7 @@ async function addProduct() {
         name, loginId: accessId, key, price,
         lastUpdated: firebase.firestore.FieldValue.serverTimestamp() 
       });
-      notify('✅ Product updated!');
+      notify(' Product updated!');
       editingProductId = null;
     } else {
       // 🔥 Naya product add karte waqt server date
@@ -1642,7 +2035,7 @@ async function addProduct() {
         isSoldOut: false,
         submittedAt: firebase.firestore.FieldValue.serverTimestamp() 
       });
-      notify('✅ Product added!');
+      notify(' Product added!');
     }
 
     // Inputs Clear karein
@@ -1674,7 +2067,7 @@ async function deleteUser(userId) {
   if(!confirm('Delete this user?')) return;
   try {
     await db.collection('users').doc(userId).delete();
-    notify('✅ User deleted!');
+    notify(' User deleted!');
     loadUserManagement();
   } catch(err) {
     notify('Delete failed!', 'error');
@@ -1685,7 +2078,7 @@ async function deleteProduct(productId) {
   if(!confirm('Delete this product?')) return;
   try {
     await db.collection('products').doc(productId).delete();
-    notify('✅ Product deleted!');
+    notify(' Product deleted!');
     loadProductManagement();
     loadUserData();
     renderProductsList();
@@ -1698,7 +2091,7 @@ async function deleteProduct(productId) {
 function copyToClipboard(text) {
     navigator.clipboard.writeText(text).then(() => {
         // 1. Alert ya Toast dikhao
-        alert("✅ Copied to Clipboard!");
+        alert(" Copied to Clipboard!");
 
         // 2. Haptic Feedback (Vibration) - Sirf Mobile par kaam karega
         if (navigator.vibrate) {
@@ -1900,11 +2293,14 @@ setInterval(updateDashboardTip, 12000);
 
 
 
+// ==========================================
+// -- SYNC Timmer WITH FIREBASE ---
+// ==========================================
+
 // Global Variable
 let timerInterval = null;
 const DEFAULT_MS = 72 * 60 * 60 * 1000;
 
-// --- 1. SYNC WITH FIREBASE ---
 function syncUserTimer(timerData) {
     clearInterval(timerInterval);
     const startBtn = document.getElementById("timerBtn");
@@ -2025,3 +2421,115 @@ function toggleSettings() {
     panel.style.display = (panel.style.display === "none" || panel.style.display === "") ? "flex" : "none";
     icon.innerText = panel.style.display === "flex" ? "❌" : "⚙️";
 }
+
+// ==========================================
+// -- SYNC Timmer WITH FIREBASE ---END
+// ==========================================
+
+
+
+
+
+// ==========================================
+// -- Random Code Generator (Working Fine) ---
+// ==========================================
+
+function autoGenerateCode() {
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    let res = '';
+    for (let i = 0; i < 6; i++) res += chars.charAt(Math.floor(Math.random() * chars.length));
+    document.getElementById('cpCode').value = 'XIAOMI' + res;
+}
+
+// 2. Save to Firestore with all fields
+async function saveCouponToDb() {
+    const code = document.getElementById('cpCode').value.trim().toUpperCase();
+    const value = parseFloat(document.getElementById('cpValue').value);
+    const type = document.getElementById('cpType').value;
+    const expiry = document.getElementById('cpExpiry').value;
+    const limit = parseInt(document.getElementById('cpLimit').value);
+
+    if (!code || isNaN(value)) {
+        return alert("Please enter Code and Discount Value!");
+    }
+
+    try {
+        await db.collection('coupons').add({
+            code: code,
+            value: value,
+            type: type,
+            expiryDate: expiry || "No Expiry",
+            usageLimit: limit || 9999,
+            usedCount: 0,
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+
+        alert("🎉Coupon '" + code + "' Created Successfully!");
+        
+        // Reset fields
+        document.getElementById('cpCode').value = '';
+        document.getElementById('cpValue').value = '';
+        document.getElementById('cpExpiry').value = '';
+        document.getElementById('cpLimit').value = '';
+        
+        loadActiveCoupons(); // Refresh list
+    } catch (e) {
+        console.error(e);
+        alert("Error: " + e.message);
+    }
+}
+
+// 3. Load & Display Coupons with better UI
+async function loadActiveCoupons() {
+    const list = document.getElementById('activeCouponsList');
+    if(!list) return;
+    
+    list.innerHTML = '<p style="text-align:center; color:#555;">Loading coupons...</p>';
+
+    try {
+        const snap = await db.collection('coupons').orderBy('createdAt', 'desc').get();
+        let html = '';
+        
+        if(snap.empty) {
+            list.innerHTML = '<p style="text-align:center; color:#555; font-size:12px;">No active coupons found.</p>';
+            return;
+        }
+
+        snap.forEach(doc => {
+            const d = doc.data();
+            const symbol = d.type === 'fixed' ? '₹' : '%';
+            
+            html += `
+                <div style="background: #15193a; border: 1px solid #2a2f4a; padding: 12px; border-radius: 10px; margin-bottom: 10px; position: relative;">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                        <div>
+                            <span style="background: #ffeb3b; color: #000; padding: 2px 8px; border-radius: 4px; font-weight: bold; font-size: 12px;">${d.code}</span>
+                            <div style="margin-top: 8px; font-size: 14px; color: #fff;">
+                                Discount: <b>${d.value}${symbol} Off</b>
+                            </div>
+                        </div>
+                        <button onclick="deleteCoupon('${doc.id}')" style="background: rgba(255,68,68,0.1); color: #ff4444; border: 1px solid #ff4444; border-radius: 5px; padding: 4px 8px; font-size: 10px; cursor: pointer;">DELETE</button>
+                    </div>
+                    <div style="margin-top: 10px; display: flex; gap: 15px; font-size: 11px; color: #888; border-top: 1px solid #222; padding-top: 8px;">
+                        <span>📅 Exp: ${d.expiryDate}</span>
+                        <span>👥 Limit: ${d.usedCount}/${d.usageLimit}</span>
+                    </div>
+                </div>
+            `;
+        });
+        list.innerHTML = html;
+    } catch (e) {
+        list.innerHTML = '<p style="color:red;">Failed to load coupons.</p>';
+    }
+}
+
+// 4. Delete Function
+async function deleteCoupon(id) {
+    if(confirm("Are you sure you want to delete this coupon?")) {
+        await db.collection('coupons').doc(id).delete();
+        loadActiveCoupons();
+    }
+}
+// ==========================================
+// --Random Code Generator (Working Fine)---END
+// ==========================================
