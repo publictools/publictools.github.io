@@ -1,4 +1,3 @@
-/* [ALL YOUR EXISTING STYLES REMAIN SAME - NO CHANGES NEEDED] */
 * {box-sizing:border-box; -webkit-tap-highlight-color: transparent;}
 html, body {height:100%; margin:0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background:#0f1220; color:#eaeaf0; overflow-x:hidden;}
 body {padding-bottom: env(safe-area-inset-bottom);}
@@ -750,6 +749,48 @@ body.glass-mode .whatsapp-float {
   border: 2px solid rgba(255,255,255,0.1);
 }
 
+
+/* Settings Row Styles */
+.setting-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    background: rgba(255, 255, 255, 0.03);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    cursor: pointer;
+}
+
+.row-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 14px;
+}
+
+/* Arrow Styling */
+.row-arrow {
+    font-size: 14px;
+    color: #6d7cff;
+    transition: transform 0.3s ease;
+    display: inline-block;
+}
+
+/* Jab panel khulega to arrow niche ghomega */
+.rotate-arrow {
+    transform: rotate(90deg);
+}
+
+/* Hidden Panels */
+.settings-edit-panel {
+    background: rgba(0, 0, 0, 0.15);
+    padding: 20px;
+    border-bottom: 1px solid rgba(109, 124, 255, 0.2);
+}
+
+.hidden {
+    display: none !important;
+}
 
 
 
