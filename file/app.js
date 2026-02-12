@@ -12,6 +12,8 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.firestore();
+// Google Provider initialize karein
+const googleProvider = new firebase.auth.GoogleAuthProvider();
 
 let currentUser = null, userRole = 'user', userProducts = [], pendingTransactions = [], allProducts = [];
 let editingProductId = null, currentQRProduct = null;
@@ -391,7 +393,7 @@ html += `
       <div style="position: absolute; right: -16px; top: 65%; transform: translateY(-50%); width: 32px; height: 32px; background: #0f121d; border-radius: 50%; border: 1.5px solid rgba(255,255,255,0.25); z-index: 10;"></div>
 
       <div style="width: 100%; height: 160px; background: #000; overflow: hidden;">
-          <img src="${p.image || 'https://blog.boon.so/wp-content/uploads/2024/03/Xiaomi-Logo-scaled.jpg'}" style="width: 100%; height: 100%; object-fit: cover;">
+          <img src="${p.image || 'https://helproot.github.io/img/Xiaomi-2.png'}" style="width: 100%; height: 100%; object-fit: cover;">
       </div>
 
       <div style="padding: 20px;">
@@ -555,17 +557,51 @@ async function directClaimFree(productId, couponDocId, code) {
     if (!auth.currentUser) return;
 
     const buyBtn = document.getElementById(`buy-btn-${productId}`);
-    const originalText = buyBtn.innerText;
-    buyBtn.innerText = "Processing... ⏳";
-    buyBtn.disabled = true;
+    const originalText = buyBtn ? buyBtn.innerText : "CLAIM";
+    if (buyBtn) {
+        buyBtn.innerText = "Processing... ⏳";
+        buyBtn.disabled = true;
+    }
 
     try {
         const userId = auth.currentUser.uid;
-        const userEmail = auth.currentUser.email; // Buyer ka email lein
+        const userEmail = auth.currentUser.email || "No Email";
+        
+        // 1. References Define Karein
         const userRef = db.collection('users').doc(userId);
+        const productRef = db.collection('products').doc(productId);
+        const couponRef = db.collection('coupons').doc(couponDocId);
+        const transRef = db.collection('pendingTransactions').doc();
 
-        // 1. Transaction Record
-        await db.collection('pendingTransactions').add({
+        // Product ka data nikalna zaroori hai Telegram alert ke liye
+        const prodSnap = await productRef.get();
+        if (!prodSnap.exists) throw new Error("Account Database mein nahi mila!");
+        const prodData = prodSnap.data();
+
+        // 🔥 FIX: Batch ko yahan define karna zaroori hai
+        const batch = db.batch();
+
+        // 2. Product Update (Mark as SOLD)
+        batch.update(productRef, {
+            status: 'sold',
+            isSoldOut: true,
+            soldTo: userId,
+            buyerEmail: userEmail,
+            soldAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+
+        // 3. User Profile Update
+        batch.update(userRef, {
+            purchasedProducts: firebase.firestore.FieldValue.arrayUnion(productId)
+        });
+
+        // 4. Coupon Count Update
+        batch.update(couponRef, {
+            usedCount: firebase.firestore.FieldValue.increment(1)
+        });
+
+        // 5. Transaction Record
+        batch.set(transRef, {
             userId: userId,
             userEmail: userEmail,
             productId: productId,
@@ -576,48 +612,46 @@ async function directClaimFree(productId, couponDocId, code) {
             submittedAt: firebase.firestore.FieldValue.serverTimestamp()
         });
 
-        // 🔥 2. PRODUCT UPDATE FIX: Buyer details add karein
-        // Isse Admin panel par "null" ki jagah email dikhega
-        await db.collection('products').doc(productId).update({
-            status: 'sold',
-            isSoldOut: true,
-            soldTo: userId,        // Buyer ID
-            buyerEmail: userEmail, // Admin yahi field read karta hai display ke liye
-            soldAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
+        // 🔥 Sab kuch ek saath commit karein
+        await batch.commit();
 
-        // 3. User Profile Update (For Dashboard Sync)
-        await userRef.update({
-            purchasedProducts: firebase.firestore.FieldValue.arrayUnion(productId)
-        });
+        // 📢 Telegram Alert (Aapka Function)
+        const alertMsg = `🎁 <b>Free Claim! (Coupon)</b>\n\n📧 Email: ${userEmail}\n🎫 Coupon: ${code}\n📦 Account: ${prodData.name || productId}\n✅ Status: Auto-Delivered`;
+        if (typeof sendTelegramAlert === 'function') {
+            sendTelegramAlert(alertMsg);
+        }
 
-        // 4. Coupon Update
-        await db.collection('coupons').doc(couponDocId).update({
-            usedCount: firebase.firestore.FieldValue.increment(1)
-        });
-
-        // Celebration
-        if (typeof confetti === 'function') {
-            confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, zIndex: 9999 });
+        // 🎆 Fireworks & Celebration
+        if (typeof launchFireworks === 'function') {
+            launchFireworks();
+        } else if (typeof confetti === 'function') {
+            confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
         }
 
         alert("🎁 Success! Account claimed.");
 
         // Data Sync
         await loadUserData(); 
-        await renderProductsList();
+        if (typeof renderProductsList === 'function') {
+            await renderProductsList();
+        } else if (typeof renderProducts === 'function') {
+            await renderProducts();
+        }
 
         setTimeout(() => {
             showSection('mykeys');
-        }, 500); 
+        }, 800); 
 
     } catch (error) {
         console.error("Claim Error:", error);
         alert("❌ Error: " + error.message);
-        buyBtn.innerText = originalText;
-        buyBtn.disabled = false;
+        if (buyBtn) {
+            buyBtn.innerText = originalText;
+            buyBtn.disabled = false;
+        }
     }
 }
+
 
 // ==========================================
 // --100% buy Cupon Se direct access ---end
@@ -841,109 +875,90 @@ async function updateProfilePhoto() {
 
 async function loadUserData() {
   try {
-    // 1. OFFLINE DATA LOAD
+    // OFFLINE DATA LOAD (Pehle screen par purana data dikhao)
     const cachedData = localStorage.getItem('userDashboardData');
     if (cachedData) {
       const offlineData = JSON.parse(cachedData);
-      renderUI(offlineData.userData, offlineData.userEmail, offlineData.availableOnly, offlineData.actualPurchaseCount || 0);
+      renderUI(offlineData.userData, offlineData.userEmail, offlineData.availableOnly);
     }
 
-    // 2. ONLINE DATA FETCH
+    // ONLINE DATA FETCH (Agar net hai toh fresh data lao)
     if (navigator.onLine && currentUser) {
-      // Parallel fetch: Profile aur Transactions dono mangwao
-      const [userDoc, transSnap, prodSnapshot] = await Promise.all([
-        db.collection('users').doc(currentUser.uid).get(),
-        db.collection('pendingTransactions')
-          .where('userId', '==', currentUser.uid)
-          .where('status', '==', 'completed')
-          .get(),
-        db.collection('products').get()
-      ]);
+      const userDoc = await db.collection('users').doc(currentUser.uid).get();
+      const prodSnapshot = await db.collection('products').get();
       
-      let userData = { role: 'user', purchasedProducts: [], profilePhoto: "" };
+      let userData = {
+        role: 'user',
+        purchasedProducts: [],
+        profilePhoto: ""
+      };
+
       if (userDoc.exists) {
         userData = userDoc.data();
-        userRole = userData.role || 'user';
+        // Global variables ko update karna zaroori hai admin features ke liye
+        userRole = userData.role || 'user'; 
         userProducts = userData.purchasedProducts || [];
       }
-
-      // --- 🔥 TOTAL COUNT LOGIC START ---
-      
-      // 1. Manual/Old items jo user profile array mein hain
-      const profileIds = userData.purchasedProducts || [];
-      
-      // 2. New items jo transactions table mein hain
-      const transIds = transSnap.docs.map(doc => doc.data().productId);
-      
-      // 3. MERGE & UNIQUE: Dono ko milao aur duplicates hatao
-      // Isse Manual + Coupon dono jud jayenge
-      const allUniqueIds = [...new Set([...profileIds, ...transIds])];
-      const totalCombinedCount = allUniqueIds.length;
-
-      // --- TOTAL COUNT LOGIC END ---
 
       const userEmail = currentUser.email;
       const availableOnly = prodSnapshot.docs.filter(p => !p.data().isSoldOut).length;
 
-      // Local storage update
+      // Data save karo agli baar ke liye
       localStorage.setItem('userDashboardData', JSON.stringify({
         userData,
         userEmail,
-        availableOnly,
-        actualPurchaseCount: totalCombinedCount
+        availableOnly
       }));
 
       // Fresh UI update
-      renderUI(userData, userEmail, availableOnly, totalCombinedCount);
+      renderUI(userData, userEmail, availableOnly);
     }
   } catch (err) {
     console.error("Profile Load Error:", err);
   }
 }
 
-
-
 // 2. renderUI: Sidebar aur Settings dono jagah data dikhana
-function renderUI(userData, userEmail, availableOnly, actualPurchaseCount = 0) {
+function renderUI(userData, userEmail, availableOnly) {
   const currentRole = userData.role || 'user';
+  const currentProducts = userData.purchasedProducts || [];
   const photoUrl = userData.profilePhoto || "";
 
-  // 1. PHOTO/AVATAR LOGIC
+  // PHOTO/AVATAR LOGIC (Sidebar + Settings Dono ke liye)
   const photoHTML = (photoUrl && photoUrl !== "") 
     ? `<img src="${photoUrl}" style="width:100%; height:100%; border-radius:50%; object-fit:cover;" onerror="this.src='https://ui-avatars.com/api/?name=${userEmail}&background=6d7cff&color=fff'">`
     : `<span style="font-size:20px; font-weight:bold; color:white;">${userEmail.charAt(0).toUpperCase()}</span>`;
   
-  if(document.getElementById('sideAvatar')) document.getElementById('sideAvatar').innerHTML = photoHTML;
-  if(document.getElementById('settingsAvatar')) document.getElementById('settingsAvatar').innerHTML = photoHTML;
+  const sideAvatar = document.getElementById('sideAvatar');
+  const settingsAvatar = document.getElementById('settingsAvatar');
+  
+  if(sideAvatar) sideAvatar.innerHTML = photoHTML;
+  if(settingsAvatar) settingsAvatar.innerHTML = photoHTML;
 
-  // 2. NAME & ROLE TEXT LOGIC
+  // NAME & ROLE TEXT
   let namePart = userEmail.split('@')[0].toUpperCase();
   if(namePart.length > 10) namePart = namePart.substring(0, 8) + "..";
   const roleDisplayText = currentRole === 'admin' ? '👑Administrator' : 'Verified User✅';
 
-  // Sidebar & Settings Display Updates
+  // Sidebar Updates
   if(document.getElementById('sideName')) document.getElementById('sideName').textContent = namePart;
   if(document.getElementById('sideRole')) document.getElementById('sideRole').textContent = roleDisplayText;
+  
+  // Settings Page Updates
   if(document.getElementById('set-userName')) document.getElementById('set-userName').textContent = namePart;
   if(document.getElementById('set-userRole')) document.getElementById('set-userRole').textContent = roleDisplayText;
   if(document.getElementById('set-userEmail')) document.getElementById('set-userEmail').textContent = userEmail;
 
-  // 3. DASHBOARD STATS (Actual Fix Yahan Hai)
+  // DASHBOARD STATS
   if(document.getElementById('userInfo')) document.getElementById('userInfo').textContent = userEmail;
   if(document.getElementById('roleBadge')) document.getElementById('roleBadge').textContent = currentRole.toUpperCase();
   if(document.getElementById('totalProducts')) document.getElementById('totalProducts').textContent = availableOnly;
-  
-  // 🔥 ASLI FIX: Dashboard Count
-  // Hum loadUserData se already merged count (Manual + Coupon) bhej rahe hain.
-  // Ab yahan kisi extra logic ki zaroorat nahi, seedha count display karein.
-  if(document.getElementById('userKeys')) {
-      document.getElementById('userKeys').textContent = actualPurchaseCount;
-  }
+  if(document.getElementById('userKeys')) document.getElementById('userKeys').textContent = currentProducts.length;
 
-  // 4. ADMIN SECTION VISIBILITY
+  // ADMIN SECTION CONTROL (Fix: Isse admin section sahi se dikhega)
   const adminSec = document.getElementById('adminSection');
   const userSec = document.getElementById('userSection');
-  
+
   if(currentRole === 'admin') {
     if(adminSec) adminSec.classList.remove('hidden');
     if(userSec) userSec.classList.add('hidden');
@@ -1518,7 +1533,7 @@ async function submitTransaction() {
         });
 
         // 📢 Telegram Alert (Idea 3)
-        const alertMsg = `🚀 <b>New Order!</b>\n\n📧 Email: ${auth.currentUser.email}\n💳 UTR: ${txId}\n📦 Product: ${currentQRProduct}\n💰 Amount: ₹${currentProductPrice}`;
+        const alertMsg = `🚀 <b>New Order!</b>\n\n📧 Email: ${auth.currentUser.email}\n💳 UTR: ${txId}\n📦 Account: ${currentQRProduct}\n💰 Amount: ₹${currentProductPrice}`;
         sendTelegramAlert(alertMsg);
 
         // 🎆 Fireworks (Idea 6)
@@ -2532,4 +2547,100 @@ async function deleteCoupon(id) {
 }
 // ==========================================
 // --Random Code Generator (Working Fine)---END
+// ==========================================
+
+
+
+
+
+
+function toggleSettingsPanel(panelId) {
+    // 1. Panel ko hide/show karo
+    const panel = document.getElementById(panelId);
+    panel.classList.toggle('hidden');
+
+    // 2. Arrow ko rotate karo
+    const arrow = document.getElementById('arrow-' + panelId);
+    if (arrow) {
+        arrow.classList.toggle('rotate-arrow');
+    }
+}
+
+
+
+
+
+
+
+// ==========================================
+// --ID pass login Show hide function(Working Fine)
+// ==========================================
+
+function toggleEmailSection() {
+    const section = document.getElementById('emailSection');
+    const arrow = document.getElementById('arrow-icon');
+    
+    // Check if section is closed
+    if (section.style.maxHeight === "0px" || section.style.maxHeight === "") {
+        section.style.maxHeight = "400px"; // Expand (Itna kaafi hai saare fields ke liye)
+        section.style.opacity = "1";
+        section.style.paddingTop = "10px";
+        arrow.style.transform = "rotate(180deg)"; // Arrow turns up
+        arrow.style.color = "#bd00ff"; // Glow color for arrow
+    } else {
+        section.style.maxHeight = "0px"; // Collapse
+        section.style.opacity = "0";
+        section.style.paddingTop = "0px";
+        arrow.style.transform = "rotate(0deg)"; // Arrow turns down
+        arrow.style.color = "rgba(255,255,255,0.4)";
+    }
+}
+
+// ==============================================
+// --ID pass login Show hide function(Working Fine)end
+// ==============================================
+
+
+
+
+
+// ==========================================
+// --Login with Google function(Working Fine)
+// ==========================================
+async function loginWithGoogle() {
+    try {
+        const result = await auth.signInWithPopup(googleProvider);
+        const user = result.user;
+        
+        const userDocRef = db.collection('users').doc(user.uid);
+        const userDoc = await userDocRef.get();
+        
+        // Agar user naya hai toh uska record banayein
+        if (!userDoc.exists) {
+            console.log("Creating new Google user record...");
+            await userDocRef.set({
+                uid: user.uid,
+                email: user.email,
+                displayName: user.displayName || user.email.split('@')[0],
+                role: 'user',
+                purchasedProducts: [],
+                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                timer: { 
+                    isRunning: false, 
+                    savedRemaining: 72 * 60 * 60 * 1000, 
+                    totalBase: 72 * 60 * 60 * 1000 
+                }
+            });
+        }
+        
+        // Aapka Auth.onAuthStateChanged automatically baki kaam sambhal lega
+        console.log("Google Login Successful!");
+
+    } catch (error) {
+        console.error("Google Auth Error:", error);
+        alert("❌ Google Login Failed: " + error.message);
+    }
+}
+// ==========================================
+// --Login with Google function(Working Fine) end
 // ==========================================
