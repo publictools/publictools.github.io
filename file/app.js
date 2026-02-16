@@ -2760,6 +2760,10 @@ async function loginWithGoogle() {
 // ==========================================
 // --Login with Google function(Working Fine) end
 // ==========================================
+function openErrorPage() {
+    // Agar aapka error code wala file 'errors.html' naam se save hai:
+    window.location.href = 'error_codes.html'; 
+}
 // ===================
-// --Vesion:- 18
+// --Vesion:- 19
 // ===================
