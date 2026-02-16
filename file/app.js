@@ -573,6 +573,14 @@ async function directClaimFree(productId, couponDocId, code) {
         const couponRef = db.collection('coupons').doc(couponDocId);
         const transRef = db.collection('pendingTransactions').doc();
 
+        // User ki poori details nikaalo (Profile details ke liye)
+        const userSnap = await userRef.get();
+        const userData = userSnap.exists ? userSnap.data() : {};
+        
+        const fullName = userData.name || "Not Provided";
+        const mobile = userData.mobile || "Not Provided";
+        const telegramUser = userData.telegram || "Not Provided";
+        
         // Product ka data nikalna zaroori hai Telegram alert ke liye
         const prodSnap = await productRef.get();
         if (!prodSnap.exists) throw new Error("Account Database mein nahi mila!");
@@ -616,7 +624,18 @@ async function directClaimFree(productId, couponDocId, code) {
         await batch.commit();
 
         // 📢 Telegram Alert (Aapka Function)
-        const alertMsg = `🎁 <b>Free Claim! (Coupon)</b>\n\n📧 Email: ${userEmail}\n🎫 Coupon: ${code}\n📦 Account: ${prodData.name || productId}\n✅ Status: Auto-Delivered`;
+        // 📢 3. Telegram Alert (With Full Details)
+        const alertMsg = `🎁 <b>Free Claim! (100% Discount)</b>\n\n` +
+            `👤 <b>User Info:</b>\n` +
+            `📝 Name: ${fullName}\n` +
+            `📧 Email: ${userEmail}\n` +
+            `📞 Mobile: ${mobile}\n` +
+            `✈️ Telegram: ${telegramUser}\n\n` +
+            `📦 <b>Order Details:</b>\n` +
+            `🎫 Coupon: ${code}\n` +
+            `📦 Account: ${prodData.name || productId}\n` +
+            `✅ Status: Auto-Delivered`;
+
         if (typeof sendTelegramAlert === 'function') {
             sendTelegramAlert(alertMsg);
         }
@@ -970,6 +989,7 @@ function renderUI(userData, userEmail, availableOnly) {
 
 
 
+
 // ==========================================
 // 🔥 FIXED: Sidebar Photo Rendering end
 // ==========================================
@@ -1257,13 +1277,10 @@ let couponListenerStarted = false;
 auth.onAuthStateChanged(async (user) => {
   if (user) {
     currentUser = user;
-    
     const userDocRef = db.collection('users').doc(user.uid);
     let userDoc = await userDocRef.get();
     
-    // 1. User Record Check & Creation
     if (!userDoc.exists) {
-      console.log("Re-creating missing user record...");
       const newUserData = {
         email: user.email,
         role: 'user',
@@ -1272,27 +1289,35 @@ auth.onAuthStateChanged(async (user) => {
         timer: { isRunning: false, savedRemaining: 72 * 60 * 60 * 1000, totalBase: 72 * 60 * 60 * 1000 }
       };
       await userDocRef.set(newUserData);
+      userDoc = await userDocRef.get();
     }
 
-    // 2. --- COUPON AUTO-LOAD ---
     if (!couponListenerStarted) {
         loadActiveCoupons();
         couponListenerStarted = true;
     }
 
-    // 3. --- REAL-TIME SYNC ---
+    // REAL-TIME SYNC & INPUT AUTO-FILL
     userDocRef.onSnapshot((doc) => {
       const userData = doc.data();
       if (userData) {
           if (userData.timer) syncUserTimer(userData.timer);
           
-          // ✅ FIX: updateDashboard hata diya, loadUserData call kiya
-          // Isse count hamesha sync rahega
+          // IDs Matched with your HTML
+          const eInp = document.getElementById('upd-email');
+          const nInp = document.getElementById('upd-name');
+          const mInp = document.getElementById('upd-mobile');
+          const tInp = document.getElementById('upd-telegram');
+
+          if (eInp) eInp.value = user.email || '';
+          if (nInp) nInp.value = userData.name || '';
+          if (mInp) mInp.value = userData.mobile || '';
+          if (tInp) tInp.value = userData.telegram || '';
+
           loadUserData(); 
       }
     });
 
-    // 4. App Initialization
     await loadUserData();
     unlockApp();
     if (typeof checkBroadcasts === 'function') checkBroadcasts();    
@@ -1303,6 +1328,8 @@ auth.onAuthStateChanged(async (user) => {
     couponListenerStarted = false;
   }
 });
+
+
 
 // ✅ Error Backup: Agar code mein kahin aur updateDashboard call ho raha ho
 // toh ye function error aane se rokega
@@ -1413,67 +1440,12 @@ function closeQRModal() {
 
 // Ye Submit button ke liye hai (Firebase mein data jayega)
 
-async function submitTransaction() {
-    const txInput = document.getElementById('transactionId');
-    const txId = txInput ? txInput.value.trim() : "";
-    const sound = document.getElementById("successPing");
-
-    if (!currentQRProduct) {
-        alert("❌ Error: First Select Xaiomi Account ! then click Buy now");
-        return;
-    }
-    if (!txId) {
-        alert("❌ UTR / Transaction ID daalna zaroori hai.");
-        return;
-    }
-
-    try {
-        // Firebase Firestore mein entry
-        await db.collection('pendingTransactions').add({
-            userId: auth.currentUser.uid,
-            userEmail: auth.currentUser.email,
-            transactionId: txId,
-            productId: currentQRProduct,
-            amount: currentProductPrice,
-            status: 'pending',
-            submittedAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
-
-        // 🔥 Sound Play Karo
-        if (sound) {
-            sound.currentTime = 0; 
-            sound.play().catch(e => console.log("Sound block:", e));
-        }
-
-        // 📱 Mobile Vibration (200ms)
-        if (navigator.vibrate) {
-            navigator.vibrate(200);
-        }
-
-        alert("✅ Success! Admin 5m mein aprove kar dega");
-        closeQRModal(); 
-        showSection('mykeys');
-
-    } catch (error) {
-        alert("❌ Error: " + error.message);
-    }
-}
-
-
 // ==========================================
-// 2.--- MODAL FUNCTIONS (FIXED) --- END
+//--- STEP 1: TELEGRAM NOTIFICATION FUNCTION ---
 // ==========================================
-
-
-
-
-// ==========================================
-//--- STEP 3: TELEGRAM NOTIFICATION FUNCTION ---
-// ==========================================
-
 async function sendTelegramAlert(msg) {
-    const token = "7955185832:AAH4_TJyi_P78BFkHnBl32d3CgD4sdZ7Gxo"; // Apna Bot Token yaha dalo
-    const chatId = "6931353821";   // Apni Chat ID yaha dalo
+    const token = "7955185832:AAH4_TJyi_P78BFkHnBl32d3CgD4sdZ7Gxo"; 
+    const chatId = "6931353821";   
     const url = `https://api.telegram.org/bot${token}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(msg)}&parse_mode=HTML`;
     
     try {
@@ -1483,23 +1455,24 @@ async function sendTelegramAlert(msg) {
     }
 }
 
-// --- STEP 6: FIREWORKS (CONFETTI) FUNCTION ---
+// ==========================================
+//--- STEP 2: FIREWORKS (CONFETTI) FUNCTION ---
+// ==========================================
 function launchFireworks() {
+    if (typeof confetti === 'undefined') return; // Check if library loaded
     var duration = 3 * 1000;
     var end = Date.now() + duration;
 
     (function frame() {
         confetti({
             particleCount: 5,
-            angle: 60,
-            spread: 55,
+            angle: 60, spread: 55,
             origin: { x: 0 },
             colors: ['#6d7cff', '#6dff9a', '#ffffff']
         });
         confetti({
             particleCount: 5,
-            angle: 120,
-            spread: 55,
+            angle: 120, spread: 55,
             origin: { x: 1 },
             colors: ['#6d7cff', '#6dff9a', '#ffffff']
         });
@@ -1510,47 +1483,94 @@ function launchFireworks() {
     }());
 }
 
-// --- UPDATED SUBMIT FUNCTION ---
+// ==========================================
+//--- STEP 3: THE MAIN SUBMIT FUNCTION (FIXED) ---
+// ==========================================
 async function submitTransaction() {
     const txInput = document.getElementById('transactionId');
     const txId = txInput ? txInput.value.trim() : "";
     const sound = document.getElementById("successPing");
 
-    if (!currentQRProduct || !txId) {
-        alert("❌ Error: Missing details!");
+    if (!currentQRProduct) {
+        alert("❌ Error: First Select Xaiomi Account! then click Buy now");
+        return;
+    }
+    if (!txId) {
+        alert("❌ UTR / Transaction ID daalna zaroori hai.");
         return;
     }
 
+    // Final price calculate karo
+    const finalAmount = (window.discountApplied > 0) ? (currentProductPrice - window.discountApplied) : currentProductPrice;
+
     try {
+        // --- [ID MATCH FIX] User Profile Details Fetch ---
+        const userDoc = await db.collection('users').doc(auth.currentUser.uid).get();
+        const userData = userDoc.exists ? userDoc.data() : {};
+        
+        // Wahi keys use kar rahe hain jo aapne updateFullProfile mein save ki hain
+        const fullName = userData.name || "Not Set"; 
+        const mobile = userData.mobile || "Not Set";
+        const telegramUser = userData.telegram || "Not Set";
+
+        // 1. Coupon usage count increment
+        if (window.appliedCouponId) {
+            await db.collection('coupons').doc(window.appliedCouponId).update({
+                usedCount: firebase.firestore.FieldValue.increment(1)
+            });
+        }
+
+        // 2. Save Transaction to Firestore
         await db.collection('pendingTransactions').add({
             userId: auth.currentUser.uid,
             userEmail: auth.currentUser.email,
+            userName: fullName,
+            userMobile: mobile,
+            userTelegram: telegramUser,
             transactionId: txId,
             productId: currentQRProduct,
-            amount: currentProductPrice,
+            amount: finalAmount,
             status: 'pending',
-            submittedAt: firebase.firestore.FieldValue.serverTimestamp()
+            submittedAt: firebase.firestore.FieldValue.serverTimestamp(),
+            couponUsed: window.currentCouponCode || "none"
         });
 
-        // 📢 Telegram Alert (Idea 3)
-        const alertMsg = `🚀 <b>New Order!</b>\n\n📧 Email: ${auth.currentUser.email}\n💳 UTR: ${txId}\n📦 Account: ${currentQRProduct}\n💰 Amount: ₹${currentProductPrice}`;
+        // 3. ✅ [PREMIUM ALERT] Telegram Message with User Profile
+        const alertMsg = `🚀 <b>New Order Received!</b>\n\n` +
+            `👤 <b>User Info:</b>\n` +
+            `📝 Name: ${fullName}\n` +
+            `📧 Email: ${auth.currentUser.email}\n` +
+            `📞 Mobile: ${mobile}\n` +
+            `✈️ Telegram: ${telegramUser}\n\n` +
+            `📦 <b>Product Info:</b>\n` +
+            `💳 UTR: ${txId}\n` +
+            `📂 Account: ${currentQRProduct}\n` +
+            `💰 Amount: ₹${finalAmount}\n` +
+            `🎫 Coupon: ${window.currentCouponCode || 'None'}`;
+        
         sendTelegramAlert(alertMsg);
 
-        // 🎆 Fireworks (Idea 6)
-        launchFireworks();
-
-        // 📱 Sound & Vibration
-        if (sound) { sound.currentTime = 0; sound.play(); }
+        // 4. Effects
+        if (typeof launchFireworks === 'function') launchFireworks();
+        if (sound) { sound.currentTime = 0; sound.play().catch(e => {}); }
         if (navigator.vibrate) { navigator.vibrate(200); }
 
-        alert("✅ Success! Admin 5m mein aprove kar dega");
+        alert("✅ Success! Admin 5m mein approve kar dega");
+
+        // 5. Cleanup
+        window.appliedCouponId = null;
+        window.currentCouponCode = null;
+        window.discountApplied = 0;
+
         closeQRModal(); 
         showSection('mykeys');
 
     } catch (error) {
+        console.error("Submit Error:", error);
         alert("❌ Error: " + error.message);
     }
 }
+
 
 // ==========================================
 // --- STEP 3: TELEGRAM NOTIFICATION FUNCTION --- End
@@ -1712,15 +1732,21 @@ async function loadUserManagement() {
           </div>
           
           <div style="display: flex; gap: 8px;">
-            <button class="manual-verify" onclick="viewUserHistory('${userId}', '${u.email}')" 
-              style="width: 38px; height: 38px; min-width: 38px; border-radius: 12px; padding: 0; display: flex; align-items: center; justify-content: center; font-size: 18px; background: #ffeb3b; border: none; cursor: pointer;" title="History">
-              👁️
-            </button>
-            <button class="danger" onclick="deleteUser('${userId}')" 
-              style="width: 38px; height: 38px; min-width: 38px; border-radius: 12px; padding: 0; display: flex; align-items: center; justify-content: center; font-size: 16px; background: #ff4444; border: none; cursor: pointer;" title="Delete">
-              🗑️
-            </button>
-          </div>
+  <button onclick="viewUserHistory('${userId}', '${u.email}')" 
+    class="text-blue-500" 
+    style="width: 38px; height: 38px; min-width: 38px; border-radius: 12px; padding: 0; display: flex; align-items: center; justify-content: center; font-size: 16px; background: rgba(59, 130, 246, 0.2); border: 1.5px solid #3b82f6; color: #3b82f6; cursor: pointer;" 
+    title="Edit">
+    <i class="fas fa-edit"></i>
+  </button>
+
+  <button onclick="deleteUser('${userId}')" 
+    class="text-red-500" 
+    style="width: 38px; height: 38px; min-width: 38px; border-radius: 12px; padding: 0; display: flex; align-items: center; justify-content: center; font-size: 16px; background: rgba(239, 68, 68, 0.2); border: 1.5px solid #ef4444; color: #ef4444; cursor: pointer;" 
+    title="Delete">
+    <i class="fas fa-trash"></i>
+  </button>
+</div>
+
         </div>
       `;
     });
@@ -1744,6 +1770,12 @@ async function viewUserHistory(userId, userEmail) {
     try {
         const userDoc = await db.collection('users').doc(userId).get();
         const userData = userDoc.data() || {};
+        
+        // --- Extra Data Fetching (Using original userData) ---
+        const name = userData.name || userData.displayName || 'N/A';
+        const mobile = userData.mobile || userData.phoneNumber || 'N/A';
+        const telegram = userData.telegram || userData.telegramUsername || 'N/A';
+        
         const registrationDate = userData.createdAt ? 
             new Date(userData.createdAt.toDate()).toLocaleString('en-GB', { dateStyle: 'medium', timeStyle: 'short' }) : 'Unknown';
         
@@ -1755,13 +1787,24 @@ async function viewUserHistory(userId, userEmail) {
 
         let html = `<h4>📜 History for: ${userEmail}</h4>`;
         
+        // --- Naya User Info Section (Original IDs ke saath) ---
+        html += `
+            <div style="background:rgba(255,255,255,0.05); padding:15px; border-radius:12px; margin-bottom:15px; border:1px solid rgba(255,255,255,0.1); display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                <div style="font-size:13px;"><span style="color:#94a3b8;">Name:</span> <br><b style="color:#fff;">👤 ${name}</b></div>
+                <div style="font-size:13px;"><span style="color:#94a3b8;">Mobile:</span> <br><b style="color:#fff;">📞 ${mobile}</b></div>
+                <div style="font-size:13px;"><span style="color:#94a3b8;">Telegram:</span> <br><b style="color:#38bdf8;">✈️ ${telegram}</b></div>
+                <div style="font-size:13px;"><span style="color:#94a3b8;">Status:</span> <br><b style="color:#6dff9a;">✅ Active</b></div>
+            </div>
+        `;
         
+        // --- Aapka Purana Joined On Box ---
         html += `
             <div style="background:rgba(109,124,255,0.1); padding:12px; border-radius:10px; margin-bottom:15px; border:1px solid #6d7cff; text-align:center;">
                 <span style="color:#6dff9a; font-weight:bold;">📅 Joined On:</span> ${registrationDate}
             </div>
             <button class="action" onclick="showSection('manageUsers')" style="margin-bottom:15px; width:100%;">⬅️ Back to Users List</button>
         `;
+
 
         const txProductIds = new Set();
 
@@ -2496,47 +2539,62 @@ async function saveCouponToDb() {
 
 // 3. Load & Display Coupons with better UI
 async function loadActiveCoupons() {
+    // 1. Check karein ki Admin Panel mein ye ID exist karti hai
     const list = document.getElementById('activeCouponsList');
-    if(!list) return;
+    if(!list) {
+        console.error("Error: 'activeCouponsList' element nahi mila!");
+        return;
+    }
     
-    list.innerHTML = '<p style="text-align:center; color:#555;">Loading coupons...</p>';
+    list.innerHTML = '<p style="text-align:center; color:#888; font-size:12px;">⌛ Loading coupons...</p>';
 
     try {
-        const snap = await db.collection('coupons').orderBy('createdAt', 'desc').get();
-        let html = '';
-        
-        if(snap.empty) {
-            list.innerHTML = '<p style="text-align:center; color:#555; font-size:12px;">No active coupons found.</p>';
-            return;
-        }
-
-        snap.forEach(doc => {
-            const d = doc.data();
-            const symbol = d.type === 'fixed' ? '₹' : '%';
+        // Real-time listener taaki delete/add turant dikhe
+        db.collection('coupons').orderBy('createdAt', 'desc').onSnapshot((snap) => {
+            let html = '';
             
-            html += `
-                <div style="background: #15193a; border: 1px solid #2a2f4a; padding: 12px; border-radius: 10px; margin-bottom: 10px; position: relative;">
-                    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-                        <div>
-                            <span style="background: #ffeb3b; color: #000; padding: 2px 8px; border-radius: 4px; font-weight: bold; font-size: 12px;">${d.code}</span>
-                            <div style="margin-top: 8px; font-size: 14px; color: #fff;">
-                                Discount: <b>${d.value}${symbol} Off</b>
+            if(snap.empty) {
+                list.innerHTML = '<p style="text-align:center; color:#555; font-size:12px;">📭 No active coupons found.</p>';
+                return;
+            }
+
+            snap.forEach(doc => {
+                const d = doc.data();
+                const symbol = d.type === 'fixed' ? '₹' : '%';
+                
+                // Expiry Date check (Safe handling)
+                const exp = d.expiryDate || 'No Expiry';
+                
+                // Usage color logic: Jab limit khatam ho jaye toh red dikhe
+                const isLimitFull = (d.usedCount >= d.usageLimit);
+                const limitColor = isLimitFull ? '#ff4444' : '#6dff9a';
+
+                html += `
+                    <div style="background: rgba(21, 25, 58, 0.8); border: 1px solid #2a2f4a; padding: 12px; border-radius: 12px; margin-bottom: 10px; position: relative;">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                            <div>
+                                <span style="background: #ffeb3b; color: #000; padding: 3px 10px; border-radius: 6px; font-weight: 800; font-size: 11px; text-transform: uppercase;">${d.code}</span>
+                                <div style="margin-top: 8px; font-size: 13px; color: #fff;">
+                                    Value: <b style="color:#ffeb3b;">${d.value}${symbol} Off</b>
+                                </div>
                             </div>
+                            <button onclick="deleteCoupon('${doc.id}')" style="background: rgba(255,68,68,0.1); color: #ff4444; border: 1px solid #ff4444; border-radius: 6px; padding: 5px 10px; font-size: 10px; font-weight:bold; cursor: pointer; transition: 0.3s;">DELETE</button>
                         </div>
-                        <button onclick="deleteCoupon('${doc.id}')" style="background: rgba(255,68,68,0.1); color: #ff4444; border: 1px solid #ff4444; border-radius: 5px; padding: 4px 8px; font-size: 10px; cursor: pointer;">DELETE</button>
+                        <div style="margin-top: 10px; display: flex; justify-content: space-between; font-size: 11px; color: #94a3b8; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 10px;">
+                            <span>📅 Exp: ${exp}</span>
+                            <span style="color: ${limitColor}; font-weight:bold;">👥 Limit: ${d.usedCount || 0}/${d.usageLimit}</span>
+                        </div>
                     </div>
-                    <div style="margin-top: 10px; display: flex; gap: 15px; font-size: 11px; color: #888; border-top: 1px solid #222; padding-top: 8px;">
-                        <span>📅 Exp: ${d.expiryDate}</span>
-                        <span>👥 Limit: ${d.usedCount}/${d.usageLimit}</span>
-                    </div>
-                </div>
-            `;
+                `;
+            });
+            list.innerHTML = html;
         });
-        list.innerHTML = html;
     } catch (e) {
-        list.innerHTML = '<p style="color:red;">Failed to load coupons.</p>';
+        console.error("Coupon Load Error:", e);
+        list.innerHTML = '<p style="color:#ff4444; text-align:center; font-size:12px;">❌ Error loading coupons.</p>';
     }
 }
+
 
 // 4. Delete Function
 async function deleteCoupon(id) {
@@ -2567,8 +2625,66 @@ function toggleSettingsPanel(panelId) {
 }
 
 
+// ==========================================
+// --Complete profile function(Working Fine)
+// ==========================================
 
+async function updateFullProfile() {
+    // Current User check zaroori hai
+    if (!auth.currentUser) {
+        alert("Session expired! Please login again.");
+        return;
+    }
+    const newName = document.getElementById('upd-name').value.trim();
+    const newMobile = document.getElementById('upd-mobile').value.trim();
+    const newTelegram = document.getElementById('upd-telegram').value.trim();
 
+    // 1. Validation check
+    if(!newName || !newMobile) {
+        alert("Bhai, Name aur Mobile toh zaroori hai!");
+        return;
+    }
+
+    try {
+        const userRef = db.collection('users').doc(auth.currentUser.uid);
+        
+        // 2. Database Update
+        // Note: 'name' use kar rahe hain taaki loadUserData() se mismatch na ho
+        await userRef.update({
+            name: newName, 
+            mobile: newMobile,
+            telegram: newTelegram,
+            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+
+        // 3. LIVE DOM UPDATE (Refresh ke bina name badalne ke liye)
+        // Aapke profile header ke liye (Rishu Kumarr wala part)
+        const profileHeaderName = document.querySelector('.profile-header h3'); 
+        if(profileHeaderName) {
+            profileHeaderName.textContent = newName;
+        }
+
+        // Sidebar ya baaki sections ke liye
+        if(document.getElementById('sideName')) {
+            document.getElementById('sideName').textContent = newName;
+        }
+
+        alert("✅ Profile Update Ho Gayi!");
+        
+        // Panel close logic
+        if (typeof toggleSettingsPanel === 'function') {
+            toggleSettingsPanel('profile-panel'); 
+        }
+
+    } catch (error) {
+        console.error("Error updating profile:", error);
+        alert("❌ Kuch gadbad ho gayi: " + error.message);
+    }
+}
+
+// ==========================================
+// --Complete profile function(Working Fine) end
+// ==========================================
 
 
 
@@ -2644,3 +2760,6 @@ async function loginWithGoogle() {
 // ==========================================
 // --Login with Google function(Working Fine) end
 // ==========================================
+// ===================
+// --Vesion:- 18
+// ===================
