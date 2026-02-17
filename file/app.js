@@ -22,55 +22,110 @@ let editingProductId = null, currentQRProduct = null;
 // ==========================================
 //🔥FIXED BROADCAST - NOW WORKS PERFECTLY
 // ==========================================
+// 1. Send Broadcast (Unique ID ke saath save karega)
+// 1. Send Broadcast
 async function sendBroadcast() {
-  if (userRole !== 'admin') return notify('❌ Admin only!', 'error');
+  if (userRole !== 'admin') return notify('❌ Admin access only!', 'error');
 
   const title = document.getElementById('broadcastTitleInput').value.trim();
   const message = document.getElementById('broadcastMessageInput').value.trim();
 
-  if (!title || !message) return notify('❌ Title aur Message dono bhariye!', 'error');
+  if (!title || !message) return notify('⚠️ Please fill all fields', 'error');
 
   try {
-    // Ye line database mein "latest_msg" ko naye data se badal degi
-    await db.collection('broadcasts').doc("latest_msg").set({
+    await db.collection('broadcasts').add({
       title: title,
       message: message,
       sentAt: firebase.firestore.FieldValue.serverTimestamp()
-    }, { merge: false }); // merge: false matlab purana data poori tarah khatam
+    });
     
-    notify('message send Success', 'success');
+    notify('🚀 Broadcast Sent Successfully!', 'success');
     
-    // Naya message turant dikhane ke liye
-    showBroadcast(title, message);
-    
-    // Inputs saaf karne ke liye
+    // Clear & Refresh
     document.getElementById('broadcastTitleInput').value = '';
     document.getElementById('broadcastMessageInput').value = '';
+    loadPreviousBroadcasts();
   } catch (error) {
-    console.error("Broadcast error:", error);
-    notify('❌ Update fail: ' + error.message, 'error');
+    notify('❌ Failed: ' + error.message, 'error');
+  }
+}
+
+// 2. Load History with Premium Look
+async function loadPreviousBroadcasts() {
+  const listDiv = document.getElementById('previousBroadcastsList');
+  if (!listDiv) return;
+
+  try {
+    // Latest 10 messages fetch karein
+    const snapshot = await db.collection('broadcasts').orderBy('sentAt', 'desc').limit(10).get();
+    
+    if (snapshot.empty) {
+      listDiv.innerHTML = '<div style="text-align:center; padding:30px; opacity:0.3; font-size:13px;">No previous broadcasts found</div>';
+      return;
+    }
+
+    let html = '';
+    snapshot.forEach(doc => {
+      const data = doc.data();
+      const time = data.sentAt ? new Date(data.sentAt.toDate()).toLocaleString('en-IN', { hour12: true, hour: '2-digit', minute: '2-digit', day: '2-digit', month: 'short' }) : 'Just now';
+      
+      html += `
+<div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); padding: 18px; border-radius: 18px; margin-bottom: 15px; position: relative; transition: 0.3s; border-left: 4px solid #00c6ff;">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+        <div style="flex: 1; padding-right: 35px; text-align: left;">
+            <div style="color: #00c6ff; font-weight: 800; font-size: 14px; margin-bottom: 6px; letter-spacing: 0.5px;">${data.title}</div>
+            <p style="margin: 0; font-size: 13px; color: #e0e0e0; line-height: 1.6; opacity: 0.9;">${data.message}</p>
+            <div style="margin-top: 10px; font-size: 10px; color: #6dff9a; opacity: 0.7; font-weight: 600;">
+                <i class="far fa-clock"></i> ${time}
+            </div>
+        </div>
+        <button onclick="deleteBroadcast('${doc.id}')" 
+                style="background: rgba(255,68,68,0.1); border: 1px solid rgba(255,68,68,0.2); color: #ff4444; width: 34px; height: 34px; border-radius: 10px; cursor: pointer; transition: 0.2s;">
+            <i class="fas fa-trash-alt" style="font-size: 12px;"></i>
+        </button>
+    </div>
+</div>
+`;
+
+    });
+    listDiv.innerHTML = html;
+  } catch (err) {
+    console.error(err);
+    listDiv.innerHTML = '<p style="color:#ff4444; font-size:11px; text-align:center;">Failed to load history</p>';
+  }
+}
+
+// 3. Delete Broadcast
+async function deleteBroadcast(id) {
+  if (!confirm('Permanently delete this broadcast from history?')) return;
+  try {
+    await db.collection('broadcasts').doc(id).delete();
+    notify('🗑️ Deleted!');
+    loadPreviousBroadcasts();
+  } catch (err) {
+    notify('Delete failed!', 'error');
   }
 }
 
 
-
-// 🔥 UPDATED: FIXED AUTO-LOAD BROADCAST
+// 4. Auto-show latest for users (Modified checkBroadcasts)
 async function checkBroadcasts() {
   try {
-    // Hum hamesha "latest_msg" wala document hi uthayenge
-    const doc = await db.collection('broadcasts').doc("latest_msg").get();
+    // Latest message fetch karein jo time ke hisaab se sabse upar ho
+    const snapshot = await db.collection('broadcasts').orderBy('sentAt', 'desc').limit(1).get();
     
-    if (doc.exists) {
-      const data = doc.data();
+    if (!snapshot.empty) {
+      const data = snapshot.docs[0].data();
       document.getElementById('broadcastTitle').textContent = data.title;
       document.getElementById('broadcastMessage').textContent = data.message;
       document.getElementById('broadcastPopup').style.display = 'block';
       document.getElementById('broadcastPopup').classList.add('show');
     }
   } catch (err) {
-    console.log('No saved broadcast');
+    console.log('No broadcast found');
   }
 }
+
 
 // ==================================================
 //🔥 FIXED BROADCAST - NOW WORKS PERFECTLY END
@@ -1078,6 +1133,8 @@ function showSection(id, fromNav = false) {
     if(id === 'manageUsers') loadUserManagement();
     if(id === 'manageProducts') loadProductManagement();
     if(id === 'verifyTransactions') loadPendingTransactions();
+    if(id === 'broadcast') loadPreviousBroadcasts();
+    
 }
 
 
@@ -2760,10 +2817,12 @@ async function loginWithGoogle() {
 // ==========================================
 // --Login with Google function(Working Fine) end
 // ==========================================
+
 function openErrorPage() {
     // Agar aapka error code wala file 'errors.html' naam se save hai:
     window.location.href = 'error_codes.html'; 
 }
+}
 // ===================
-// --Vesion:- 19
+// --Vesion:- 20
 // ===================
