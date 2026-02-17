@@ -2822,7 +2822,7 @@ function openErrorPage() {
     // Agar aapka error code wala file 'errors.html' naam se save hai:
     window.location.href = 'error_codes.html'; 
 }
-}
+
 // ===================
 // --Vesion:- 20
 // ===================
