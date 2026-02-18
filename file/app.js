@@ -1752,60 +1752,95 @@ async function loadUserManagement() {
       const arrayCount = u.purchasedProducts ? u.purchasedProducts.length : 0;
       
       // Jo zyada ho wahi asli count hai (Purana data + Naya data merge)
-      const purchaseCount = Math.max(transCount, arrayCount);
-      
+      const purchaseCount = Math.max(transCount, arrayCount);     
       const userRoleColor = u.role === 'admin' ? '#ff6b35' : '#6dff9a';
+
+// --- Fixed Avatar Logic (profilePhoto) ---
+const profileImg = u.profilePhoto || ''; 
+
+// Name logic: Agar name khali hai toh "Not Set" dikhayega
+const finalDisplayName = (u.name && u.name.trim() !== "") ? u.name : "Not Set";
+
+html += `
+<div class="user-item" style="
+  /* Background Blue Gradient Fix */
+  background: linear-gradient(145deg, rgba(13, 25, 48, 0.9), rgba(10, 15, 30, 0.95));
+  border: 1px solid rgba(0, 242, 255, 0.15);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  padding: 15px;
+  margin-bottom: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: 0.3s;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+">
+  <div style="flex: 1; display: flex; align-items: center; gap: 12px;">
+    
+    <div style="width: 50px; height: 50px; background: rgba(0, 242, 255, 0.1); border-radius: 14px; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(0, 242, 255, 0.2); overflow: hidden;">
+      ${profileImg ? 
+        `<img src="${profileImg}" style="width: 100%; height: 100%; object-fit: cover;">` : 
+        `<i class="fas fa-user-shield" style="color: #00f2ff; font-size: 20px;"></i>`
+      }
+    </div>
+
+    <div style="flex: 1; overflow: hidden;">
+      <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+        <span style="font-size: 15px; font-weight: 700; color: ${u.name ? '#fff' : '#ffb3b3'}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 160px;">
+          ${finalDisplayName}
+        </span>
+        <span style="background: rgba(0, 242, 255, 0.15); color: #00f2ff; font-size: 9px; font-weight: 800; padding: 2px 8px; border-radius: 50px; text-transform: uppercase; border: 1px solid rgba(0, 242, 255, 0.3); letter-spacing: 0.5px;">
+          ${u.role || 'user'}
+        </span>
+      </div>
       
-      html += `
-        <div class="item" style="
-          background: linear-gradient(145deg, #1e244a, #15193a);
-          border: 1px solid rgba(255,255,255,0.05);
-          border-radius: 16px;
-          padding: 12px 15px;
-          margin: 10px 0;
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-        ">
-          <div style="flex: 1; overflow: hidden; margin-right: 10px;">
-            <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 2px;">
-              <b style="font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #fff;">
-                ${u.email}
-              </b>
-              <span style="color: ${userRoleColor}; font-size: 9px; font-weight: 800; text-transform: uppercase;">
-                [${u.role || 'user'}]
-              </span>
-            </div>
-            
-            <div style="display: flex; flex-direction: column; gap: 2px;">
-              <small style="font-size: 10px; color: #a5b1ff; opacity: 0.8;">📅 Registered: ${regDate}</small>
-              <div style="display: flex; align-items: center; gap: 4px; margin-top: 2px;">
-                <span style="font-size: 10px; background: rgba(109,124,255,0.2); color: #6d7cff; padding: 2px 8px; border-radius: 20px; font-weight: bold; border: 1px solid rgba(109,124,255,0.3);">
-                  🛒 Purchased: ${purchaseCount}
-                </span>
-              </div>
-            </div>
-          </div>
-          
-          <div style="display: flex; gap: 8px;">
-  <button onclick="viewUserHistory('${userId}', '${u.email}')" 
-    class="text-blue-500" 
-    style="width: 38px; height: 38px; min-width: 38px; border-radius: 12px; padding: 0; display: flex; align-items: center; justify-content: center; font-size: 16px; background: rgba(59, 130, 246, 0.2); border: 1.5px solid #3b82f6; color: #3b82f6; cursor: pointer;" 
-    title="Edit">
-    <i class="fas fa-edit"></i>
-  </button>
+      <div style="display: flex; flex-direction: column; gap: 3px; width: 100%;">
+    <div style="
+        font-size: 11px; 
+        color: #a5b1ff; 
+        opacity: 0.7; 
+        display: flex; 
+        align-items: center; 
+        gap: 5px;
+        /* Gmail Hide Logic (No Dots) */
+        white-space: nowrap; 
+        overflow: hidden; 
+        max-width: 155px; /* Isse zyada bada Gmail apne aap hide ho jayega */
+    ">
+        <i class="far fa-envelope" style="font-size: 12px; flex-shrink: 0;"></i> 
+        <span style="overflow: hidden; white-space: nowrap;">
+            ${u.email}
+        </span>
+    </div>
 
-  <button onclick="deleteUser('${userId}')" 
-    class="text-red-500" 
-    style="width: 38px; height: 38px; min-width: 38px; border-radius: 12px; padding: 0; display: flex; align-items: center; justify-content: center; font-size: 16px; background: rgba(239, 68, 68, 0.2); border: 1.5px solid #ef4444; color: #ef4444; cursor: pointer;" 
-    title="Delete">
-    <i class="fas fa-trash"></i>
-  </button>
-</div>
-
+        <div style="display: flex; align-items: center; gap: 10px; margin-top: 4px;">
+           <span style="font-size: 10px; color: #6dff9a; display: flex; align-items: center; gap: 4px;">
+             <i class="fas fa-shopping-cart" style="font-size: 9px;"></i> Orders: ${purchaseCount}
+           </span>
+           <span style="font-size: 10px; color: rgba(255,255,255,0.4);">
+             <i class="far fa-calendar-alt"></i> ${regDate}
+           </span>
         </div>
-      `;
+      </div>
+    </div>
+  </div>
+  
+  <div style="display: flex; gap: 10px; margin-left: 10px;">
+    <button onclick="viewUserHistory('${userId}', '${u.email}')" 
+      style="width: 40px; height: 40px; border-radius: 12px; border: 1px solid rgba(0, 210, 255, 0.3); background: rgba(0, 210, 255, 0.1); color: #00d2ff; cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: center; font-size: 14px;">
+      <i class="fas fa-user-edit"></i>
+    </button>
+
+    <button onclick="deleteUser('${userId}')" 
+      style="width: 40px; height: 40px; border-radius: 12px; border: 1px solid rgba(255, 68, 68, 0.3); background: rgba(255, 68, 68, 0.1); color: #ff4444; cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: center; font-size: 14px;">
+      <i class="fas fa-trash-alt"></i>
+    </button>
+  </div>
+</div>
+`;
     });
     
     document.getElementById('userManagementList').innerHTML = html;
@@ -1844,23 +1879,132 @@ async function viewUserHistory(userId, userEmail) {
 
         let html = `<h4>📜 History for: ${userEmail}</h4>`;
         
-        // --- Naya User Info Section (Original IDs ke saath) ---
-        html += `
-            <div style="background:rgba(255,255,255,0.05); padding:15px; border-radius:12px; margin-bottom:15px; border:1px solid rgba(255,255,255,0.1); display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                <div style="font-size:13px;"><span style="color:#94a3b8;">Name:</span> <br><b style="color:#fff;">👤 ${name}</b></div>
-                <div style="font-size:13px;"><span style="color:#94a3b8;">Mobile:</span> <br><b style="color:#fff;">📞 ${mobile}</b></div>
-                <div style="font-size:13px;"><span style="color:#94a3b8;">Telegram:</span> <br><b style="color:#38bdf8;">✈️ ${telegram}</b></div>
-                <div style="font-size:13px;"><span style="color:#94a3b8;">Status:</span> <br><b style="color:#6dff9a;">✅ Active</b></div>
+// 1. Firebase data extraction
+const timerData = userData.timer || {}; 
+const endTime = timerData.endTime; 
+const isRunning = timerData.isRunning === true;
+const savedRemaining = timerData.savedRemaining || 0; // Paused time handle karne ke liye
+
+html += `
+<div style="
+    background: linear-gradient(145deg, rgba(20, 24, 45, 0.98), rgba(13, 17, 33, 1));
+    padding: 18px;
+    border-radius: 20px;
+    margin-bottom: 15px;
+    border: 1px solid ${isRunning ? 'rgba(0, 242, 255, 0.3)' : 'rgba(255, 255, 255, 0.1)'};
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+">
+    <div style="display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 10px;">
+        
+        <div style="min-width: 0; text-align: center;">
+            <div style="font-size: 11px; margin-bottom: 8px;">
+                <span style="color: #94a3b8;">👤Name</span><br>
+                <b style="color: #fff; font-size: 13px; display: block; overflow: hidden; text-overflow: ellipsis;">${name}</b>
             </div>
-        `;
+            <div style="font-size: 11px;">
+                <span style="color: #94a3b8;">✈️Telegram</span><br>
+                <b style="color: #38bdf8; font-size: 12px; display: block; overflow: hidden; text-overflow: ellipsis;">${telegram}</b>
+            </div>
+        </div>
+
+        <div style="text-align: center;">
+            <div style="background: rgba(0, 242, 255, 0.05); border: 1px solid ${isRunning ? 'rgba(0, 242, 255, 0.35)' : 'rgba(255, 255, 255, 0.15)'}; border-radius: 14px; padding: 8px 10px; min-width: 90px; box-shadow: 0 0 15px rgba(0, 242, 255, 0.1);">
+                <div style="font-size: 7px; color: ${isRunning ? '#00f2ff' : '#94a3b8'}; font-weight: 900; text-transform: uppercase; margin-bottom: 4px;">
+                    ${isRunning ? 'Unlock In' : 'Paused'}
+                </div>
+                <div id="db_timer_${userId}" style="color: #fff; font-size: 11px; font-weight: 800; font-family: 'Courier New', monospace;">
+                    ${isRunning ? '--:--:--' : formatStaticTime(savedRemaining)}
+                </div>
+            </div>
+        </div>
+
+        <div style="min-width: 0; text-align: center; display: flex; flex-direction: column; align-items: flex-end;">
+            <div style="font-size: 11px; margin-bottom: 8px; width: 100%;">
+                <span style="color: #94a3b8;">📞Mobile</span><br>
+                <b style="color: #fff; font-size: 13px;">${mobile}</b>
+            </div>
+            
+            <div style="width: 100%; display: flex; flex-direction: column; align-items:center;">
+             <span style="color: #94a3b8; font-size: 11px; display: block; margin-bottom: 2px;">Status</span>
+                <b style="color: ${isRunning ? '#6dff9a' : '#ffeb3b'}; font-size: 10px; display: flex; align-items: center; gap: 5px; background: rgba(255,255,255,0.05); padding: 2px 8px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1);">
+                    <span style="width: 6px; height: 6px; background: ${isRunning ? '#6dff9a' : '#ffeb3b'}; border-radius: 50%; box-shadow: 0 0 5px ${isRunning ? '#6dff9a' : '#ffeb3b'};"></span> 
+                    ${isRunning ? 'ACTIVE' : 'STOPPED'}
+                </b>
+            </div>
+        </div>
+
+    </div>
+</div>
+`;
+
+
+// --- Real-time Logic (Fixed Function Call) ---
+if (isRunning && endTime) {
+    // Thoda delay taaki modal DOM mein render ho jaye
+    setTimeout(() => startLiveSync(userId, endTime), 50);
+}
+
+// Helper for Static Display
+function formatStaticTime(ms) {
+    if (!ms || ms <= 0) return "00:00:00";
+    const h = Math.floor(ms / 3600000);
+    const m = Math.floor((ms % 3600000) / 60000);
+    const s = Math.floor((ms % 60000) / 1000);
+    return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+}
+
+function startLiveSync(id, endMs) {
+    const timerBox = document.getElementById(`db_timer_${id}`);
+    if (!timerBox) return;
+
+    const run = () => {
+        const remaining = endMs - Date.now();
+        if (remaining <= 0) {
+            timerBox.innerHTML = "READY";
+            timerBox.style.color = "#6dff9a";
+            return;
+        }
+
+        const h = Math.floor(remaining / 3600000);
+        const m = Math.floor((remaining % 3600000) / 60000);
+        const s = Math.floor((remaining % 60000) / 1000);
+
+        timerBox.innerHTML = `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+        requestAnimationFrame(run);
+    };
+    run();
+}
+
+
+
         
         // --- Aapka Purana Joined On Box ---
         html += `
             <div style="background:rgba(109,124,255,0.1); padding:12px; border-radius:10px; margin-bottom:15px; border:1px solid #6d7cff; text-align:center;">
                 <span style="color:#6dff9a; font-weight:bold;">📅 Joined On:</span> ${registrationDate}
             </div>
-            <button class="action" onclick="showSection('manageUsers')" style="margin-bottom:15px; width:100%;">⬅️ Back to Users List</button>
-        `;
+              <button class="action" onclick="showSection('manageUsers')" style="
+        margin-bottom: 20px; 
+        width: 100%; 
+        padding: 12px; 
+        border-radius: 12px; 
+        background: rgba(255, 255, 255, 0.05); 
+        color: #fff; 
+        border: 1px solid rgba(255, 255, 255, 0.1); 
+        font-weight: bold; 
+        font-size: 13px; 
+        cursor: pointer; 
+        display: flex; 
+        align-items: center; 
+        justify-content: center; 
+        gap: 10px;
+        transition: all 0.3s ease;
+    " onmouseover="this.style.background='rgba(255,255,255,0.1)'; this.style.borderColor='rgba(255,255,255,0.2)';" 
+      onmouseout="this.style.background='rgba(255,255,255,0.05)'; this.style.borderColor='rgba(255,255,255,0.1)';"
+    >
+        <span style="font-size: 16px;">⬅️</span> Back to Users List
+    </button>
+`;
 
 
         const txProductIds = new Set();
@@ -2019,95 +2163,160 @@ async function loadProductManagement() {
     }
 
     // 🔥 SORTING LOGIC: Available upar (Active), Sold niche
-    products.sort((a, b) => {
+        products.sort((a, b) => {
+      // 1. Pehle Active (false) aur Sold (true) ko alag karein
       if (a.isSoldOut !== b.isSoldOut) {
-        return a.isSoldOut ? 1 : -1; // false (Active) pehle, true (Sold) baad mein
+        return a.isSoldOut ? 1 : -1; 
       }
-      // Agar dono same status ke hain toh naya wala upar
-      return (b.submittedAt?.toMillis() || 0) - (a.submittedAt?.toMillis() || 0);
+
+      // 2. Agar dono ACTIVE hain, toh "submittedAt" (Add Date) ke hisab se sort karein
+      if (!a.isSoldOut) {
+        return (b.submittedAt?.toMillis() || 0) - (a.submittedAt?.toMillis() || 0);
+      }
+
+      // 3. Agar dono SOLD hain, toh "soldAt" (Sold Date) ke hisab se sort karein
+      // Jo abhi-abhi sold hua hai wo Sold list mein sabse upar rahega
+      return (b.soldAt?.toMillis() || 0) - (a.soldAt?.toMillis() || 0);
     });
 
     let html = '';
     products.forEach(p => {
       const isSold = p.isSoldOut || false;
       
-      // Date Formatting
+      // Date Formatting (Added Date)
       let dateStr = "New";
       if (p.submittedAt) {
           const d = p.submittedAt.toDate();
           dateStr = d.toLocaleDateString('en-GB') + " " + d.toLocaleTimeString('en-GB', {hour: '2-digit', minute:'2-digit', hour12: true});
       }
 
+      // Buyer Email
       const buyerEmail = isSold && p.soldTo ? (userMap[p.soldTo] || "Unknown User") : null;
 
       // --- PREMIUM SIMPLE DESIGN ---
       html += `
-        <div style="
-          background: #1a1f3c; 
-          border: 1px solid ${isSold ? 'rgba(255, 68, 68, 0.2)' : 'rgba(109, 255, 154, 0.2)'};
-          border-radius: 20px;
-          padding: 20px;
-          margin-bottom: 15px;
-          position: relative;
-        ">
-          <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-            <div>
-              <h3 style="margin: 0; font-size: 16px; color: #fff; letter-spacing: 0.5px;">${p.name}</h3>
-              <div style="font-size: 10px; color: #6d7cff; margin-top: 4px; opacity: 0.8;">ID: ${p.id}</div>
-            </div>
-            <div style="
-              background: ${isSold ? 'rgba(255, 68, 68, 0.1)' : 'rgba(109, 255, 154, 0.1)'};
-              color: ${isSold ? '#ff4444' : '#6dff9a'};
-              padding: 5px 12px;
-              border-radius: 20px;
-              font-size: 9px;
-              font-weight: 800;
-              border: 1px solid ${isSold ? 'rgba(255, 68, 68, 0.2)' : 'rgba(109, 255, 154, 0.2)'};
-              display: flex; align-items: center; gap: 4px;
-            ">
-              <span style="font-size: 12px;">●</span> ${isSold ? 'SOLD OUT' : 'ACTIVE'}
-            </div>
-          </div>
+<div class="product-item" style="
+  background: linear-gradient(145deg, rgba(20, 24, 45, 0.9), rgba(13, 17, 33, 0.98));
+  border: 1px solid ${isSold ? 'rgba(255, 68, 68, 0.15)' : 'rgba(0, 242, 255, 0.15)'};
+  border-radius: 22px;
+  padding: 20px;
+  margin-bottom: 10px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+  transition: 0.3s ease;
+  text-align: center;
+">
+  
+  <div style="display: flex; justify-content: center; margin-bottom: 10px;">
+    <div style="
+      background: ${isSold ? 'rgba(255, 68, 68, 0.1)' : 'rgba(0, 242, 255, 0.08)'};
+      color: ${isSold ? '#ff4444' : '#00f2ff'};
+      padding: 6px 14px;
+      border-radius: 50px;
+      font-size: 10px;
+      font-weight: 900;
+      border: 1px solid ${isSold ? 'rgba(255, 68, 68, 0.2)' : 'rgba(0, 242, 255, 0.2)'};
+      display: flex; align-items: center; gap: 6px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    ">
+      <span style="height: 6px; width: 6px; background: ${isSold ? '#ff4444' : '#00f2ff'}; border-radius: 50%; box-shadow: 0 0 8px ${isSold ? '#ff4444' : '#00f2ff'};"></span>
+      ${isSold ? 'Sold Out' : 'Active'}
+    </div>
+  </div>
 
-          <div style="margin-top: 15px; display: flex; justify-content: space-between; font-size: 12px;">
-             <span style="color: #bbb;">Price: <b style="color: #6dff9a;">₹${p.price}</b></span>
-             <span style="color: #bbb;">Key: <b style="color: #ffeb3b;">${p.key || '@notset'}</b></span>
-          </div>
-          <div style="color: #555; font-size: 10px; margin-top: 6px;">📅 Added on: ${dateStr}</div>
+  <div style="margin-bottom: 10px;">
+    <h3 style="margin: 0; font-size: 18px; color: #fff; font-weight: 800; letter-spacing: 0.3px;">
+      ${p.name}
+    </h3>
+    
+     <div style="display: flex; align-items: center; justify-content: center; gap: 6px; margin-top: 4px;">
+      <span style="font-size: 10px; color: #00d2ff; opacity: 0.7; font-family: monospace; letter-spacing: 0.5px;">
+        ID: ${p.id}
+      </span>
+      
+      <i class="far fa-copy" 
+         onclick="copyToClipboard('${p.id}', this)" 
+         style="
+           cursor: pointer;
+           color: #00d2ff;
+           font-size: 11px;
+           opacity: 0.6;
+           transition: 0.2s;
+         " 
+         onmouseover="this.style.opacity='1'; this.style.transform='scale(1.1)';" 
+         onmouseout="this.style.opacity='0.6'; this.style.transform='scale(1)';"
+         title="Copy ID">
+      </i>
+    </div>   
+  </div>
 
-          ${isSold ? `
-            <div style="margin-top: 15px; padding: 12px; background: rgba(255,68,68,0.05); border-radius: 12px; border: 1px dashed rgba(255,68,68,0.3);">
-              <div style="color: #ff8a8a; font-size: 9px; font-weight: bold; text-transform: uppercase; margin-bottom: 4px;">👤BOUGHT BY</div>
-              <div style="color: #fff; font-size: 12px; opacity: 0.9;">${buyerEmail}</div>
-            </div>
-          ` : ''}
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
+     <div style="background: rgba(255,255,255,0.03); padding: 10px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05);">
+        <div style="font-size: 9px; color: #a5b1ff; text-transform: uppercase; margin-bottom: 4px;">Price</div>
+        <div style="color: #6dff9a; font-size: 16px; font-weight: 800;">₹${p.price}</div>
+     </div>
+     <div style="background: rgba(255,255,255,0.03); padding: 10px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); overflow: hidden;">
+        <div style="font-size: 9px; color: #a5b1ff; text-transform: uppercase; margin-bottom: 4px;">Key</div>
+        <div style="color: #ffeb3b; font-size: 13px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+          ${p.key || '@notset'}
+        </div>
+     </div>
+  </div>
 
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 18px;">
-            <button onclick="editProduct('${p.id}','${p.name}','${p.loginId}','${p.key}',${p.price})" style="
-              background: transparent;
-              color: #6d7cff;
-              border: 1px solid rgba(109, 124, 255, 0.4);
-              padding: 10px;
-              border-radius: 12px;
-              font-size: 13px;
-              font-weight: 600;
-              cursor: pointer;
-              display: flex; align-items: center; justify-content: center; gap: 6px;
-            ">✏️Edit</button>
-            
-            <button onclick="deleteProduct('${p.id}')" style="
-              background: transparent;
-              color: #ff4444;
-              border: 1px solid rgba(255, 68, 68, 0.4);
-              padding: 10px;
-              border-radius: 12px;
-              font-size: 13px;
-              font-weight: 600;
-              cursor: pointer;
-              display: flex; align-items: center; justify-content: center; gap: 6px;
-            ">🗑️Delete</button>
-          </div>
-        </div>`;
+  <div style="display: flex; flex-direction: column; align-items: center; gap: 4px; margin-bottom: 10px;">
+    <div style="color: rgba(255,255,255,0.3); font-size: 10px; display: flex; align-items: center; gap: 5px;">
+      <i class="far fa-calendar-plus"></i> Added: ${dateStr}
+    </div>
+    ${isSold && p.soldAt ? `
+    <div style="color: #ff8a8a; font-size: 10px; display: flex; align-items: center; gap: 5px; opacity: 0.8;">
+      <i class="fas fa-calendar-check"></i> Sold: ${new Date(p.soldAt.toDate()).toLocaleString()}
+    </div>
+    ` : ''}
+  </div>
+
+  ${isSold ? `
+    <div style="margin-bottom: 10px; padding: 12px; background: rgba(255,68,68,0.05); border-radius: 14px; border: 1px dashed rgba(255,68,68,0.2);">
+      <div style="color: #ff8a8a; font-size: 9px; font-weight: 900; text-transform: uppercase; margin-bottom: 4px; letter-spacing: 1px;">
+        <i class="fas fa-user-tag"></i> Buyer Email
+      </div>
+      <div style="color: #fff; font-size: 12px; opacity: 0.9; word-break: break-all;">
+        ${buyerEmail}
+      </div>
+    </div>
+  ` : ''}
+
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+    <button onclick="editProduct('${p.id}','${p.name}','${p.loginId}','${p.key}',${p.price})" style="
+      background: rgba(109, 124, 255, 0.08);
+      color: #00d2ff;
+      border: 1px solid rgba(0, 210, 255, 0.2);
+      padding: 12px;
+      border-radius: 14px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+    ">
+      <i class="fas fa-pen-nib"></i> Edit
+    </button>
+    
+    <button onclick="deleteProduct('${p.id}')" style="
+      background: rgba(255, 68, 68, 0.08);
+      color: #ff4444;
+      border: 1px solid rgba(255, 68, 68, 0.2);
+      padding: 12px;
+      border-radius: 14px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+    ">
+      <i class="fas fa-trash-alt"></i> Delete
+    </button>
+  </div>
+</div>`;
     });
     
     document.getElementById('productManagementList').innerHTML = html;
@@ -2627,22 +2836,58 @@ async function loadActiveCoupons() {
                 const limitColor = isLimitFull ? '#ff4444' : '#6dff9a';
 
                 html += `
-                    <div style="background: rgba(21, 25, 58, 0.8); border: 1px solid #2a2f4a; padding: 12px; border-radius: 12px; margin-bottom: 10px; position: relative;">
-                        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-                            <div>
-                                <span style="background: #ffeb3b; color: #000; padding: 3px 10px; border-radius: 6px; font-weight: 800; font-size: 11px; text-transform: uppercase;">${d.code}</span>
-                                <div style="margin-top: 8px; font-size: 13px; color: #fff;">
-                                    Value: <b style="color:#ffeb3b;">${d.value}${symbol} Off</b>
-                                </div>
-                            </div>
-                            <button onclick="deleteCoupon('${doc.id}')" style="background: rgba(255,68,68,0.1); color: #ff4444; border: 1px solid #ff4444; border-radius: 6px; padding: 5px 10px; font-size: 10px; font-weight:bold; cursor: pointer; transition: 0.3s;">DELETE</button>
-                        </div>
-                        <div style="margin-top: 10px; display: flex; justify-content: space-between; font-size: 11px; color: #94a3b8; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 10px;">
-                            <span>📅 Exp: ${exp}</span>
-                            <span style="color: ${limitColor}; font-weight:bold;">👥 Limit: ${d.usedCount || 0}/${d.usageLimit}</span>
-                        </div>
-                    </div>
-                `;
+    <div style="
+        background: linear-gradient(145deg, rgba(30, 41, 59, 0.4), rgba(15, 23, 42, 0.6)); 
+        border: 1px solid rgba(255, 235, 59, 0.1); 
+        padding: 15px; 
+        border-radius: 18px; 
+        margin-bottom: 5px; 
+        position: relative;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    ">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+            <div style="display: flex; align-items: center; gap: 6px;">
+                <span style="
+                    background: linear-gradient(90deg, #ffeb3b, #fbc02d); 
+                    color: #000; 
+                    padding: 4px 12px; 
+                    border-radius: 8px; 
+                    font-weight: 900; 
+                    font-size: 12px; 
+                    text-transform: uppercase;
+                    letter-spacing: 1px;
+                ">${d.code}</span>
+
+                <div onclick="copyToClipboard('${d.code}', this)" style="cursor: pointer; display: flex; align-items: center; transition: 0.2s; padding: 4px;" title="Copy Code">
+                    <svg id="copy_icon_${doc.id}" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="filter: drop-shadow(0 0 2px rgba(56, 189, 248, 0.3));">
+                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                    </svg>
+                </div>
+            </div>
+
+            <button onclick="deleteCoupon('${doc.id}')" style="background: rgba(255, 68, 68, 0.05); color: #ff4444; border: 1px solid rgba(255, 68, 68, 0.3); border-radius: 8px; padding: 6px 12px; font-size: 10px; font-weight: 800; cursor: pointer; text-transform: uppercase;">
+                🗑️ Remove
+            </button>
+        </div>
+
+        <div style="margin-bottom: 5px;">
+            <div style="font-size: 16px; color: #fff; font-weight: 800;">
+                <span style="color: #6dff9a;">${d.value}${symbol}</span> OFF
+            </div>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; font-size: 10px; border-top: 1px solid rgba(255, 255, 255, 0.05); padding-top: 10px;">
+            <span style="color: #94a3b8;">⏳ Exp: <b style="color: #ddd;">${exp}</b></span>
+            <div style="background: rgba(255, 255, 255, 0.03); padding: 4px 10px; border-radius: 20px; border: 1px solid rgba(255, 255, 255, 0.05);">
+                <span style="color: ${limitColor}; font-weight: 900;">${d.usedCount || 0} / ${d.usageLimit} USED</span>
+            </div>
+        </div>
+    </div>
+`;
+
+
+
             });
             list.innerHTML = html;
         });
@@ -2665,6 +2910,17 @@ async function deleteCoupon(id) {
 // ==========================================
 
 
+function copyToClipboard(text, btn) {
+    navigator.clipboard.writeText(text).then(() => {
+        const originalText = btn.innerHTML;
+        btn.innerHTML = "✅ COPIED";
+        btn.style.color = "#6dff9a";
+        setTimeout(() => {
+            btn.innerHTML = originalText;
+            btn.style.color = "#fff";
+        }, 2000);
+    });
+}
 
 
 
@@ -2822,7 +3078,6 @@ function openErrorPage() {
     // Agar aapka error code wala file 'errors.html' naam se save hai:
     window.location.href = 'error_codes.html'; 
 }
-
 // ===================
-// --Vesion:- 20
+// --Vesion:- 21
 // ===================
