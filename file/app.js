@@ -1414,12 +1414,63 @@ function showLockScreen() {
   showLoginType('user');
 }
 
+
+
+
 // 5. Broadcast Popup Band karne ka function
-function closeBroadcast() {
-  const popup = document.getElementById('broadcastPopup');
-  popup.style.display = 'none';
-  popup.classList.remove('show');
-}
+window.forceClosePopup = function() {
+    const popup = document.getElementById('broadcastPopup');
+    if (popup) {
+        popup.classList.remove('show');
+        setTimeout(() => { popup.style.display = 'none'; }, 400); // Animation ke baad hide
+    }
+};
+
+// Function 2: Got it! ke liye (Band + Navigation)
+window.handleGotItAction = function() {
+    // 1. Popup band karo
+    window.forceClosePopup();
+
+    // 2. Direct Firestore se check karo (ID Mismatch se bachne ke liye)
+    if (!currentUser) return;
+
+    db.collection('users').doc(currentUser.uid).get().then((doc) => {
+        if (doc.exists) {
+            const data = doc.data();
+            
+            // In charo fields ko check kar rahe hain
+            const isIncomplete = !data.name || !data.mobile || !data.telegram;
+
+            if (isIncomplete) {
+                // Profile Incomplete: Settings -> Profile Panel
+                if (typeof showSection === 'function') {
+                    showSection('settings'); 
+                    
+                    setTimeout(() => {
+                        // Profile panel open karne ka logic
+                        toggleSettingsPanel('profile-panel');
+                        if(window.showToast) showToast("Pehle apni profile poori karein! 👤");
+                    }, 400);
+                }
+            } else {
+                // Profile Complete: Go to Products
+                if (typeof showSection === 'function') {
+                    showSection('products');
+                }
+            }
+        }
+    }).catch((error) => {
+        console.error("Error checking profile:", error);
+        // Fallback: Agar error aaye toh products par bhej do
+        showSection('products');
+    });
+};
+
+
+
+
+
+
 
 // 6. User Signup/Forgot Password toggles
 function showUserSignup() {
@@ -3078,6 +3129,8 @@ function openErrorPage() {
     // Agar aapka error code wala file 'errors.html' naam se save hai:
     window.location.href = 'error_codes.html'; 
 }
+
+
 // ===================
 // --Vesion:- 21
 // ===================
