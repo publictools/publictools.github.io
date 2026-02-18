@@ -1,3 +1,4 @@
+/* [ALL YOUR EXISTING STYLES REMAIN SAME - NO CHANGES NEEDED] */
 * {box-sizing:border-box; -webkit-tap-highlight-color: transparent;}
 html, body {height:100%; margin:0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background:#0f1220; color:#eaeaf0; overflow-x:hidden;}
 body {padding-bottom: env(safe-area-inset-bottom);}
@@ -68,9 +69,6 @@ body {padding-bottom: env(safe-area-inset-bottom);}
   justify-content: center;
   margin-bottom: 10px;
 }
-
-
-
 
 .social-links {
   border-top: 1px solid rgba(255,255,255,0.1);
@@ -165,6 +163,16 @@ button {padding:14px 20px; margin:8px 0; border:0; border-radius:12px; font-size
 
 
 /* --- BROADCAST POPUP FIXED --- */
+/* Dashboard Fix: Isse Bottom Nav hamesha screen ke upar rahega */
+.bottom-nav {
+    position: fixed !important;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000; /* Dashboard hamesha popup ke niche rahega lekin screen par dikhega */
+}
+
+/* Updated Broadcast Popup */
 .broadcast-popup {
     position: fixed; 
     top: 50%; 
@@ -172,74 +180,45 @@ button {padding:14px 20px; margin:8px 0; border:0; border-radius:12px; font-size
     transform: translate(-50%, -50%); 
     background: linear-gradient(135deg, #ff6b35, #ff8e53); 
     color: #fff; 
-    padding: 35px; /* Padding thodi badhai hai */
-    border-radius: 24px; 
-    width: 350px; /* Isse thickness/width fix ho jayegi */
+    padding: 40px 30px; 
+    border-radius: 28px; 
+    width: 350px; 
     max-width: 90vw; 
-    max-height: 80vh; 
-    z-index: 9999; 
-    display: none; 
+    z-index: 9999; /* Popup sabse upar */
+    display: none; /* Default hidden */
     box-shadow: 0 30px 60px rgba(255,107,53,0.4); 
     text-align: center; 
-    backdrop-filter: blur(20px);
-    border: 1px solid rgba(255,255,255,0.2); /* Halka border chamak ke liye */
+    border: 1px solid rgba(255,255,255,0.2);
 }
-/* Jab show class add ho */
+
 .broadcast-popup.show {
     display: block; 
     animation: popupSlide 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
-.broadcast-popup h3 {
-    margin: 0 0 15px 0; 
-    font-size: 26px; /* Heading thodi badi */
-    font-weight: 800;
-}
-.broadcast-popup p {
-    font-size: 17px; 
-    line-height: 1.6; 
-    margin-bottom: 25px;
-    opacity: 0.9;
-}
-.broadcast-close {
-    background: #fff; 
-    color: #ff6b35; 
-    border: none; 
-    padding: 14px 40px; /* Button thoda bada aur mota */
-    border-radius: 50px; 
-    font-weight: 700; 
-    font-size: 16px; 
+
+/* Floating ❌ Close Button Style */
+.close-popup-icon {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    font-size: 22px;
+    color: rgba(255,255,255,0.7);
     cursor: pointer;
+    line-height: 1;
+    padding: 5px;
     transition: 0.3s;
-    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
 }
-.broadcast-close:hover {
-    transform: scale(1.05);
-    background: #f0f0f0;
+.close-popup-icon:hover {
+    color: #fff;
+    transform: rotate(90deg);
 }
 
-/* Animations */
+/* Animations baki aapki wali same rahengi */
 @keyframes popupSlide {
     from {opacity: 0; transform: translate(-50%, -60%) scale(0.95);} 
     to {opacity: 1; transform: translate(-50%, -50%) scale(1);}
 }
 
-/* INPUT FIELD STYLES */
-input {
-    padding: 16px; 
-    margin: 10px 0; 
-    border-radius: 12px; 
-    border: 1px solid #2a2f4a; 
-    background: #1b1f3b; 
-    color: #fff; 
-    font-size: 16px; 
-    width: 100%;
-    transition: 0.3s;
-}
-input:focus {
-    outline: none; 
-    border-color: #6d7cff; 
-    box-shadow: 0 0 0 4px rgba(109,124,255,0.15);
-}
 /* --- BROADCAST POPUP FIXED End --- */
 
 
@@ -748,6 +727,12 @@ body.glass-mode .whatsapp-float {
   background: linear-gradient(135deg, #6d7cff, #a5b1ff);
   border: 2px solid rgba(255,255,255,0.1);
 }
+
+
+
+
+
+
 
 
 /* Settings Row Styles */
